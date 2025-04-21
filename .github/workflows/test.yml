@@ -129,6 +129,8 @@ jobs:
   all_done:
     name: Tests done
     runs-on: ubuntu-latest
+
+    if: always()
     needs: [tests]
 
     steps:
