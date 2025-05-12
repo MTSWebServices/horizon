@@ -19,6 +19,10 @@ jobs:
   tests:
     name: Run tests (Python ${{ matrix.python-version }}, Pydantic v${{ matrix.pydantic-version }} on ${{ matrix.os }})
     runs-on: ${{ matrix.os }}
+
+    permissions:
+      contents: read
+
     strategy:
       fail-fast: false
       matrix:
