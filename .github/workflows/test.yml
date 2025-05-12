@@ -15,13 +15,13 @@ concurrency:
 env:
   DEFAULT_PYTHON: '3.13'
 
+permissions:
+  contents: read
+
 jobs:
   tests:
     name: Run tests (Python ${{ matrix.python-version }}, Pydantic v${{ matrix.pydantic-version }} on ${{ matrix.os }})
     runs-on: ${{ matrix.os }}
-
-    permissions:
-      contents: read
 
     strategy:
       fail-fast: false
