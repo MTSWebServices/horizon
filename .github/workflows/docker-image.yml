@@ -17,6 +17,9 @@ jobs:
     runs-on: ubuntu-latest
     if: github.repository == 'MobileTeleSystems/horizon'  # prevent running on forks
 
+    permissions:
+      contents: read
+
     steps:
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v3

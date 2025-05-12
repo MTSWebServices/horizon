@@ -9,15 +9,17 @@ on:
 env:
   DEFAULT_PYTHON: '3.13'
 
-permissions:
-  contents: read
-
 jobs:
   check-changelog:
     name: Changelog Entry Check
     runs-on: ubuntu-latest
-    timeout-minutes: 10
     if: "!contains(github.event.pull_request.labels.*.name, 'ci:skip-changelog') && github.event.pull_request.user.login != 'pre-commit-ci[bot]' && github.event.pull_request.user.login != 'dependabot[bot]'"
+
+    permissions:
+      contents: read
+
+    timeout-minutes: 10
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
