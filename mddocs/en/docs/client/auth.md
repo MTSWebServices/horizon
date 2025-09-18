@@ -25,5 +25,4 @@ These classes are used for adding auth information to requests send from client.
 ::: horizon.client.auth.AccessToken
     options:
         members:
-            - token 
-           
+            - token

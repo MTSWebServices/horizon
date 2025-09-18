@@ -1,6 +1,6 @@
 # Changelog { #Changelog }
 
-# Changelog
+## Changelog
 
 * [1.1.2 (2025-04-07)](changelog/1.1.2.md)
 * [1.1.1 (2025-01-28)](changelog/1.1.1.md)

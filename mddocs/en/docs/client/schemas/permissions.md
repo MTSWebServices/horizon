@@ -10,7 +10,7 @@
             - PermissionResponseItemV1
             - PermissionsResponseV1
             - PermissionUpdateRequestItemV1
-            - PermissionsUpdateRequestV1 
+            - PermissionsUpdateRequestV1
 
 <!--
 ```{eval-rst}
@@ -18,13 +18,11 @@
     :model-show-field-summary: false
 ``` -->
 
-
 <!--
 ```{eval-rst}
 .. autopydantic_model:: PermissionsResponseV1
     :model-show-field-summary: false
 ``` -->
-
 
 <!--
 ```{eval-rst}
@@ -32,10 +30,8 @@
     :model-show-field-summary: false
 ``` -->
 
-
 <!--
 ```{eval-rst}
 .. autopydantic_model:: PermissionsUpdateRequestV1
     :model-show-field-summary: false
 ``` -->
-

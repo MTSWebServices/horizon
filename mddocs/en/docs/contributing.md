@@ -265,12 +265,12 @@ and the suffix.
 In general the name will follow `<pr_number>.<category>.rst` pattern,
 where the categories are:
 
-- `feature`: Any new feature
-- `bugfix`: A bug fix
-- `improvement`: An improvement
-- `doc`: A change to the documentation
-- `dependency`: Dependency-related changes
-- `misc`: Changes internal to the repo like CI, test and build changes
+* `feature`: Any new feature
+* `bugfix`: A bug fix
+* `improvement`: An improvement
+* `doc`: A change to the documentation
+* `dependency`: Dependency-related changes
+* `misc`: Changes internal to the repo like CI, test and build changes
 
 A pull request may have more than one of these components, for example
 a code change may introduce a new feature that deprecates an old

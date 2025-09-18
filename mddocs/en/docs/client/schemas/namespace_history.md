@@ -8,15 +8,13 @@
     options:
         members:
             - NamespaceHistoryResponseV1
-            - NamespaceHistoryPaginateQueryV1 
-
+            - NamespaceHistoryPaginateQueryV1
 
 <!--
 ```{eval-rst}
 .. autopydantic_model:: NamespaceHistoryResponseV1
     :model-show-field-summary: false
 ``` -->
-
 
 <!--
 ```{eval-rst}

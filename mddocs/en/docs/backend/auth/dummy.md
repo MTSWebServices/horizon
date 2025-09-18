@@ -110,6 +110,4 @@ deactivate "Client"
 
 ::: horizon.backend.settings.auth.dummy.DummyAuthProviderSettings
 
-
 ::: horizon.backend.settings.auth.jwt.JWTSettings
-

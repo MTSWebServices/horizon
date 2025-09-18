@@ -2,5 +2,4 @@
 
 These settings used to control serving static files by backend.
 
-::: horizon.backend.settings.server.static_files.StaticFilesSettings 
-
+::: horizon.backend.settings.server.static_files.StaticFilesSettings

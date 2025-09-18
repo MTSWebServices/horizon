@@ -169,5 +169,4 @@ Other settings are just the same as for `LDAPAuthProvider`
   
 ::: horizon.backend.settings.auth.cached_ldap.LDAPCacheSettings
 
-::: horizon.backend.settings.auth.cached_ldap.LDAPCachePasswordHashSettings 
-
+::: horizon.backend.settings.auth.cached_ldap.LDAPCachePasswordHashSettings

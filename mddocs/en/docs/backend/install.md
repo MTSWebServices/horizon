@@ -86,19 +86,20 @@ Users listed in `HORIZON__ENTRYPOINT__ADMIN_USERS` env variable will be automati
 
 ## Without docker
 
-### Requirements
+### Requirements without docker
 
 - Python 3.7 or above
 - Pydantic 2.x
 - `libldap2-dev`, `libsasl2-dev`, `libkrb5-dev` (for [LDAP Auth provider](auth/ldap.md#backend-auth-ldap))
 - Some relation database instance, like [Postgres](https://www.postgresql.org/)
 
-### Installation process
+### Installation process without docker
 
 Install `data-horizon` package with following *extra* dependencies:
 
 ```console
 $ pip install data-horizon[backend,postgres,ldap]
+...
 ```
 
 Available *extras* are:
@@ -108,6 +109,7 @@ Available *extras* are:
 - `ldap` - requirements used by [LDAP Auth provider](auth/ldap.md#backend-auth-ldap).
 
 #### NOTE
+
 For **macOS** users, an additional step is required. [You need to install the “bonsai” Python library from source code](https://bonsai.readthedocs.io/en/latest/install.html#install-from-source-on-macos). This installation is necessary to work with LDAP.
 
 ### Run database
@@ -129,12 +131,14 @@ To apply migrations (database structure changes) you need to execute following c
 
 ```console
 $ python -m horizon.backend.db.migrations upgrade head
+...
 ```
 
 This is a thin wrapper around [alembic](https://alembic.sqlalchemy.org/en/latest/tutorial.html#running-our-first-migration) cli,
 options and commands are just the same.
 
-#### NOTE
+#### NOTE run migrations
+
 This command should be executed after each upgrade to new Horizon version.
 
 ### Run backend
@@ -143,6 +147,7 @@ To start backend server you need to execute following command:
 
 ```console
 $ python -m horizon.backend --host 0.0.0.0 --port 8000
+...
 ```
 
 This is a thin wrapper around [uvicorn](https://www.uvicorn.org/#command-line-options) cli,
@@ -156,6 +161,7 @@ To promote specific users to `SUPERADMIN` role, run the following script:
 
 ```console
 $ python -m horizon.backend.scripts.manage_admins add admin1 admin2
+...
 ```
 
 See [Scripts](scripts/index.md#scripts) documentation.

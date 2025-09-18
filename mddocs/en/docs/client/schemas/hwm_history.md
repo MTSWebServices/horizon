@@ -24,5 +24,3 @@
     :model-show-field-summary: false
 ```
 -->
-
-

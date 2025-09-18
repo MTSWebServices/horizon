@@ -1,74 +1,3 @@
-<!--
-```{eval-rst}
-.. include:: ../README.rst
-    :end-before: |Logo|
-```
-
-```{image} _static/logo.svg
-:align: center
-:alt: Horizon logo
-:width: 400
-```
-
-```{eval-rst}
-.. include:: ../README.rst
-    :start-after: |Logo|
-    :end-before: documentation
-```
-
-```{toctree}
-:caption: Horizon
-:hidden: true
-:maxdepth: 2
-
-self
-```
-
-```{toctree}
-:caption: High-level design
-:hidden: true
-:maxdepth: 2
-
-design/entities
-design/permissions
-```
-
-```{toctree}
-:caption: Backend
-:hidden: true
-:maxdepth: 2
-
-backend/install
-backend/architecture
-backend/configuration/index
-backend/auth/index
-backend/openapi
-backend/scripts/index
-```
-
-```{toctree}
-:caption: Client
-:hidden: true
-:maxdepth: 2
-
-client/install
-client/sync
-client/auth
-client/schemas/index
-client/exceptions
-```
-
-```{toctree}
-:caption: Development
-:hidden: true
-:maxdepth: 2
-
-changelog
-contributing
-security
-``` -->
-<a id="readme"></a>
-
 # Data.Horizon { #readme }
 
 [![Repo status - Active](https://www.repostatus.org/badges/latest/active.svg)](https://github.com/MobileTeleSystems/horizon) [![DockerHub - Latest release](https://img.shields.io/docker/v/mtsrus/horizon-backend?sort=semver&label=docker)](https://hub.docker.com/r/mtsrus/horizon-backend) [![PyPI - Latest Release](https://img.shields.io/pypi/v/data-horizon)](https://pypi.org/project/data-horizon/) [![PyPI - License](https://img.shields.io/pypi/l/data-horizon.svg)](https://github.com/MobileTeleSystems/horizon/blob/develop/LICENSE.txt) [![PyPI - Python Version](https://img.shields.io/pypi/pyversions/data-horizon.svg)](https://pypi.org/project/data-horizon/) [![PyPI - Downloads](https://img.shields.io/pypi/dm/data-horizon)](https://pypi.org/project/data-horizon/)
@@ -100,8 +29,8 @@ Data.Horizon is an application that implements simple HWM Store. Right now it in
 High-level design
 
 * [entities][entities]
-* [permissions][permissions]     
-      
+* [permissions][permissions]
+
 Backend
 
 * [install][backend-install]

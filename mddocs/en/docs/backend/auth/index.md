@@ -4,14 +4,12 @@ Horizon supports different auth provider implementations. You can change impleme
 
 ::: horizon.backend.settings.auth.AuthSettings
 
-
-
-# Auth providers
+## Auth providers
 
 * [Dummy Auth provider][backend-auth-dummy]
-   * [Description](dummy.md#description)
-   * [Interaction schema](dummy.md#interaction-schema)
-   * [Configuration](dummy.md#configuration)
+  * [Description](dummy.md#description)
+  * [Interaction schema](dummy.md#interaction-schema)
+  * [Configuration](dummy.md#configuration)
 * [LDAP Auth provider][backend-auth-ldap]
   * [Description](ldap.md#description)
   * [Strategies](ldap.md#strategies)
@@ -23,6 +21,6 @@ Horizon supports different auth provider implementations. You can change impleme
   * [Interaction schema](cached_ldap.md#interaction-schema)
   * [Configuration](cached_ldap.md#configuration)
 
-# For developers
+## For developers
 
 * [Custom Auth provider][backend-auth-custom]

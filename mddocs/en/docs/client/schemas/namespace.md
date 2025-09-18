@@ -11,14 +11,13 @@
             - NamespaceResponseV1
             - NamespacePaginateQueryV1
             - NamespaceCreateRequestV1
-            - NamespaceUpdateRequestV1 
+            - NamespaceUpdateRequestV1
 
 <!--
 ```{eval-rst}
 .. autopydantic_model:: NamespaceResponseV1
     :model-show-field-summary: false
 ``` -->
-
 
 <!--
 ```{eval-rst}
@@ -27,13 +26,11 @@
     :model-show-field-summary: false
 ``` -->
 
-
 <!--
 ```{eval-rst}
 .. autopydantic_model:: NamespaceCreateRequestV1
     :model-show-field-summary: false
 ``` -->
-
 
 <!--
 ```{eval-rst}

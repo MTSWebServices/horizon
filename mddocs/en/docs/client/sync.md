@@ -123,7 +123,7 @@ HWMResponseV1(
             - paginate_namespace_history
             - retry
             - bulk_copy_hwm
-            
+
 ::: horizon.client.sync.RetryConfig
 
-::: horizon.client.sync.TimeoutConfig 
+::: horizon.client.sync.TimeoutConfig

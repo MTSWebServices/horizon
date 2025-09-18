@@ -9,7 +9,7 @@
         members:
             - PaginateQueryV1
             - PageResponseV1
-            - PageMetaResponseV1 
+            - PageMetaResponseV1
 
 <!--
 ```{eval-rst}
@@ -18,7 +18,6 @@
     :model-show-field-summary: false
 ``` -->
 
-
 <!--
 ```{eval-rst}
 .. autopydantic_model:: PageResponseV1
@@ -26,10 +25,8 @@
     :model-show-field-summary: false
 ``` -->
 
-
 <!--
 ```{eval-rst}
 .. autopydantic_model:: PageMetaResponseV1
     :model-show-field-summary: false
 ``` -->
-

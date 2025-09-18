@@ -21,6 +21,7 @@
         [REST API] ..> [LDAP]
     @enduml
 ```
+
 ```mermaid
 stateDiagram-v2
 [User] --> [RESTAPI]

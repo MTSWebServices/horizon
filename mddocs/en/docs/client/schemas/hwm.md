@@ -15,7 +15,7 @@
             - HWMCreateRequestV1
             - HWMUpdateRequestV1
             - HWMBulkCopyRequestV1
-            - HWMBulkDeleteRequestV1 
+            - HWMBulkDeleteRequestV1
 
 <!--
 ```{eval-rst}
@@ -23,13 +23,11 @@
     :model-show-field-summary: false
 ``` -->
 
-
 <!--
 ```{eval-rst}
 .. autopydantic_model:: HWMListResponseV1
     :model-show-field-summary: false
 ``` -->
-
 
 <!--
 ```{eval-rst}
@@ -39,14 +37,11 @@
     :model-show-field-summary: false
 ``` -->
 
-
-
 <!--
 ```{eval-rst}
 .. autopydantic_model:: HWMCreateRequestV1
     :model-show-field-summary: false
 ``` -->
-
 
 <!--
 ```{eval-rst}
@@ -54,20 +49,14 @@
     :model-show-field-summary: false
 ``` -->
 
-
-
 <!--
 ```{eval-rst}
 .. autopydantic_model:: HWMBulkCopyRequestV1
     :model-show-field-summary: false
 ``` -->
 
-
-
 <!--
 ```{eval-rst}
 .. autopydantic_model:: HWMBulkDeleteRequestV1
     :model-show-field-summary: false
 ``` -->
-
-

@@ -7,11 +7,10 @@
 ::: horizon.commons.schemas
     options:
         members:
-            - PingResponse 
+            - PingResponse
 
 <!--
 ```{eval-rst}
 .. autopydantic_model:: PingResponse
     :model-show-field-summary: false
 ``` -->
-

@@ -8,13 +8,15 @@ All requests to backend should be made with passing this access token. If token 
 
 After successful auth, username is saved to backend database. It is then used for creating audit records for any object change, see `changed_by` field.
 
-#### WARNING
+### WARNING
+
 Until token is valid, no requests will be made to LDAP to check if user exists and not locked.
 So do not set access token expiration time for too long (e.g. longer than a day).
 
 ## Strategies
 
-#### NOTE
+### NOTE
+
 Basic LDAP terminology is explained here: [LDAP Overview](https://www.zytrax.com/books/ldap/ch2/)
 
 There are 2 strategies to check for user in LDAP:
@@ -113,6 +115,7 @@ After user is found in LDAP, its [uid_attribute](#horizon.backend.settings.auth.
             deactivate "Client"
         @enduml
 ```
+
 ```mermaid
 sequenceDiagram
 participant "Client"
@@ -317,20 +320,14 @@ deactivate "Client"
 
 ::: horizon.backend.settings.auth.ldap.LDAPAuthProviderSettings
 
-
 ::: horizon.backend.settings.auth.ldap.LDAPSettings
-
 
 ::: horizon.backend.settings.auth.jwt.JWTSettings
 
-
-::: horizon.backend.settings.auth.ldap.LDAPConnectionPoolSettings 
-
+::: horizon.backend.settings.auth.ldap.LDAPConnectionPoolSettings
 
 ## Lookup-related configuration
 
 ::: horizon.backend.settings.auth.ldap.LDAPLookupSettings
 
-
-::: horizon.backend.settings.auth.ldap.LDAPCredentials 
-
+::: horizon.backend.settings.auth.ldap.LDAPCredentials

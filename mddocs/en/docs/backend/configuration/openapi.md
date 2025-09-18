@@ -9,7 +9,4 @@ These settings used to control exposing OpenAPI.json and SwaggerUI/ReDoc endpoin
         - SwaggerSettings
         - RedocSettings
         - LogoSettings
-        - FaviconSettings 
-
-
-
+        - FaviconSettings

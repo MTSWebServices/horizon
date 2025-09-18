@@ -4,7 +4,7 @@ These classes are used for sending requests to backend and parsing responses.
 
 All of then are based on Pydantic models.
 
-# Horizon schemas
+## Horizon schemas
 
 * [Namespace-related schemas][client-schemas-namespace]
 * [Namespace history-related schemas][client-schemas-namespace-history]
