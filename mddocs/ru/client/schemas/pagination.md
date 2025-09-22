@@ -9,7 +9,7 @@
         members:
             - PaginateQueryV1
             - PageResponseV1
-            - PageMetaResponseV1 
+            - PageMetaResponseV1
 
 <!--
 ```{eval-rst}

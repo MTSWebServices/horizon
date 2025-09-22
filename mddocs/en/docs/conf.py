@@ -1,3 +1,5 @@
+# SPDX-FileCopyrightText: 2023-2025 MTS PJSC
+# SPDX-License-Identifier: Apache-2.0
 # Configuration file for the Sphinx documentation builder.
 #
 # This file only contains a selection of the most common options. For a full
@@ -51,7 +53,7 @@ extensions = [
     "sphinx.ext.autodoc",
     "sphinx.ext.autosummary",
     "sphinx.ext.intersphinx",
-  #  "sphinxcontrib.autodoc_pydantic",
+    #  "sphinxcontrib.autodoc_pydantic",
     "sphinxcontrib.towncrier",  # provides `towncrier-draft-entries` directive
     "sphinx_issues",
     "sphinx_design",  # provides `dropdown` directive

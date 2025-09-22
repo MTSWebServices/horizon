@@ -100,16 +100,16 @@ Data.Horizon is an application that implements simple HWM Store. Right now it in
 High-level design
 
 * [entities][entities]
-* [permissions][permissions]     
-      
+* [permissions][permissions]
+
 Backend
 
 * [install][backend-install]
 * [architecture][backend-architecture]
-* [configuration][backend-configuration] 
-* [auth][backend-auth-providers] 
+* [configuration][backend-configuration]
+* [auth][backend-auth-providers]
 * [openapi][backend-openapi]
-* [scripts][scripts] 
+* [scripts][scripts]
 
 Client
 

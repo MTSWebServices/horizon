@@ -35,10 +35,10 @@ Backend
 
 * [install][backend-install]
 * [architecture][backend-architecture]
-* [configuration][backend-configuration] 
-* [auth][backend-auth-providers] 
+* [configuration][backend-configuration]
+* [auth][backend-auth-providers]
 * [openapi][backend-openapi]
-* [scripts][scripts] 
+* [scripts][scripts]
 
 Client
 

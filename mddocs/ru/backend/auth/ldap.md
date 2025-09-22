@@ -324,7 +324,7 @@ deactivate "Client"
 ::: horizon.backend.settings.auth.jwt.JWTSettings
 
 
-::: horizon.backend.settings.auth.ldap.LDAPConnectionPoolSettings 
+::: horizon.backend.settings.auth.ldap.LDAPConnectionPoolSettings
 
 
 ## Lookup-related configuration
@@ -332,5 +332,5 @@ deactivate "Client"
 ::: horizon.backend.settings.auth.ldap.LDAPLookupSettings
 
 
-::: horizon.backend.settings.auth.ldap.LDAPCredentials 
+::: horizon.backend.settings.auth.ldap.LDAPCredentials
 

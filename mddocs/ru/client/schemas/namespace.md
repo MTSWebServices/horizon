@@ -11,7 +11,7 @@
             - NamespaceResponseV1
             - NamespacePaginateQueryV1
             - NamespaceCreateRequestV1
-            - NamespaceUpdateRequestV1 
+            - NamespaceUpdateRequestV1
 
 <!--
 ```{eval-rst}

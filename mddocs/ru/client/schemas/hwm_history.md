@@ -1,6 +1,6 @@
 # HWM history-related schemas { #client-schemas-hwm-history }
 
-<!-- 
+<!--
 ```{eval-rst}
 .. currentmodule:: horizon.commons.schemas.v1.hwm_history
 ``` -->

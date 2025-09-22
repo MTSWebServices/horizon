@@ -9,7 +9,7 @@
         - SwaggerSettings
         - RedocSettings
         - LogoSettings
-        - FaviconSettings 
+        - FaviconSettings
 
 
 

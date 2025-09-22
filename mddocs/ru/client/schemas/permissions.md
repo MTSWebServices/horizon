@@ -10,7 +10,7 @@
             - PermissionResponseItemV1
             - PermissionsResponseV1
             - PermissionUpdateRequestItemV1
-            - PermissionsUpdateRequestV1 
+            - PermissionsUpdateRequestV1
 
 <!--
 ```{eval-rst}

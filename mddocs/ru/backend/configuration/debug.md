@@ -45,7 +45,7 @@ Server can add `X-Request-ID` header to responses, which allows to match request
 
 This is done by `request_id` middleware, which is enabled by default and can configured as described below:
 
-::: horizon.backend.settings.server.request_id.RequestIDSettings 
+::: horizon.backend.settings.server.request_id.RequestIDSettings
 
 
 ## Print request ID to backend logs
@@ -126,7 +126,7 @@ Server can add `X-Application-Version` header to responses, which allows to dete
 
 This is done by `application_version` middleware, which is enabled by default and can configured as described below:
 
-::: horizon.backend.settings.server.application_version.ApplicationVersionSettings 
+::: horizon.backend.settings.server.application_version.ApplicationVersionSettings
 
 
 ## Use `X-Application-Version` header on client

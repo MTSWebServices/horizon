@@ -17,7 +17,7 @@
             - HWMCreateRequestV1
             - HWMUpdateRequestV1
             - HWMBulkCopyRequestV1
-            - HWMBulkDeleteRequestV1 
+            - HWMBulkDeleteRequestV1
 
 <!--
 ```{eval-rst}

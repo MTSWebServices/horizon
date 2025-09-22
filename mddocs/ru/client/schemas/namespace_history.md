@@ -8,7 +8,7 @@
     options:
         members:
             - NamespaceHistoryResponseV1
-            - NamespaceHistoryPaginateQueryV1 
+            - NamespaceHistoryPaginateQueryV1
 
 
 <!--

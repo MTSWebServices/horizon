@@ -7,7 +7,7 @@
 ::: horizon.commons.schemas
     options:
         members:
-            - PingResponse 
+            - PingResponse
 
 <!--
 ```{eval-rst}

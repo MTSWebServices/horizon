@@ -2,5 +2,5 @@
 
 Эти настройки используются для управления обслуживанием статических файлов бэкенда.
 
-::: horizon.backend.settings.server.static_files.StaticFilesSettings 
+::: horizon.backend.settings.server.static_files.StaticFilesSettings
 
