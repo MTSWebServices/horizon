@@ -238,7 +238,7 @@ types-passlib = {version = "^1.7.7", python = ">=3.9"}
 types-pyyaml = {version = "^6.0.12", python = ">=3.9"}
 types-requests = {version = "^2.32.0", python = ">=3.9"}
 types-authlib = {version= "^1.4.0", python = ">=3.9"}
-ruff = ">=0.11.2,<0.15.0"
+ruff = {version= "^0.14.1", python = ">=3.9"}
 
 [tool.poetry.group.docs.dependencies]
 autodoc-pydantic = {version = "^2.2.0", python = ">=3.9"}
@@ -319,9 +319,10 @@ extend-exclude = ["docs/", "Makefile"]
 
 [tool.ruff.lint]
 select = ["ALL"]
-# UP035, UP006 - Set -> set, Dict -> dict... ignore for support python verstion before 3.9
+# UP035, UP006 - Set -> set, Dict -> dict... ignore for support python version before 3.9
 # FA100, UP045 - Optional[str] -> str | None, doesn't work before 3.10
-ignore = ["ARG", "ANN", "D", "COM812", "TD", "FIX002", "UP035", "UP006", "UP007", "FA100", "UP045"]
+# B905 - zip(strict=True) was added in Python 3.9
+ignore = ["ARG", "ANN", "D", "COM812", "TD", "FIX002", "UP035", "UP006", "UP007", "FA100", "UP045", "B905"]
 
 [tool.ruff.lint.per-file-ignores]
 "horizon/commons/schemas/*" = ["TC"]
