@@ -17,6 +17,9 @@ jobs:
     runs-on: ubuntu-latest
     if: github.repository == 'MobileTeleSystems/horizon'  # prevent running on forks
 
+    permissions:
+      contents: read
+
     steps:
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v3
@@ -31,10 +34,10 @@ jobs:
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Set up Python ${{ env.DEFAULT_PYTHON }}
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@v6
         with:
           python-version: ${{ env.DEFAULT_PYTHON }}
 
@@ -96,7 +99,7 @@ jobs:
             README.rst
 
       - name: Update DockerHub Description
-        uses: peter-evans/dockerhub-description@v4
+        uses: peter-evans/dockerhub-description@v5
         if: github.ref_type == 'tag'
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}

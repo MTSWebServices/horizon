@@ -30,9 +30,9 @@ Data.Horizon
 .. |CI Status| image:: https://github.com/MobileTeleSystems/horizon/workflows/Tests/badge.svg
     :alt: Github Actions - latest CI build status
     :target: https://github.com/MobileTeleSystems/horizon/actions
-.. |Test Coverage| image:: https://codecov.io/gh/MobileTeleSystems/horizon/branch/develop/graph/badge.svg?token=BIRWPTWEE0
-    :alt: Test coverage - percent
-    :target: https://codecov.io/gh/MobileTeleSystems/horizon
+.. |Test Coverage| image:: https://img.shields.io/endpoint?url=https://gist.githubusercontent.com/
+    MTSOnGithub/03e73a82ecc4709934540ce8201cc3b4/raw/horizon_badge.json
+    :target: https://github.com/MobileTeleSystems/horizon/actions
 .. |pre-commit.ci Status| image:: https://results.pre-commit.ci/badge/github/MobileTeleSystems/horizon/develop.svg
     :alt: pre-commit.ci - status
     :target: https://results.pre-commit.ci/latest/github/MobileTeleSystems/horizon/develop

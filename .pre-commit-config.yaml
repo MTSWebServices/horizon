@@ -1,19 +1,15 @@
 repos:
   - repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: v5.0.0
+    rev: v6.0.0
     hooks:
       - id: check-added-large-files
       - id: check-ast
       - id: check-merge-conflict
-      - id: check-yaml
-        args: [--unsafe]
       - id: debug-statements
       - id: detect-private-key
       - id: end-of-file-fixer
         types: [python]
       - id: fix-byte-order-marker
-      - id: fix-encoding-pragma
-        args: [--remove]
       - id: mixed-line-ending
         args: [--fix=lf]
         types: [python]
@@ -55,13 +51,13 @@ repos:
           - --no-extra-eol
 
   - repo: https://github.com/asottile/pyupgrade
-    rev: v3.19.1
+    rev: v3.21.0
     hooks:
       - id: pyupgrade
         args: [--py37-plus, --keep-runtime-typing]
 
   - repo: https://github.com/asottile/add-trailing-comma
-    rev: v3.1.0
+    rev: v4.0.0
     hooks:
       - id: add-trailing-comma
 
@@ -71,7 +67,7 @@ repos:
       - id: docker-compose-check
 
   - repo: https://github.com/macisamuele/language-formatters-pre-commit-hooks
-    rev: v2.14.0
+    rev: v2.15.0
     hooks:
       - id: pretty-format-yaml
         args: [--autofix, --indent, '2', --offset, '2']
@@ -85,7 +81,7 @@ repos:
           - tomli
 
   - repo: https://github.com/sbrunner/hooks
-    rev: 1.4.0
+    rev: 1.6.1
     hooks:
       - id: poetry-check
         additional_dependencies:
@@ -95,7 +91,7 @@ repos:
           - poetry
 
   - repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: v0.11.2
+    rev: v0.14.2
     hooks:
       - id: ruff
         args: [--fix]

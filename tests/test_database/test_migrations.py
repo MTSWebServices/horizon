@@ -15,7 +15,14 @@ def get_diff_db_metadata(connection: Connection, metadata: MetaData):
     return compare_metadata(context=migration_ctx, metadata=metadata)
 
 
-def test_migrations_up_to_date(empty_db_url: str, run_migrations):
-    with create_engine(empty_db_url).connect() as connection:
+def test_migrations_up_to_date(empty_db_url: str, run_migrations, request: pytest.FixtureRequest):
+    engine = create_engine(empty_db_url)
+
+    def finalizer():  # noqa: engine
+        engine.dispose()
+
+    request.addfinalizer(finalizer)
+
+    with engine.connect() as connection:
         diff = get_diff_db_metadata(connection, metadata=Base.metadata)
     assert not diff

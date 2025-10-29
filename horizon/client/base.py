@@ -144,7 +144,7 @@ class BaseClient(GenericModel, Generic[SessionClass]):
             if hasattr(http_exception, "add_note"):
                 http_exception.add_note(f"Response body:\n{pprint.pformat(body)}")
 
-        except Exception as format_err:  # noqa: BLE001
+        except Exception as format_err:
             if hasattr(http_exception, "add_note"):
                 http_exception.add_note(f"Response body:\n{response.content!r}")
             else:

@@ -14,11 +14,18 @@ concurrency:
 
 env:
   DEFAULT_PYTHON: '3.13'
+  MIN_COVERAGE: 93
+
+permissions:
+  contents: write
+  checks: write
+  pull-requests: write
 
 jobs:
   tests:
     name: Run tests (Python ${{ matrix.python-version }}, Pydantic v${{ matrix.pydantic-version }} on ${{ matrix.os }})
     runs-on: ${{ matrix.os }}
+
     strategy:
       fail-fast: false
       matrix:
@@ -35,7 +42,7 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
@@ -64,7 +71,7 @@ jobs:
           docker compose -f docker-compose.test.yml up -d --wait --wait-timeout 60
 
       - name: Set up Python ${{ matrix.python-version }}
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@v6
         with:
           python-version: ${{ matrix.python-version }}
 
@@ -112,14 +119,14 @@ jobs:
           docker compose -f docker-compose.test.yml down -v --remove-orphans
 
       - name: Upload server logs
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         if: failure()
         with:
           name: backend-logs-${{ matrix.os }}-${{ matrix.python-version }}-${{ matrix.pydantic-version }}
           path: logs/*
 
       - name: Upload Coverage Results
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: raw-coverage-${{ matrix.os }}-${{ matrix.python-version }}-${{ matrix.pydantic-version }}
           path: reports/.coverage*
@@ -129,14 +136,16 @@ jobs:
   all_done:
     name: Tests done
     runs-on: ubuntu-latest
+
+    if: always()
     needs: [tests]
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Set up Python ${{ env.DEFAULT_PYTHON }}
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@v6
         with:
           python-version: ${{ env.DEFAULT_PYTHON }}
 
@@ -153,7 +162,7 @@ jobs:
         run: pip install -I coverage pytest
 
       - name: Download all raw coverage data
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v6
         with:
           path: coverage-data/
           pattern: raw-coverage-*
@@ -163,13 +172,32 @@ jobs:
           coverage combine coverage-data/*
           coverage xml -o combined_coverage.xml
 
-      - name: Check Coverage
-        uses: codecov/codecov-action@v5
+      - name: Coverage comment
+        id: coverage
+        uses: MishaKav/pytest-coverage-comment@v1
         with:
-          token: ${{ secrets.CODECOV_TOKEN }}
-          files: ./combined_coverage.xml
-          fail_ci_if_error: true
-          plugins: noop
+          pytest-xml-coverage-path: ./combined_coverage.xml
+          default-branch: develop
+          xml-skip-covered: true
+          report-only-changed-files: true
+          hide-comment: ${{ github.event_name != 'pull_request' }}
+
+      - name: Dynamic Badges
+        uses: schneegans/dynamic-badges-action@v1.7.0
+        if: github.repository == 'MobileTeleSystems/horizon' && github.event_name == 'push'
+        with:
+          auth: ${{ secrets.AUTOMERGE_TOKEN }}
+          gistID: 03e73a82ecc4709934540ce8201cc3b4
+          filename: horizon_badge.json
+          label: Coverage
+          message: ${{ steps.coverage.outputs.coverage }}
+          color: ${{ steps.coverage.outputs.color }}
+
+      - name: Fail if coverage too low
+        if: ${{ steps.coverage.outputs.coverage < env.MIN_COVERAGE }}
+        run: |
+          echo "Coverage is below ${{ env.MIN_COVERAGE }}%!"
+          exit 1
 
       - name: All done
         run: echo 1
