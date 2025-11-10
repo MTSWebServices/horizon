@@ -51,7 +51,7 @@ repos:
           - --no-extra-eol
 
   - repo: https://github.com/asottile/pyupgrade
-    rev: v3.21.0
+    rev: v3.21.1
     hooks:
       - id: pyupgrade
         args: [--py37-plus, --keep-runtime-typing]
@@ -91,7 +91,7 @@ repos:
           - poetry
 
   - repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: v0.14.3
+    rev: v0.14.4
     hooks:
       - id: ruff
         args: [--fix]
