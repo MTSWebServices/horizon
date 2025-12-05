@@ -60,13 +60,35 @@ If you already have venv, but need to install dependencies required for developm
 
     make venv-install
 
-Install pre-commit hooks:
+We are using `poetry <https://python-poetry.org/docs/managing-dependencies/>`_ for managing dependencies and building the package.
+It allows to keep development environment the same for all developers due to using lock file with fixed dependency versions.
+
+There are *extra* dependencies (included into package as optional):
+
+* ``backend``
+* ``client-sync``
+* ``postgres``
+* ``ldap``
+
+And *groups* (not included into package, used locally and in CI):
+
+* ``test`` - for running tests
+* ``dev`` - for development, like linters, formatters, mypy, pre-commit and so on
+* ``docs`` - for building documentation
+
+Enable pre-commit hooks
+~~~~~~~~~~~~~~~~~~~~~~~
+
+`pre-commit <https://pre-commit.com/>`_ hooks allows to validate & fix repository content before making new commit.
+It allows to run linters, formatters, fix file permissions and so on. If something is wrong, changes cannot be committed.
+
+Firstly, install pre-commit hooks:
 
 .. code:: bash
 
     pre-commit install --install-hooks
 
-Test pre-commit hooks run:
+Ant then test hooks run:
 
 .. code:: bash
 
