@@ -7,7 +7,7 @@ name = "data-horizon"
 version = "1.1.4"
 license = "Apache-2.0"
 description = "Horizon REST API + client"
-authors = ["DataOps.ETL <onetools@mts.ru>"]
+authors = ["MWS Data Bridge <onetools@mts.ru>"]
 readme = "README.rst"
 classifiers = [
     "Development Status :: 5 - Production/Stable",
