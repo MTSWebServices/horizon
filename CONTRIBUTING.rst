@@ -6,10 +6,20 @@ reports, improving documentation, submitting feature requests, reviewing
 new submissions, or contributing code that can be incorporated into the
 project.
 
-Limitations
------------
+Review process
+--------------
 
-We should keep close to these items during development:
+For any **significant** changes please create a new GitHub issue and
+enhancements that you wish to make. Describe the feature you would like
+to see, why you need it, and how it will work. Discuss your ideas
+transparently and get community feedback before proceeding.
+
+Small changes can directly be crafted and submitted to the GitHub
+Repository as a Pull Request. This requires creating a **repo fork** using
+`instruction <https://docs.github.com/en/get-started/quickstart/fork-a-repo>`_.
+
+Important notes
+---------------
 
 * Some companies still use Python 3.7. So it is required to keep compatibility if possible, at least for *client* part of package.
 * Different users uses Horizon in different ways - someone store data in Postgres, someone in MySQL, some users need LDAP. Such dependencies should be optional.
@@ -22,21 +32,14 @@ Install Git
 
 Please follow `instruction <https://docs.github.com/en/get-started/quickstart/set-up-git>`_.
 
-Create a fork
-~~~~~~~~~~~~~
-
-If you are not a member of a development team building horizon, you should create a fork before making any changes.
-
-Please follow `instruction <https://docs.github.com/en/get-started/quickstart/fork-a-repo>`_.
-
 Clone the repo
 ~~~~~~~~~~~~~~
 
-Open terminal and run these commands:
+Open terminal and run these commands to clone a **forked** repo:
 
 .. code:: bash
 
-    git clone https://github.com/MobileTeleSystems/horizon -b develop
+    git clone git@github.com:myuser/horizon.git -b develop
 
     cd horizon
 
@@ -57,35 +60,13 @@ If you already have venv, but need to install dependencies required for developm
 
     make venv-install
 
-We are using `poetry <https://python-poetry.org/docs/managing-dependencies/>`_ for managing dependencies and building the package.
-It allows to keep development environment the same for all developers due to using lock file with fixed dependency versions.
-
-There are *extra* dependencies (included into package as optional):
-
-* ``backend``
-* ``client-sync``
-* ``postgres``
-* ``ldap``
-
-And *groups* (not included into package, used locally and in CI):
-
-* ``test`` - for running tests
-* ``dev`` - for development, like linters, formatters, mypy, pre-commit and so on
-* ``docs`` - for building documentation
-
-Enable pre-commit hooks
-~~~~~~~~~~~~~~~~~~~~~~~
-
-`pre-commit <https://pre-commit.com/>`_ hooks allows to validate & fix repository content before making new commit.
-It allows to run linters, formatters, fix file permissions and so on. If something is wrong, changes cannot be committed.
-
-Firstly, install pre-commit hooks:
+Install pre-commit hooks:
 
 .. code:: bash
 
     pre-commit install --install-hooks
 
-Ant then test hooks run:
+Test pre-commit hooks run:
 
 .. code:: bash
 
@@ -218,24 +199,8 @@ If documentation should be build cleanly instead of reusing existing build resul
 
     make docs-fresh
 
-
-Review process
---------------
-
-Please create a new GitHub issue for any significant changes and
-enhancements that you wish to make. Provide the feature you would like
-to see, why you need it, and how it will work. Discuss your ideas
-transparently and get community feedback before proceeding.
-
-Significant Changes that you wish to contribute to the project should be
-discussed first in a GitHub issue that clearly outlines the changes and
-benefits of the feature.
-
-Small Changes can directly be crafted and submitted to the GitHub
-Repository as a Pull Request.
-
 Create pull request
-~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~
 
 Commit your changes:
 
@@ -252,7 +217,7 @@ After pull request is created, it get a corresponding number, e.g. 123 (``pr_num
 Write release notes
 ~~~~~~~~~~~~~~~~~~~
 
-``horizon`` uses `towncrier <https://pypi.org/project/towncrier/>`_
+``Horizon`` uses `towncrier <https://pypi.org/project/towncrier/>`_
 for changelog management.
 
 To submit a change note about your PR, add a text file into the
@@ -267,6 +232,7 @@ combined with others, it will be a part of the "news digest"
 telling the readers **what changed** in a specific version of
 the library *since the previous version*.
 
+You should also use
 reStructuredText syntax for highlighting code (inline or block),
 linking parts of the docs or external sites.
 If you wish to sign your change, feel free to add ``-- by
@@ -330,7 +296,11 @@ How to skip change notes check?
 Just add ``ci:skip-changelog`` label to pull request.
 
 Release Process
-^^^^^^^^^^^^^^^
+---------------
+
+.. note::
+
+    This is for repo maintainers only
 
 Before making a release from the ``develop`` branch, follow these steps:
 
