@@ -185,6 +185,7 @@ client-sync = [
 ]
 
 [tool.poetry.group.test.dependencies]
+# pytest-lazy-fixture doesn't support pytest 8.x+
 pytest = "^7.4.4"
 httpx = [
   {version = "^0.24.1", python = "3.7"},
@@ -198,32 +199,36 @@ pytest-asyncio = [
 pytest-randomly = [
   {version = "^3.12.0", python = "3.7"},
   {version = "^3.15.0", python = "3.8"},
-  {version = "^3.16.0", python = ">=3.9"},
+  {version = "^4.0.1", python = ">=3.9"},
 ]
-pytest-deadfixtures = ">=2.2.1,<4.0.0"
+pytest-deadfixtures = {version = "^3.0.0", python = ">=3.10"}
 pytest-rerunfailures = [
   {version = "^13.0", python = "3.7"},
   {version = "^14.0", python = "3.8"},
-  {version = "^15.0", python = ">=3.9"},
+  {version = "^15.1", python = "3.9"},
+  {version = "^16.1", python = ">=3.10"},
 ]
 pytest-lazy-fixture = "^0.6.3"
 coverage = [
   {version = "^7.2.7", python = "3.7"},
   {version = "^7.6.1", python = "3.8"},
-  {version = "^7.6.9", python = ">=3.9"},
+  {version = "^7.10.0", python = "3.9"},
+  {version = "^7.11.0", python = ">=3.10"},
 ]
 psycopg2-binary = [
   {version = "^2.9.9", python = "3.7"},
-  {version = "^2.9.10", python = ">=3.8"},
+  {version = "^2.9.10", python = "3.8"},
+  {version = "^2.9.11", python = ">=3.9"},
 ]
 gevent = [
   {version = "^22.10.2", python = "3.7"},
   {version = "^24.2.1", python = "3.8"},
-  {version = "^24.11.1", python = ">=3.9"},
+  {version = "^25.8.2", python = "3.9"},
+  {version = "^25.9.1", python = ">=3.10"},
 ]
 responses = [
   {version = "^0.23.2", python = "3.7"},
-  {version = "^0.25.6", python = ">=3.8"},
+  {version = "^0.25.8", python = ">=3.8"},
 ]
 types-pyyaml = [
   {version = "6.0.12.12", python = "3.7"},
@@ -231,37 +236,35 @@ types-pyyaml = [
 ]
 
 [tool.poetry.group.dev.dependencies]
-pre-commit = {version = "^4.1.0", python = ">=3.9"}
-mypy = {version = "^1.14.0", python = ">=3.9"}
-sqlalchemy = {extras = ["mypy"], version = "^2.0.37", python = ">=3.9"}
-types-passlib = {version = "^1.7.7", python = ">=3.9"}
-types-pyyaml = {version = "^6.0.12", python = ">=3.9"}
-types-requests = {version = "^2.32.0", python = ">=3.9"}
-types-authlib = {version= "^1.4.0", python = ">=3.9"}
-ruff = {version= "^0.14.1", python = ">=3.9"}
+pre-commit = {version = "^4.5.0", python = ">=3.10"}
+mypy = {version = "^1.19.0", python = ">=3.10"}
+sqlalchemy = {extras = ["mypy"], version = "^2.0.44", python = ">=3.10"}
+types-passlib = {version = "^1.7.7", python = ">=3.10"}
+types-pyyaml = {version = "^6.0.12", python = ">=3.10"}
+types-requests = {version = "^2.32.4", python = ">=3.10"}
+types-authlib = {version= "^1.6.5", python = ">=3.10"}
+ruff = {version= "^0.14.8", python = ">=3.10"}
 
 [tool.poetry.group.docs.dependencies]
-autodoc-pydantic = {version = "^2.2.0", python = ">=3.9"}
-numpydoc = {version = "^1.8.0", python = ">=3.9"}
+autodoc-pydantic = {version = "^2.2.0", python = ">=3.10"}
+numpydoc = {version = "^1.10.0", python = ">=3.10"}
+# sphinx-design doesn't support sphinx 9
 sphinx = [
-  {version = "^7.4.7", python = "3.9"},
-  {version = "^8.1.3", python = ">=3.10"},
+    {version = "^8.1.3", python = "3.10"},
+    {version = "^8.2.3", python = ">=3.11"},
 ]
-furo = {version = ">=2024.8.6,<2026.0.0", python = ">=3.9"}
-sphinx-copybutton = {version = "^0.5.2", python = ">=3.9"}
-sphinxcontrib-towncrier = {version = "^0.5.0a0", python = ">=3.9"}
-towncrier = {version = "^24.8.0", python = ">=3.9"}
-sphinx-issues = {version = "^5.0.0", python = ">=3.9"}
-sphinx-design = {version = "^0.6.1", python = ">=3.9"}
-sphinx-favicon = {version = "^1.0.1", python = ">=3.9"}
-sphinx-argparse = [
-    {version = "^0.4.0", python = ">=3.9,<3.10"},
-    {version = "^0.5.2", python = ">=3.10"},
-]
+furo = {version = "^2025.9.25", python = ">=3.10"}
+sphinx-copybutton = {version = "^0.5.2", python = ">=3.10"}
+sphinxcontrib-towncrier = {version = "^0.5.0a0", python = ">=3.10"}
+towncrier = {version = "^25.8.0", python = ">=3.10"}
+sphinx-issues = {version = "^5.0.1", python = ">=3.10"}
+sphinx-design = {version = "^0.6.1", python = ">=3.10"}
+sphinx-favicon = {version = "^1.0.1", python = ">=3.10"}
+sphinx-argparse = {version = "^0.5.2", python = ">=3.10"}
 # https://github.com/mgeier/sphinx-last-updated-by-git/pull/77
-sphinx-last-updated-by-git = {version = "^0.3.8", python = ">=3.9"}
+sphinx-last-updated-by-git = {version = "^0.3.8", python = ">=3.10"}
 # uncomment after https://github.com/zqmillet/sphinx-plantuml/pull/4
-# sphinx-plantuml = {version = "^1.0.0", python = ">=3.9"}
+# sphinx-plantuml = {version = "^1.0.0", python = ">=3.10"}
 
 [tool.poetry.plugins."tricoder_package_spy.register"]
 "data-horizon" = "horizon"
