@@ -3,8 +3,11 @@
 include .env.local
 
 VERSION = develop
-PIP = .venv/bin/pip
-POETRY = .venv/bin/poetry
+VIRTUAL_ENV ?= .venv
+PYTHON = ${VIRTUAL_ENV}/bin/python
+PIP = ${VIRTUAL_ENV}/bin/pip
+UV ?= ${VIRTUAL_ENV}/bin/uv
+PYTEST = ${VIRTUAL_ENV}/bin/pytest
 
 # Fix docker build and docker compose build using different backends
 COMPOSE_DOCKER_CLI_BUILD = 1
@@ -26,17 +29,16 @@ help: ##@Help Show this help
 
 
 
-venv-init: venv-cleanup  venv-install##@Env Init venv and install poetry dependencies
+venv: venv-cleanup  venv-install##@Env Init venv and install dependencies
 
 venv-cleanup: ##@Env Cleanup venv
-	@rm -rf .venv || true
-	python3 -m venv .venv
-	${PIP} install -U setuptools wheel pip
-	${PIP} install poetry poetry-bumpversion
+	@rm -rf ${VIRTUAL_ENV} || true
+	python3 -m venv ${VIRTUAL_ENV}
+	${PIP} install uv
 
 venv-install: ##@Env Install requirements to venv
-	${POETRY} config virtualenvs.create false
-	${POETRY} install --no-root --all-extras --with dev,test,docs $(ARGS)
+	${UV} sync --inexact --frozen --all-extras --all-groups $(ARGS)
+	${UV} pip install --no-deps sphinx-plantuml
 
 
 
@@ -46,23 +48,23 @@ db-start: ##@DB Start database
 	docker compose -f docker-compose.test.yml up -d --wait db $(DOCKER_COMPOSE_ARGS)
 
 db-revision: ##@DB Generate migration file
-	${POETRY} run python -m horizon.backend.db.migrations revision --autogenerate
+	${PYTHON} -m horizon.backend.db.migrations revision --autogenerate
 
 db-upgrade: ##@DB Run migrations to head
-	${POETRY} run python -m horizon.backend.db.migrations upgrade head
+	${PYTHON} -m horizon.backend.db.migrations upgrade head
 
 db-downgrade: ##@DB Downgrade head migration
-	${POETRY} run python -m horizon.backend.db.migrations downgrade head-1
+	${PYTHON} -m horizon.backend.db.migrations downgrade head-1
 
 ldap-start: ##@LDAP Start LDAP container
 	docker compose -f docker-compose.test.yml up -d --wait ldap $(DOCKER_COMPOSE_ARGS)
 
 
 test: db-start ldap-start ##@Test Run tests
-	${POETRY} run pytest $(PYTEST_ARGS)
+	${PYTEST} $(PYTEST_ARGS)
 
 test-check-fixtures: ##@Test Check declared fixtures
-	${POETRY} run pytest --dead-fixtures $(PYTEST_ARGS)
+	${PYTEST} --dead-fixtures $(PYTEST_ARGS)
 
 test-cleanup: ##@Test Cleanup tests dependencies
 	docker compose -f docker-compose.test.yml down $(ARGS)
@@ -70,7 +72,7 @@ test-cleanup: ##@Test Cleanup tests dependencies
 
 
 dev: db-start ##@Application Run development server (without docker)
-	${POETRY} run python -m horizon.backend $(ARGS)
+	${PYTHON} -m horizon.backend $(ARGS)
 
 prod-build: ##@Application Build docker image
 	docker build --progress=plain --network=host -t mtsrus/horizon-backend:latest -f ./docker/Dockerfile.backend --target prod $(ARGS) .
@@ -80,6 +82,7 @@ prod: ##@Application Run production server (with docker)
 
 prod-cleanup: ##@Application Stop production server
 	docker compose down --remove-orphans $(ARGS)
+
 
 .PHONY: docs
 
@@ -97,4 +100,4 @@ docs-cleanup: ##@Docs Cleanup docs
 docs-fresh: docs-cleanup docs-build ##@Docs Cleanup & build docs
 
 docs-openapi: ##@Docs Generate OpenAPI schema
-	python -m horizon.backend.export_openapi_schema docs/_static/openapi.json
+	${PYTHON} -m horizon.backend.export_openapi_schema docs/_static/openapi.json

@@ -36,42 +36,36 @@ jobs:
         # this step is needed for successful installation of "bonsai" library in python dependencies
         run: sudo apt-get update && sudo apt-get install -y libldap2-dev libsasl2-dev
 
-      - name: Install poetry
-        uses: snok/install-poetry@v1
-
-      - name: Cache poetry
-        uses: actions/cache@v5
-        with:
-          path: ~/.cache/pypoetry
-          key: ${{ runner.os }}-python-${{ env.DEFAULT_PYTHON }}-release-${{ hashFiles('**/poetry.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-python-${{ env.DEFAULT_PYTHON }}-release-${{ hashFiles('**/poetry.lock') }}
-            ${{ runner.os }}-python-${{ env.DEFAULT_PYTHON }}-release-
-            ${{ runner.os }}-python-
+      - name: Install uv
+        uses: astral-sh/setup-uv@v7
 
       - name: Install dependencies
         run: |
-          poetry install --no-root --all-extras --without docs,test,dev
+          export UV=$(which uv)
+          make venv-install
 
       - name: Generate OpenAPI Schema
         run: |
-          source .env.local
-          poetry run python -m horizon.backend.export_openapi_schema docs/_static/openapi.json
+          make docs-openapi
 
       - name: Fix logo in Readme
         run: |
           sed -i "s#image:: docs/#image:: https://raw.githubusercontent.com/MobileTeleSystems/horizon/$GITHUB_SHA/docs/#g" README.rst
 
+      - name: Patch version template
+        # Due to change above, git stage area is dirty, so we need to patch the template
+        run: sed -i 's#dirty_template = ".*"#dirty_template = "{tag}"#' pyproject.toml
+
       - name: Build package
-        run: poetry build
+        run: uv build
 
       - name: Publish package
         uses: pypa/gh-action-pypi-publish@release/v1
 
       - name: Generate SBOM
         run: |
-          pip install cyclonedx-bom
-          cyclonedx-py poetry --extras backend,postgres,ldap --without dev,test,docs > sbom.cyclonedx.json
+          uv pip install cyclonedx-bom
+          uv export --extra backend --extra postgres --extra ldap --format requirements.txt | uv run cyclonedx-py requirements - > sbom.cyclonedx.json
 
       - name: Get changelog
         run: |
