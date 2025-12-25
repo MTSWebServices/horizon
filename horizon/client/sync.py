@@ -2,7 +2,7 @@
 # SPDX-License-Identifier: Apache-2.0
 from __future__ import annotations
 
-from typing import List, Optional, TypeVar, Union
+from typing import TYPE_CHECKING, List, Optional, TypeVar, Union, cast
 
 from authlib.integrations.requests_client import OAuth2Session
 from pydantic import BaseModel, Field, root_validator, validator
@@ -36,6 +36,9 @@ from horizon.commons.schemas.v1 import (
 )
 
 ResponseSchema = TypeVar("ResponseSchema", bound=BaseModel)
+
+if TYPE_CHECKING:
+    from requests import Session
 
 
 class RetryConfig(BaseModel):
@@ -153,7 +156,7 @@ class HorizonClientSync(BaseClient[OAuth2Session]):
         >>> client.authorize()
         """
 
-        session: OAuth2Session = self.session  # type: ignore[assignment]
+        session: OAuth2Session = cast("OAuth2Session", self.session)
         token_kwargs = self.auth.fetch_token_kwargs(self.base_url)
         if token_kwargs:
             session.token = session.fetch_token(**token_kwargs)
@@ -172,7 +175,7 @@ class HorizonClientSync(BaseClient[OAuth2Session]):
 
         >>> client.close()
         """
-        session: OAuth2Session = self.session  # type: ignore[assignment]
+        session: Session = cast("Session", self.session)
         session.close()
 
     def __enter__(self):
@@ -1007,7 +1010,7 @@ class HorizonClientSync(BaseClient[OAuth2Session]):
         return values
 
     @validator("session", always=True)
-    def _set_client_info(cls, session: OAuth2Session):  # noqa: N805
+    def _set_client_info(cls, session: Session):  # noqa: N805
         session.headers["X-Client-Name"] = "python-horizon[sync]"
         session.headers["X-Client-Version"] = horizon_version
         return session
@@ -1022,7 +1025,7 @@ class HorizonClientSync(BaseClient[OAuth2Session]):
     ) -> ResponseSchema | None:
         """Send request to backend and return ``response_class``, ``None`` or raise an exception."""
 
-        session: OAuth2Session = self.session  # type: ignore[assignment]
+        session: OAuth2Session = cast("OAuth2Session", self.session)
         if not session.token or session.token.is_expired():
             self.authorize()
 

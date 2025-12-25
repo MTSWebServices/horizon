@@ -33,8 +33,9 @@ author = "MWS Data Bridge"
 #
 # The short X.Y version.
 
-# this value is updated automatically by `poetry version ...` and poetry-bumpversion plugin
-ver = Version.parse("1.1.4")
+VERSION_FILE = PROJECT_ROOT_DIR / "horizon" / "VERSION"
+ver = Version.parse(VERSION_FILE.read_text())
+
 version = ver.base_version
 # The full version, including alpha/beta/rc tags.
 release = ver.public
