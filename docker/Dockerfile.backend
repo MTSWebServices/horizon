@@ -63,7 +63,6 @@ RUN --mount=type=cache,target=/root/.cache/uv \
         --frozen \
         --no-install-project \
         --all-extras \
-        --no-default-groups \
         --compile-bytecode
 
 
@@ -87,7 +86,6 @@ RUN --mount=type=cache,target=/root/.cache/uv \
         --no-install-project \
         --all-extras \
         --group "test" \
-        --no-default-groups \
         --compile-bytecode
 
 RUN sed -i 's/python -m/coverage run -m/g' /app/docker/entrypoint.sh
