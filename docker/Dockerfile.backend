@@ -59,8 +59,12 @@ COPY --from=ghcr.io/astral-sh/uv:latest /uv /usr/bin/uv
 
 COPY ./pyproject.toml ./uv.lock* ./
 RUN --mount=type=cache,target=/root/.cache/uv \
-    uv sync --frozen --no-install-project --all-extras \
-    && python -m compileall -j 4 .venv
+    uv sync \
+        --frozen \
+        --no-install-project \
+        --all-extras \
+        --no-default-groups \
+        --compile-bytecode
 
 
 FROM base AS prod
@@ -78,7 +82,12 @@ USER horizon
 FROM builder AS test
 
 RUN --mount=type=cache,target=/root/.cache/uv \
-    uv sync --frozen --no-install-project --all-extras --group "test" \
-    && python -m compileall -j 4 .venv
+    uv sync \
+        --frozen \
+        --no-install-project \
+        --all-extras \
+        --group "test" \
+        --no-default-groups \
+        --compile-bytecode
 
 RUN sed -i 's/python -m/coverage run -m/g' /app/docker/entrypoint.sh
