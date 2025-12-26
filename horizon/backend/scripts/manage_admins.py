@@ -15,54 +15,56 @@ from horizon.backend.db.models import User
 from horizon.backend.middlewares import setup_logging
 from horizon.backend.settings import Settings
 
+logger = logging.getLogger(__name__)
+
 
 async def add_admins(session: AsyncSession, usernames: list[str]) -> None:
-    logging.info("Adding SUPERADMIN users:")
+    logger.info("Adding SUPERADMIN users:")
     result = await session.execute(select(User).where(User.username.in_(usernames)).order_by(User.username))
     users = result.scalars().all()
 
     not_found = set(usernames)
     for user in users:
         user.is_admin = True
-        logging.info("    %r", user.username)
+        logger.info("    %r", user.username)
         not_found.discard(user.username)
 
     if not_found:
         for username in not_found:
             session.add(User(username=username, is_admin=True))
-            logging.info("    %r (new user)", username)
+            logger.info("    %r (new user)", username)
 
     await session.commit()
-    logging.info("Done.")
+    logger.info("Done.")
 
 
 async def remove_admins(session: AsyncSession, usernames: list[str]) -> None:
-    logging.info("Removing SUPERADMIN users:")
+    logger.info("Removing SUPERADMIN users:")
     result = await session.execute(select(User).where(User.username.in_(usernames)).order_by(User.username))
     users = result.scalars().all()
 
     not_found = set(usernames)
     for user in users:
-        logging.info("    %r", user.username)
+        logger.info("    %r", user.username)
         user.is_admin = False
         not_found.discard(user.username)
 
     if not_found:
-        logging.info("Not found:")
+        logger.info("Not found:")
         for username in not_found:
-            logging.info("    %r", username)
+            logger.info("    %r", username)
 
     await session.commit()
-    logging.info("Done.")
+    logger.info("Done.")
 
 
 async def list_admins(session: AsyncSession) -> None:
     result = await session.execute(select(User).filter_by(is_admin=True).order_by(User.username))
     admins = result.scalars().all()
-    logging.info("Listing users with SUPERADMIN role:")
+    logger.info("Listing users with SUPERADMIN role:")
     for admin in admins:
-        logging.info("    %r", admin.username)
-    logging.info("Done.")
+        logger.info("    %r", admin.username)
+    logger.info("Done.")
 
 
 def create_parser() -> argparse.ArgumentParser:
