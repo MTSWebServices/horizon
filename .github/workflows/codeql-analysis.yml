@@ -48,7 +48,7 @@ jobs:
           make venv-install
 
       - name: Run mypy
-        run: uv run mypy ./horizon --config-file ./pyproject.toml
+        run: uv run mypy horizon
 
   codeql:
     name: CodeQL

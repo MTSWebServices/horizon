@@ -2,68 +2,87 @@ repos:
   - repo: https://github.com/pre-commit/pre-commit-hooks
     rev: v6.0.0
     hooks:
+      - id: check-added-large-files
+        priority: 0
       - id: check-ast
+        priority: 0
       - id: check-merge-conflict
+        priority: 0
       - id: debug-statements
+        priority: 0
       - id: detect-private-key
+        priority: 0
       - id: end-of-file-fixer
         types: [python]
+        priority: 1
       - id: fix-byte-order-marker
+        priority: 2
       - id: mixed-line-ending
         args: [--fix=lf]
         types: [python]
+        priority: 3
       - id: trailing-whitespace
+        priority: 4
 
   - repo: https://github.com/pre-commit/pygrep-hooks
     rev: v1.10.0
     hooks:
       - id: python-check-blanket-noqa
+        priority: 0
       - id: python-check-mock-methods
+        priority: 0
       - id: python-no-eval
+        priority: 0
       - id: python-no-log-warn
+        priority: 0
       - id: python-use-type-annotations
+        priority: 0
       - id: text-unicode-replacement-char
+        priority: 0
+
+  - repo: https://github.com/IamTheFij/docker-pre-commit
+    rev: v3.0.1
+    hooks:
+      - id: docker-compose-check
+        priority: 0
 
   - repo: https://github.com/Lucas-C/pre-commit-hooks
     rev: v1.5.5
     hooks:
       - id: forbid-tabs
+        priority: 0
       - id: remove-tabs
         args: [--whitespaces-count, '2']
+        priority: 5
       - id: chmod
         args: ['644']
         exclude_types: [shell]
         exclude: ^(.*__main__\.py|horizon/backend/export_openapi_schema\.py|horizon/backend/scripts/manage_admins\.py)$
+        priority: 6
       - id: chmod
         args: ['755']
         types: [shell]
+        priority: 6
       - id: chmod
         args: ['755']
-        files: ^(.*__main__\.py)$
+        files: ^(.*__main__\.py|horizon/backend/export_openapi_schema\.py|horizon/backend/scripts/manage_admins\.py)$
+        priority: 6
       - id: insert-license
-        files: .*\.py$
+        types: [python]
         exclude: ^(horizon/backend/dependencies/stub.py|docs/.*\.py|tests/.*\.py)$
         args:
           - --license-filepath
           - .spdx-license-header.txt
           - --allow-past-years
           - --no-extra-eol
-
-  - repo: https://github.com/asottile/add-trailing-comma
-    rev: v4.0.0
-    hooks:
-      - id: add-trailing-comma
-
-  - repo: https://github.com/IamTheFij/docker-pre-commit
-    rev: v3.0.1
-    hooks:
-      - id: docker-compose-check
+        priority: 7
 
   - repo: https://github.com/macisamuele/language-formatters-pre-commit-hooks
     rev: v2.15.0
     hooks:
       - id: pretty-format-yaml
         args: [--autofix, --indent, '2', --offset, '2']
+        priority: 7
 
   - repo: https://github.com/codespell-project/codespell
     rev: v2.4.1
@@ -72,36 +91,43 @@ repos:
         args: [-w]
         additional_dependencies:
           - tomli
+        exclude: .*\.svg
+        priority: 8
 
   - repo: https://github.com/astral-sh/uv-pre-commit
     rev: 0.9.18
     hooks:
       - id: uv-lock
+        priority: 9
 
   - repo: https://github.com/astral-sh/ruff-pre-commit
     rev: v0.14.10
     hooks:
-      - id: ruff
-        args: [--fix]
       - id: ruff-format
+        priority: 9
+      - id: ruff-check
+        args: [--fix]
+        priority: 10
 
   - repo: local
     hooks:
       - id: mypy
         name: mypy
-        entry: mypy ./horizon --config-file ./pyproject.toml
+        entry: mypy horizon
         language: python
-        types: [python]
         require_serial: true
         pass_filenames: false
+        priority: 10
 
   - repo: meta
     hooks:
       - id: check-hooks-apply
+        priority: 0
       - id: check-useless-excludes
+        priority: 0
 
 ci:
   skip:
-    - mypy # checked with Github Actions
-    - docker-compose-check # cannot run on pre-commit.ci
-    - chmod # failing in pre-commit.ci
+    - mypy  # checked with Github Actions
+    - chmod  # failing in pre-commit.ci
+    - docker-compose-check  # cannot run on pre-commit.ci

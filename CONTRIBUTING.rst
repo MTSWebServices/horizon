@@ -73,7 +73,7 @@ There are *extra* dependencies (included into package as optional):
 And *groups* (not included into package, used locally and in CI):
 
 * ``test`` - for running tests
-* ``dev`` - for development, like linters, formatters, mypy, pre-commit and so on
+* ``dev`` - for development, like linters, formatters, mypy, prek and so on
 * ``docs`` - for building documentation
 
 Enable pre-commit hooks
@@ -82,17 +82,17 @@ Enable pre-commit hooks
 `pre-commit <https://pre-commit.com/>`_ hooks allows to validate & fix repository content before making new commit.
 It allows to run linters, formatters, fix file permissions and so on. If something is wrong, changes cannot be committed.
 
-Firstly, install pre-commit hooks:
+Firstly, install `prek <https://prek.j178.dev/>`_:
 
 .. code:: bash
 
-    pre-commit install --install-hooks
+    prek install --install-hooks
 
 Ant then test hooks run:
 
 .. code:: bash
 
-    pre-commit run
+    prek run
 
 How to
 ------
