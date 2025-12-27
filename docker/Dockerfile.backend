@@ -1,3 +1,5 @@
+# syntax = docker/dockerfile:1.4
+
 ARG PYTHON_VERSION=3.13
 FROM python:$PYTHON_VERSION-slim AS base
 
@@ -9,27 +11,24 @@ RUN apt-get update \
 
 WORKDIR /app
 ENV PYTHONPATH=/app \
-    PATH="/app/.venv/bin:$PATH" \
-    PYTHONUNBUFFERED=1
+    PATH="/app/.venv/bin:$PATH"
 
 # Logo
-COPY docs/_static/*.svg /app/horizon/backend/static/
+COPY --chmod=644 docs/_static/*.svg /app/horizon/backend/static/
 
 # Swagger UI
-ADD https://cdn.jsdelivr.net/npm/swagger-ui-dist@latest/swagger-ui-bundle.js https://cdn.jsdelivr.net/npm/swagger-ui-dist@latest/swagger-ui.css \
+ADD --chmod=644 https://cdn.jsdelivr.net/npm/swagger-ui-dist@latest/swagger-ui-bundle.js https://cdn.jsdelivr.net/npm/swagger-ui-dist@latest/swagger-ui.css \
     /app/horizon/backend/static/swagger/
 
 # Redoc
-ADD https://cdn.jsdelivr.net/npm/redoc@latest/bundles/redoc.standalone.js /app/horizon/backend/static/redoc/redoc.standalone.js
+ADD --chmod=644 https://cdn.jsdelivr.net/npm/redoc@latest/bundles/redoc.standalone.js /app/horizon/backend/static/redoc/redoc.standalone.js
 
 ENV HORIZON__SERVER__OPENAPI__SWAGGER__JS_URL=/static/swagger/swagger-ui-bundle.js \
     HORIZON__SERVER__OPENAPI__SWAGGER__CSS_URL=/static/swagger/swagger-ui.css \
     HORIZON__SERVER__OPENAPI__REDOC__JS_URL=/static/redoc/redoc.standalone.js \
     HORIZON__SERVER__STATIC_FILES__DIRECTORY=/app/horizon/backend/static
 
-COPY ./docker/entrypoint.sh /app/docker/entrypoint.sh
-RUN chmod +x /app/docker/entrypoint.sh \
-    && chmod +r -R /app/horizon/backend/static
+COPY --chmod=755 ./docker/entrypoint.sh /app/docker/entrypoint.sh
 ENTRYPOINT ["/app/docker/entrypoint.sh"]
 EXPOSE 8000
 HEALTHCHECK --interval=30s --timeout=5s --start-period=5s --retries=3 CMD ["curl", "-f", "http://localhost:8000/monitoring/ping"]
@@ -57,7 +56,7 @@ RUN apt-get update && apt-get install -y \
 # uv package in PyPI requires Python>=3.8, but we need 3.7
 COPY --from=ghcr.io/astral-sh/uv:latest /uv /usr/bin/uv
 
-COPY ./pyproject.toml ./uv.lock* ./
+COPY ./pyproject.toml ./uv.lock ./
 RUN --mount=type=cache,target=/root/.cache/uv \
     uv sync \
         --frozen \
@@ -68,7 +67,8 @@ RUN --mount=type=cache,target=/root/.cache/uv \
 
 FROM base AS prod
 
-COPY --from=builder /app/.venv/ /app/.venv/
+COPY --link --from=builder /app/.venv/ /app/.venv/
+
 COPY ./horizon/ /app/horizon/
 RUN python -m compileall -b horizon
 
