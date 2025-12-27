@@ -45,6 +45,20 @@ jobs:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
 
+      - name: Start container dependencies
+        run: |
+          docker compose -f docker-compose.test.yml down -v --remove-orphans
+          docker compose -f docker-compose.test.yml up -d db ldap
+
+      # https://docs.docker.com/build/ci/github-actions/cache/#local-cache
+      - name: Cache Docker layers
+        uses: actions/cache@v5
+        with:
+          path: ${{ runner.temp }}/.buildx-cache
+          key: ${{ runner.os }}-buildx-${{ hashFiles('docker/Dockerfile.backend', 'pyproject.toml', 'uv.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-buildx-
+
       - name: Build Backend Container
         uses: docker/build-push-action@v6
         with:
@@ -55,17 +69,15 @@ jobs:
             PYTHON_VERSION=${{ matrix.python-version }}
           push: false
           load: true
-          cache-to: type=gha,mode=max
-          cache-from: type=gha
+          cache-from: type=local,src=${{ runner.temp }}/.buildx-cache
 
       - name: Creare reports dir
         run: |
           mkdir -p reports/
           sudo chmod 777 -R reports/
 
-      - name: Start Backend Container
+      - name: Start Backend
         run: |
-          docker compose -f docker-compose.test.yml down -v --remove-orphans
           docker compose -f docker-compose.test.yml up -d --wait --wait-timeout 60
 
       - name: Set up Python ${{ matrix.python-version }}
