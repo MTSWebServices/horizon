@@ -24,7 +24,7 @@ services:
     build:
       context: .
       dockerfile: docker/Dockerfile.backend
-      target: prod
+      target: test
       network: host
     env_file: .env.docker
     depends_on:
