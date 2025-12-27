@@ -186,6 +186,7 @@ exclude_lines = [
   "def downgrade\\(\\)",
 ]
 [tool.ruff]
+target-version = "py37"
 line-length = 120
 extend-exclude = ["docs/", "Makefile"]
 
