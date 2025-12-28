@@ -178,11 +178,9 @@ exclude_also = [
   "@(abc\\.)?abstractmethod",
   "\\.\\.\\.",
   "def downgrade\\(\\)",
-]
-partial_also = [
   "if .*TYPE_CHECKING:",
   "if .*isEnabledFor.*:",
-  "(?i)if .*debug.*:",
+  "if .*debug.*:",
   "if .*sys.version_info.*:",
   "if __name__ == .__main__.:",
 ]
