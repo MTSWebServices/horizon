@@ -92,11 +92,23 @@ jobs:
 
       - name: Install uv
         uses: astral-sh/setup-uv@v7
+        with:
+          enable-cache: 'false'
+
+      # astral-sh/setup-uv cannot restore multiple keys
+      - name: Cache uv
+        uses: actions/cache@v5
+        with:
+          path: ~/.cache/uv
+          key: ${{ runner.os }}-python${{ env.DEFAULT_PYTHON }}-pydantic${{ matrix.pydantic-version }}-${{ hashFiles('uv.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-python${{ env.DEFAULT_PYTHON }}-pydantic${{ matrix.pydantic-version }}-${{ hashFiles('uv.lock') }}
+            ${{ runner.os }}-python${{ env.DEFAULT_PYTHON }}-pydantic${{ matrix.pydantic-version }}-
+            ${{ runner.os }}-python${{ env.DEFAULT_PYTHON }}-
 
       - name: Install dependencies
         run: |
-          export UV=$(which uv)
-          make venv-install
+          uv sync --all-extras --group test
           if [ "${{ matrix.pydantic-version }}" == "1" ]; then
             uv run pip install "pydantic<2.0.0"
           fi
@@ -151,17 +163,12 @@ jobs:
 
       - name: Install uv
         uses: astral-sh/setup-uv@v7
+        with:
+          enable-cache: 'false'
 
       - name: Install dependencies
         run: |
-          export UV=$(which uv)
-          make venv-install
-
-      - name: Download all raw coverage data
-        uses: actions/download-artifact@v7
-        with:
-          path: coverage-data/
-          pattern: raw-coverage-*
+          uv sync --group test
 
       - name: Combine Coverage Data
         run: |
