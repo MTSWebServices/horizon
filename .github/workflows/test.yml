@@ -139,7 +139,7 @@ jobs:
 
       - name: Upload Coverage Results
         uses: actions/upload-artifact@v6
-        if: always()
+        if: success() || failure()
         with:
           name: coverage-${{ matrix.os }}-${{ matrix.python-version }}-${{ matrix.pydantic-version }}
           path: reports/
@@ -150,7 +150,12 @@ jobs:
     name: Tests done
     runs-on: ubuntu-latest
 
-    if: always()
+    permissions:
+      contents: write
+      checks: write
+      pull-requests: write
+
+    if: success() || failure()
     needs: [tests]
 
     steps:
