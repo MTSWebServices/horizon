@@ -60,6 +60,7 @@ COPY ./pyproject.toml ./uv.lock ./
 RUN --mount=type=cache,target=/root/.cache/uv \
     uv sync \
         --frozen \
+        --link-mode copy \
         --no-install-project \
         --all-extras \
         --compile-bytecode
@@ -70,7 +71,7 @@ FROM base AS prod
 COPY --link --from=builder /app/.venv/ /app/.venv/
 
 COPY ./horizon/ /app/horizon/
-RUN python -m compileall -b horizon
+RUN python -m compileall -b /app/horizon
 
 # Do not run production as root, to improve security.
 # Also user does not own anything inside the image, including venv and source code.
@@ -83,6 +84,7 @@ FROM builder AS test
 RUN --mount=type=cache,target=/root/.cache/uv \
     uv sync \
         --frozen \
+        --link-mode copy \
         --no-install-project \
         --all-extras \
         --group "test" \
