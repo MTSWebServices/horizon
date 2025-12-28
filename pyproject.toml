@@ -180,6 +180,7 @@ exclude_also = [
   "def downgrade\\(\\)",
 ]
 partial_also = [
+  "if .*TYPE_CHECKING:",
   "if .*isEnabledFor.*:",
   "(?i)if .*debug.*:",
   "if .*sys.version_info.*:",
