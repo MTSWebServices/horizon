@@ -13,7 +13,7 @@ concurrency:
   cancel-in-progress: true
 
 env:
-  DEFAULT_PYTHON: '3.13'
+  DEFAULT_PYTHON: '3.14'
   MIN_COVERAGE: 92
 
 permissions:
@@ -34,7 +34,7 @@ jobs:
             pydantic-version: '1'
             os: ubuntu-22.04
 
-          - python-version: '3.13'
+          - python-version: '3.14'
             pydantic-version: '2'
             os: ubuntu-latest
 
