@@ -41,6 +41,7 @@ requires-python = ">=3.7"
 dependencies = [
     "pydantic<3",
     "typing-extensions>=4.0.0",
+    "authlib>=1.0",
 ]
 dynamic = ["version"]
 
@@ -79,13 +80,11 @@ backend = [
     "uuid6",
     "devtools",
     "passlib",
-    "authlib",
 ]
 postgres = [
     "asyncpg",
 ]
 client-sync = [
-    "packaging",
     "requests",
     "urllib3>=1.26.0",
 ]
