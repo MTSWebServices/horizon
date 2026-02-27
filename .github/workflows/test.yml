@@ -131,14 +131,14 @@ jobs:
           docker compose -f docker-compose.test.yml down -v --remove-orphans
 
       - name: Upload server logs
-        uses: actions/upload-artifact@v6
+        uses: actions/upload-artifact@v7
         if: failure()
         with:
           name: backend-logs-${{ matrix.os }}-${{ matrix.python-version }}-${{ matrix.pydantic-version }}
           path: logs/*
 
       - name: Upload Coverage Results
-        uses: actions/upload-artifact@v6
+        uses: actions/upload-artifact@v7
         if: success() || failure()
         with:
           name: coverage-${{ matrix.os }}-${{ matrix.python-version }}-${{ matrix.pydantic-version }}
@@ -163,7 +163,7 @@ jobs:
         uses: actions/checkout@v6
 
       - name: Download all raw coverage data
-        uses: actions/download-artifact@v7
+        uses: actions/download-artifact@v8
         with:
           path: reports/
           pattern: coverage-*
