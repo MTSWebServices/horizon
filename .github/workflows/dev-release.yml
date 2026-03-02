@@ -14,7 +14,7 @@ jobs:
   wait-code-analysis:
     name: Dev release package
     runs-on: ubuntu-latest
-    if: github.repository == 'MobileTeleSystems/horizon'  # prevent running on forks
+    if: github.repository == 'MTSWebServices/horizon'  # prevent running on forks
 
     environment:
       name: test-pypi
@@ -41,7 +41,7 @@ jobs:
 
       - name: Fix logo in Readme
         run: |
-          sed -i "s#image:: docs/#image:: https://raw.githubusercontent.com/MobileTeleSystems/horizon/$GITHUB_SHA/docs/#g" README.rst
+          sed -i "s#image:: docs/#image:: https://raw.githubusercontent.com/MTSWebServices/horizon/$GITHUB_SHA/docs/#g" README.rst
 
       - name: Patch version template
         # Due to change above, git stage area is dirty, so we need to patch the template

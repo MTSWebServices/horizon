@@ -93,7 +93,7 @@ class LogoSettings(BaseModel):
         description="Alternative text for ``<img>`` tag",
     )
     href: Optional[AnyHttpUrl] = Field(  # type: ignore[assignment]
-        default="https://github.com/MobileTeleSystems/horizon",
+        default="https://github.com/MTSWebServices/horizon",
         description="Clicking on logo will redirect to this URL",
     )
 

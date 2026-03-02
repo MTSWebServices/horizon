@@ -160,7 +160,7 @@ htmlhelp_basename = "horizon-doc"
 
 
 # which is the equivalent to:
-issues_uri = "https://github.com/MobileTeleSystems/horizon/issues/{issue}"
-issues_pr_uri = "https://github.com/MobileTeleSystems/horizon/pulls/{pr}"
-issues_commit_uri = "https://github.com/MobileTeleSystems/horizon/commit/{commit}"
+issues_uri = "https://github.com/MTSWebServices/horizon/issues/{issue}"
+issues_pr_uri = "https://github.com/MTSWebServices/horizon/pulls/{pr}"
+issues_commit_uri = "https://github.com/MTSWebServices/horizon/commit/{commit}"
 issues_user_uri = "https://github.com/{user}"

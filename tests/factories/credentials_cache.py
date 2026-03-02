@@ -39,7 +39,7 @@ async def credentials_cache_item(
     item = credentials_cache_factory(user_id=user.id, **params)
 
     # do not use the same session in tests and fixture teardown
-    # see https://github.com/MobileTeleSystems/horizon/pull/6
+    # see https://github.com/MTSWebServices/horizon/pull/6
     async with async_session_factory() as async_session:
         async_session.add(item)
         # this is not required for backend tests, but needed by client tests

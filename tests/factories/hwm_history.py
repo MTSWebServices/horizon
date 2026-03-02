@@ -48,7 +48,7 @@ async def hwm_history_items(
     ]
 
     # do not use the same session in tests and fixture teardown
-    # see https://github.com/MobileTeleSystems/horizon/pull/6
+    # see https://github.com/MTSWebServices/horizon/pull/6
     async with async_session_factory() as async_session:
         for item in result:
             del item.id

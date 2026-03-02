@@ -15,7 +15,7 @@ jobs:
   release:
     name: Build & push image to Dockerhub
     runs-on: ubuntu-latest
-    if: github.repository == 'MobileTeleSystems/horizon'  # prevent running on forks
+    if: github.repository == 'MTSWebServices/horizon'  # prevent running on forks
 
     permissions:
       contents: read

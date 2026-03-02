@@ -40,7 +40,7 @@ async def new_namespace(
     query = delete(Namespace).where(Namespace.name == item.name)
 
     # do not use the same session in tests and fixture teardown
-    # see https://github.com/MobileTeleSystems/horizon/pull/6
+    # see https://github.com/MTSWebServices/horizon/pull/6
     async with async_session_factory() as async_session:
         await async_session.execute(query)
         await async_session.commit()

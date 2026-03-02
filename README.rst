@@ -8,7 +8,7 @@ Data.Horizon
 
 .. |Repo Status| image:: https://www.repostatus.org/badges/latest/active.svg
     :alt: Repo status - Active
-    :target: https://github.com/MobileTeleSystems/horizon
+    :target: https://github.com/MTSWebServices/horizon
 .. |DockerHub Latest Release| image:: https://img.shields.io/docker/v/mtsrus/horizon-backend?sort=semver&label=docker
     :alt: DockerHub - Latest release
     :target: https://hub.docker.com/r/mtsrus/horizon-backend
@@ -17,7 +17,7 @@ Data.Horizon
     :target: https://pypi.org/project/data-horizon/
 .. |PyPI License| image:: https://img.shields.io/pypi/l/data-horizon.svg
     :alt: PyPI - License
-    :target: https://github.com/MobileTeleSystems/horizon/blob/develop/LICENSE.txt
+    :target: https://github.com/MTSWebServices/horizon/blob/develop/LICENSE.txt
 .. |PyPI Python Version| image:: https://img.shields.io/pypi/pyversions/data-horizon.svg
     :alt: PyPI - Python Version
     :target: https://pypi.org/project/data-horizon/
@@ -27,15 +27,15 @@ Data.Horizon
 .. |Documentation| image:: https://readthedocs.org/projects/data-horizon/badge/?version=stable
     :alt: Documentation - ReadTheDocs
     :target: https://data-horizon.readthedocs.io/
-.. |CI Status| image:: https://github.com/MobileTeleSystems/horizon/workflows/Tests/badge.svg
+.. |CI Status| image:: https://github.com/MTSWebServices/horizon/workflows/Tests/badge.svg
     :alt: Github Actions - latest CI build status
-    :target: https://github.com/MobileTeleSystems/horizon/actions
+    :target: https://github.com/MTSWebServices/horizon/actions
 .. |Test Coverage| image:: https://img.shields.io/endpoint?url=https://gist.githubusercontent.com/
     MTSOnGithub/03e73a82ecc4709934540ce8201cc3b4/raw/horizon_badge.json
-    :target: https://github.com/MobileTeleSystems/horizon/actions
-.. |pre-commit.ci Status| image:: https://results.pre-commit.ci/badge/github/MobileTeleSystems/horizon/develop.svg
+    :target: https://github.com/MTSWebServices/horizon/actions
+.. |pre-commit.ci Status| image:: https://results.pre-commit.ci/badge/github/MTSWebServices/horizon/develop.svg
     :alt: pre-commit.ci - status
-    :target: https://results.pre-commit.ci/latest/github/MobileTeleSystems/horizon/develop
+    :target: https://results.pre-commit.ci/latest/github/MTSWebServices/horizon/develop
 
 
 |Logo|
@@ -43,7 +43,7 @@ Data.Horizon
 .. |Logo| image:: docs/_static/logo.svg
     :width: 400
     :alt: Horizon logo
-    :target: https://github.com/MobileTeleSystems/horizon/
+    :target: https://github.com/MTSWebServices/horizon/
 
 What is Data.Horizon?
 ---------------------

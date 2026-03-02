@@ -53,11 +53,11 @@ exclude = ["docs", "tests"]
 "*" = ["py.typed", "*.yml",  "*.ini", "VERSION"]
 
 [project.urls]  # Optional
-"Homepage" = "https://github.com/MobileTeleSystems/horizon"
+"Homepage" = "https://github.com/MTSWebServices/horizon"
 "Documentation" = "https://data-horizon.readthedocs.io/"
-"Source" = "https://github.com/MobileTeleSystems/horizon"
-"CI/CD" = "https://github.com/MobileTeleSystems/horizon/actions"
-"Tracker" = "https://github.com/MobileTeleSystems/horizon/issues"
+"Source" = "https://github.com/MTSWebServices/horizon"
+"CI/CD" = "https://github.com/MTSWebServices/horizon/actions"
+"Tracker" = "https://github.com/MTSWebServices/horizon/issues"
 
 
 [project.optional-dependencies]
