@@ -105,7 +105,7 @@ class BaseClient(GenericModel, Generic[SessionClass]):
                 f"Horizon client version {horizon.__version__!r} does not match backend version {backend_version!r}. "
                 "Please upgrade."
             )
-            warnings.warn(message, UserWarning, stacklevel=5)
+            warnings.warn(message, UserWarning, stacklevel=6)
 
     def _handle_response(  # noqa: C901
         self,
