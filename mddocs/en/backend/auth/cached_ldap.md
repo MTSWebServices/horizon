@@ -166,7 +166,7 @@ Other settings are just the same as for `LDAPAuthProvider`
 
 ::: horizon.backend.settings.auth.cached_ldap.CachedLDAPAuthProviderSettings
 <!--    :inherited-members: BaseModel -->
-  
+
 ::: horizon.backend.settings.auth.cached_ldap.LDAPCacheSettings
 
 ::: horizon.backend.settings.auth.cached_ldap.LDAPCachePasswordHashSettings
