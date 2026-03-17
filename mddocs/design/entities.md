@@ -192,7 +192,7 @@ erDiagram
         string changed_by
         string action
     }
-    
+
 
     HWMHistory {
         number id
@@ -214,7 +214,7 @@ erDiagram
         number namespace_id
         string role
     }
-    
+
     HWM ||--o{ Namespace: contains
     Namespace }o--o| NamespaceHistory: contains
     HWM }o--o| HWMHistory: contains

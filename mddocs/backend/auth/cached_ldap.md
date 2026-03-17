@@ -101,7 +101,7 @@ deactivate "Client"
 Other settings are just the same as for `LDAPAuthProvider`
 
 ::: horizon.backend.settings.auth.cached_ldap.CachedLDAPAuthProviderSettings
-  
+
 ::: horizon.backend.settings.auth.cached_ldap.LDAPCacheSettings
 
 ::: horizon.backend.settings.auth.cached_ldap.LDAPCachePasswordHashSettings
