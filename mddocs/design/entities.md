@@ -147,90 +147,78 @@ HWMHistory record has following fields (all read-only):
 
 ## Entity Diagram
 
-```plantuml
-
-    @startuml
-    title Entity Diagram
-
-    left to right direction
-
-    entity User {
-        * id
-        ----
-        * username
-        is_active
-        is_admin
-    }
-
-    entity Namespace {
-        * id
-        ----
-        * namespace_id
-        * name
-        * owned_by
-        description
-        changed_at
-        changed_by
-    }
-
-    entity HWM {
-        * id
-        ----
-        * name
-        * type
-        * value
-        description
-        entity
-        expression
-        changed_at
-        changed_by
-    }
-
-    entity NamespaceHistory {
-        * id
-        ----
-        * namespace_id
-        name
-        owned_by
-        description
-        changed_at
-        changed_by
-        action
-    }
-
-    entity HWMHistory {
-        * id
-        ----
-        * hwm_id
-        * namespace_id
-        name
-        type
-        value
-        description
-        entity
-        expression
-        changed_at
-        changed_by
-        action
-    }
-
-    entity Permission {
-        * user_id
-        * namespace_id
-        ----
-        * role
-    }
-
-    HWM ||--o{ Namespace
-    Namespace }o--o| NamespaceHistory
-    HWM }o--o| HWMHistory
-    Namespace "owner" ||--o{ User
-    Namespace }o--|| Permission
-    Permission ||--o{ User
-
-    @enduml
-```
-
 ```mermaid
+---
+title: Entity Diagram
+---
+erDiagram
+    direction LR
+    User {
+        number id
+        string username
+        bool is_active
+        bool is_admin
+    }
 
+    Namespace {
+        number id
+        number namespace_id
+        string name
+        string owned_by
+        string description
+        string changed_at
+        string changed_by
+    }
+
+    HWM {
+        number id
+        string name
+        string type
+        string value
+        string description
+        string entity
+        string expression
+        string changed_at
+        string changed_by
+    }
+
+    NamespaceHistory {
+        number id
+        number namespace_id
+        string name
+        string owned_by
+        string description
+        string changed_at
+        string changed_by
+        string action
+    }
+    
+
+    HWMHistory {
+        number id
+        number hwm_id
+        number namespace_id
+        string name
+        string type
+        string value
+        string description
+        string entity
+        string expression
+        string changed_at
+        string changed_by
+        string action
+    }
+
+    Permission {
+        number user_id
+        number namespace_id
+        string role
+    }
+    
+    HWM ||--o{ Namespace: contains
+    Namespace }o--o| NamespaceHistory: contains
+    HWM }o--o| HWMHistory: contains
+    Namespace  ||--o{ User: contains
+    Namespace }o--|| Permission: contains
+    Permission ||--o{ User: contains
 ```

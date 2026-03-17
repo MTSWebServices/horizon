@@ -79,27 +79,6 @@ HWMResponseV1(
 
 ## Reference
 
-<!--
-```{eval-rst}
-.. currentmodule:: horizon.client.sync
-```
-
-```{eval-rst}
-.. autoclass:: HorizonClientSync
-    :members: authorize, ping, whoami, paginate_namespaces, get_namespace, create_namespace, update_namespace, delete_namespace, paginate_hwm, get_hwm, create_hwm, update_hwm, delete_hwm, bulk_delete_hwm, get_namespace_permissions, update_namespace_permissions, paginate_hwm_history, paginate_namespace_history, retry, bulk_copy_hwm
-    :member-order: bysource
-```
-
-```{eval-rst}
-.. autoclass:: RetryConfig
-    :members: no
-```
-
-```{eval-rst}
-.. autoclass:: TimeoutConfig
-    :members: no
-```
--->
 ::: horizon.client.sync.HorizonClientSync
     options:
         members:
