@@ -1,3 +1,5 @@
+# SPDX-FileCopyrightText: 2025-present MTS PJSC
+# SPDX-License-Identifier: Apache-2.0
 # Configuration file for the Sphinx documentation builder.
 #
 # This file only contains a selection of the most common options. For a full
@@ -41,6 +43,28 @@ release = ver.public
 
 # -- General configuration ---------------------------------------------------
 
+<<<<<<< HEAD:mddocs/conf.py
+=======
+# Add any Sphinx extension module names here, as strings. They can be
+# extensions coming with Sphinx (named 'sphinx.ext.*') or your custom
+# ones.
+extensions = [
+    "numpydoc",
+    "sphinx_copybutton",
+    "sphinx.ext.doctest",
+    "sphinx.ext.autodoc",
+    "sphinx.ext.autosummary",
+    "sphinx.ext.intersphinx",
+    #  "sphinxcontrib.autodoc_pydantic",
+    "sphinxcontrib.towncrier",  # provides `towncrier-draft-entries` directive
+    "sphinx_issues",
+    "sphinx_design",  # provides `dropdown` directive
+    "sphinxcontrib.plantuml",
+    "sphinx_favicon",
+    "sphinxarg.ext",
+    "sphinx_last_updated_by_git",
+]
+>>>>>>> c06ec6ee0ffdd1e6413bbcde037ae99f24296590:mddocs/en/conf.py
 
 swagger = [
     {
