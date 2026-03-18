@@ -32,9 +32,8 @@ File ".../site-packages/uvicorn/middleware/proxy_headers.py", line 84, in __call
     return await self.app(scope, receive, send)
 ```
 
-### WARNING
-
-This is only for development environment only. Do **NOT** use on production!
+!!! WARNING
+    This is only for development environment only. Do **NOT** use on production!
 
 ## Print debug logs on backend
 
@@ -54,7 +53,7 @@ This is done by adding a specific filter to logging handler:
 
 ### `logging.yml`
 
-```default
+```
 # development usage only
 version: 1
 disable_existing_loggers: false

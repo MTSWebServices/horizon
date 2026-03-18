@@ -8,13 +8,13 @@ All requests to backend should be made with passing this access token. If token 
 
 After successful auth, username is saved to backend database. It is then used for creating audit records for any object change, see `changed_by` field.
 
-!!! warning ""
+!!! warning
 
     Until token is valid, no requests will be made to LDAP to check if user exists and not locked. So do not set access token expiration time for too long (e.g. longer than a day).
 
 ## Strategies { #ldap-strategies }
 
-!!! note ""
+!!! note
 
     Basic LDAP terminology is explained here: [LDAP Overview](https://www.zytrax.com/books/ldap/ch2/)
 
@@ -34,173 +34,173 @@ After user is found in LDAP, its [uid_attribute][horizon.backend.settings.auth.l
 
 ## Interaction schema { #ldap-interaction-schema }
 
-    ```mermaid
-    sequenceDiagram
-    participant "Client"
-    participant "Backend"
-    participant "LDAP"
+```mermaid
+sequenceDiagram
+participant "Client"
+participant "Backend"
+participant "LDAP"
 
-    activate "Client"
-    alt Successful case
-    "Client" ->> "Backend"  : login + password
-    "Backend" ->> "Backend" : DN = bind_dn_template(login)
-    "Backend" ->> "LDAP"  : Call bind(DN, password)
-    "LDAP" ->> "Backend"  : Successful
-    "Backend" ->> "Backend" : Check user in internal backend database,\nusername = login
-    "Backend" ->> "Backend" : Create user if not exist
-    "Backend" ->> "Client"  : Generate and return access_token
+activate "Client"
+alt Successful case
+"Client" ->> "Backend"  : login + password
+"Backend" ->> "Backend" : DN = bind_dn_template(login)
+"Backend" ->> "LDAP"  : Call bind(DN, password)
+"LDAP" ->> "Backend"  : Successful
+"Backend" ->> "Backend" : Check user in internal backend database,\nusername = login
+"Backend" ->> "Backend" : Create user if not exist
+"Backend" ->> "Client"  : Generate and return access_token
 
-    else Wrong credentials | User blocker in LDAP
-    "Client" ->> "Backend"  : login + password
-    "Backend" ->> "Backend" : DN = bind_dn_template(login)
-    "Backend" ->> "LDAP"  : Call bind(DN, password)
-    "LDAP" --x "Backend"  : Bind error
-    "Backend" --x "Client"  : 401 Unauthorized
+else Wrong credentials | User blocker in LDAP
+"Client" ->> "Backend"  : login + password
+"Backend" ->> "Backend" : DN = bind_dn_template(login)
+"Backend" ->> "LDAP"  : Call bind(DN, password)
+"LDAP" --x "Backend"  : Bind error
+"Backend" --x "Client"  : 401 Unauthorized
 
-    else User is blocked in internal backend database
-    "Client" ->> "Backend"  : login + password
-    "Backend" ->> "Backend" : DN = bind_dn_template(login)
-    "Backend" ->> "LDAP"  : Call bind(DN, password)
-    "Backend" ->> "Backend" : Check user in internal backend database,\nusername = login
-    "Backend" --x "Client"  : 404 Not found
+else User is blocked in internal backend database
+"Client" ->> "Backend"  : login + password
+"Backend" ->> "Backend" : DN = bind_dn_template(login)
+"Backend" ->> "LDAP"  : Call bind(DN, password)
+"Backend" ->> "Backend" : Check user in internal backend database,\nusername = login
+"Backend" --x "Client"  : 404 Not found
 
-    else User is deleted in internal backend database
-    "Client" ->> "Backend"  : login + password
-    "Backend" ->> "Backend" : DN = bind_dn_template(login)
-    "Backend" ->> "LDAP"  : Call bind(DN, password)
-    "LDAP" ->> "Backend"  : Return user info
-    "Backend" ->> "Backend" : Check user in internal backend database,\nusername = login
-    "Backend" --x "Client"  : 404 Not found
+else User is deleted in internal backend database
+"Client" ->> "Backend"  : login + password
+"Backend" ->> "Backend" : DN = bind_dn_template(login)
+"Backend" ->> "LDAP"  : Call bind(DN, password)
+"LDAP" ->> "Backend"  : Return user info
+"Backend" ->> "Backend" : Check user in internal backend database,\nusername = login
+"Backend" --x "Client"  : 404 Not found
 
-    else LDAP is unavailable
-    "Client" ->> "Backend"  : login + password
-    "Backend" ->> "Backend" : DN = bind_dn_template(login)
-    "Backend" --x "LDAP" : Call bind(DN, password)
-    "Backend" --x "Client" : 503 Service unavailable
-    end
+else LDAP is unavailable
+"Client" ->> "Backend"  : login + password
+"Backend" ->> "Backend" : DN = bind_dn_template(login)
+"Backend" --x "LDAP" : Call bind(DN, password)
+"Backend" --x "Client" : 503 Service unavailable
+end
 
-    alt Successful case
-    "Client" ->> "Backend"  : access_token
-    "Backend" ->> "Backend" : Validate token
-    "Backend" ->> "Backend" : Check user in internal backend database
-    "Backend" ->> "Backend" : Get data
-    "Backend" ->> "Client"  : Return data
+alt Successful case
+"Client" ->> "Backend"  : access_token
+"Backend" ->> "Backend" : Validate token
+"Backend" ->> "Backend" : Check user in internal backend database
+"Backend" ->> "Backend" : Get data
+"Backend" ->> "Client"  : Return data
 
-    else Token is expired
-    "Client" ->> "Backend"  : access_token
-    "Backend" ->> "Backend" : Validate token
-    "Backend" --x "Client"  : 401 Unauthorized
+else Token is expired
+"Client" ->> "Backend"  : access_token
+"Backend" ->> "Backend" : Validate token
+"Backend" --x "Client"  : 401 Unauthorized
 
-    else User is blocked
-    "Client" ->> "Backend"  : access_token
-    "Backend" ->> "Backend" : Validate token
-    "Backend" ->> "Backend" : Check user in internal backend database
-    "Backend" --x "Client"  : 401 Unauthorized
+else User is blocked
+"Client" ->> "Backend"  : access_token
+"Backend" ->> "Backend" : Validate token
+"Backend" ->> "Backend" : Check user in internal backend database
+"Backend" --x "Client"  : 401 Unauthorized
 
-    else
-    "Client" ->> "Backend"  : access_token
-    "Backend" ->> "Backend" : Validate token
-    "Backend" ->> "Backend" : Check user in internal backend database
-    "Backend" --x "Client"  : 404 Not found
-    end
+else
+"Client" ->> "Backend"  : access_token
+"Backend" ->> "Backend" : Validate token
+"Backend" ->> "Backend" : Check user in internal backend database
+"Backend" --x "Client"  : 404 Not found
+end
 
-    deactivate "Client"
-    ```
+deactivate "Client"
+```
 
-    ```mermaid
-    sequenceDiagram
-    participant "Client"
-    participant "Backend"
-    participant "LDAP"
+```mermaid
+sequenceDiagram
+participant "Client"
+participant "Backend"
+participant "LDAP"
 
-    "Backend" ->  "LDAP" : bind(lookup.username, lookup.password) 
-    activate "LDAP"
-    Note right of "LDAP" : Open connection \npool for\nsearch queries\n(optional, recommended)
+"Backend" ->  "LDAP" : bind(lookup.username, lookup.password) 
+activate "LDAP"
+Note right of "LDAP" : Open connection \npool for\nsearch queries\n(optional, recommended)
 
-    activate "Client"
-    alt Successful case
-    "Client" ->> "Backend"  : login + password
-    "Backend" ->> "Backend" : query = query_template(login)
-    "Backend" ->> "LDAP" : Call search(query, base_dn, attributes=*)
-    activate "LDAP"
-    "LDAP" ->> "Backend" : Return user DN and uid_attribute
-    deactivate "LDAP"
-    "Backend" ->> "LDAP"  : Call bind(DN, password)
-    "LDAP" ->> "Backend"  : Successful
-    "Backend" ->> "Backend" : Check user in internal backend database,\nusername = uid_attribute from LDAP response
-    "Backend" ->> "Backend" : Create user if not exist
-    "Backend" ->> "Client"  : Generate and return access_token
+activate "Client"
+alt Successful case
+"Client" ->> "Backend"  : login + password
+"Backend" ->> "Backend" : query = query_template(login)
+"Backend" ->> "LDAP" : Call search(query, base_dn, attributes=*)
+activate "LDAP"
+"LDAP" ->> "Backend" : Return user DN and uid_attribute
+deactivate "LDAP"
+"Backend" ->> "LDAP"  : Call bind(DN, password)
+"LDAP" ->> "Backend"  : Successful
+"Backend" ->> "Backend" : Check user in internal backend database,\nusername = uid_attribute from LDAP response
+"Backend" ->> "Backend" : Create user if not exist
+"Backend" ->> "Client"  : Generate and return access_token
 
-    else Wrong credentials | User blocker in LDAP
-    "Client" ->> "Backend"  : login + password
-    "Backend" ->> "Backend" : query = query_template(login)
-    "Backend" ->> "LDAP" : Call search(query, base_dn, attributes=*)
-    activate "LDAP"
-    "LDAP" ->> "Backend" : Return user DN and uid_attribute
-    deactivate "LDAP"
-    "Backend" ->> "LDAP"  : Call bind(DN, password)
-    "LDAP" --x "Backend"  : Bind error
-    "Backend" --x "Client"  : 401 Unauthorized
+else Wrong credentials | User blocker in LDAP
+"Client" ->> "Backend"  : login + password
+"Backend" ->> "Backend" : query = query_template(login)
+"Backend" ->> "LDAP" : Call search(query, base_dn, attributes=*)
+activate "LDAP"
+"LDAP" ->> "Backend" : Return user DN and uid_attribute
+deactivate "LDAP"
+"Backend" ->> "LDAP"  : Call bind(DN, password)
+"LDAP" --x "Backend"  : Bind error
+"Backend" --x "Client"  : 401 Unauthorized
 
-    else User is blocked in internal backend database
-    "Client" ->> "Backend"  : login + password
-    "Backend" ->> "Backend" : query = query_template(login)
-    "Backend" ->> "LDAP" : Call search(query, base_dn, attributes=*)
-    activate "LDAP"
-    "LDAP" ->> "Backend" : Return user DN and uid_attribute
-    deactivate "LDAP"
-    "Backend" ->> "LDAP"  : Call bind(DN, password)
-    "LDAP" ->> "Backend"  : Successful
-    "Backend" ->> "Backend" : Check user in internal backend database,\nusername = uid_attribute from LDAP response
-    "Backend" --x "Client"  : 404 Not found
+else User is blocked in internal backend database
+"Client" ->> "Backend"  : login + password
+"Backend" ->> "Backend" : query = query_template(login)
+"Backend" ->> "LDAP" : Call search(query, base_dn, attributes=*)
+activate "LDAP"
+"LDAP" ->> "Backend" : Return user DN and uid_attribute
+deactivate "LDAP"
+"Backend" ->> "LDAP"  : Call bind(DN, password)
+"LDAP" ->> "Backend"  : Successful
+"Backend" ->> "Backend" : Check user in internal backend database,\nusername = uid_attribute from LDAP response
+"Backend" --x "Client"  : 404 Not found
 
-    else User is deleted in internal backend database
-    "Client" ->> "Backend"  : login + password
-    "Backend" ->> "Backend" : query = query_template(login)
-    "Backend" ->> "LDAP" : Call search(query, base_dn, attributes=*)
-    activate "LDAP"
-    "LDAP" ->> "Backend" : Return user DN and uid_attribute
-    deactivate "LDAP"
-    "Backend" ->> "LDAP"  : Call bind(DN, password)
-    "LDAP" ->> "Backend"  : Successful
-    "Backend" ->> "Backend" : Check user in internal backend database,\nusername = uid_attribute from LDAP response
-    "Backend" --x "Client"  : 404 Not found
+else User is deleted in internal backend database
+"Client" ->> "Backend"  : login + password
+"Backend" ->> "Backend" : query = query_template(login)
+"Backend" ->> "LDAP" : Call search(query, base_dn, attributes=*)
+activate "LDAP"
+"LDAP" ->> "Backend" : Return user DN and uid_attribute
+deactivate "LDAP"
+"Backend" ->> "LDAP"  : Call bind(DN, password)
+"LDAP" ->> "Backend"  : Successful
+"Backend" ->> "Backend" : Check user in internal backend database,\nusername = uid_attribute from LDAP response
+"Backend" --x "Client"  : 404 Not found
 
-    else LDAP is unavailable
-    "Client" ->> "Backend"  : login + password
-    "Backend" ->> "Backend" : query = query_template(login)
-    "Backend" --x "LDAP" : Call search(query, base_dn, attributes=*)
-    "Backend" --x "Client" : 503 Service unavailable
-    end
+else LDAP is unavailable
+"Client" ->> "Backend"  : login + password
+"Backend" ->> "Backend" : query = query_template(login)
+"Backend" --x "LDAP" : Call search(query, base_dn, attributes=*)
+"Backend" --x "Client" : 503 Service unavailable
+end
 
-    alt Successful case
-    "Client" ->> "Backend"  : access_token
-    "Backend" ->> "Backend" : Validate token
-    "Backend" ->> "Backend" : Check user in internal backend database
-    "Backend" ->> "Backend" : Get data
-    "Backend" ->> "Client"  : Return data
+alt Successful case
+"Client" ->> "Backend"  : access_token
+"Backend" ->> "Backend" : Validate token
+"Backend" ->> "Backend" : Check user in internal backend database
+"Backend" ->> "Backend" : Get data
+"Backend" ->> "Client"  : Return data
 
-    else Token is expired
-    "Client" ->> "Backend"  : access_token
-    "Backend" ->> "Backend" : Validate token
-    "Backend" --x "Client"  : 401 Unauthorized
+else Token is expired
+"Client" ->> "Backend"  : access_token
+"Backend" ->> "Backend" : Validate token
+"Backend" --x "Client"  : 401 Unauthorized
 
-    else User is blocked
-    "Client" ->> "Backend"  : access_token
-    "Backend" ->> "Backend" : Validate token
-    "Backend" ->> "Backend" : Check user in internal backend database
-    "Backend" --x "Client"  : 401 Unauthorized
+else User is blocked
+"Client" ->> "Backend"  : access_token
+"Backend" ->> "Backend" : Validate token
+"Backend" ->> "Backend" : Check user in internal backend database
+"Backend" --x "Client"  : 401 Unauthorized
 
-    else User is deleted
-    "Client" ->> "Backend"  : access_token
-    "Backend" ->> "Backend" : Validate token
-    "Backend" ->> "Backend" : Check user in internal backend database
-    "Backend" --x "Client"  : 404 Not found
-    end
+else User is deleted
+"Client" ->> "Backend"  : access_token
+"Backend" ->> "Backend" : Validate token
+"Backend" ->> "Backend" : Check user in internal backend database
+"Backend" --x "Client"  : 404 Not found
+end
 
-    deactivate "LDAP"
-    deactivate "Client"
-    ```
+deactivate "LDAP"
+deactivate "Client"
+```
 
 ## Basic configuration { #ldap-basic-configuration }
 

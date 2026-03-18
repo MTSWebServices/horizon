@@ -26,8 +26,8 @@ sys.path.insert(0, os.fspath(PROJECT_ROOT_DIR))
 # -- Project information -----------------------------------------------------
 
 project = "horizon"
-copyright = "2023-2025 MTS PJSC"
-author = "DataOps.ETL"
+copyright = "2023-present MTS PJSC"
+author = "MWS Data Bridge"
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
@@ -42,29 +42,6 @@ version = ver.base_version
 release = ver.public
 
 # -- General configuration ---------------------------------------------------
-
-<<<<<<< HEAD:mddocs/conf.py
-=======
-# Add any Sphinx extension module names here, as strings. They can be
-# extensions coming with Sphinx (named 'sphinx.ext.*') or your custom
-# ones.
-extensions = [
-    "numpydoc",
-    "sphinx_copybutton",
-    "sphinx.ext.doctest",
-    "sphinx.ext.autodoc",
-    "sphinx.ext.autosummary",
-    "sphinx.ext.intersphinx",
-    #  "sphinxcontrib.autodoc_pydantic",
-    "sphinxcontrib.towncrier",  # provides `towncrier-draft-entries` directive
-    "sphinx_issues",
-    "sphinx_design",  # provides `dropdown` directive
-    "sphinxcontrib.plantuml",
-    "sphinx_favicon",
-    "sphinxarg.ext",
-    "sphinx_last_updated_by_git",
-]
->>>>>>> c06ec6ee0ffdd1e6413bbcde037ae99f24296590:mddocs/en/conf.py
 
 swagger = [
     {

@@ -108,9 +108,8 @@ Available *extras* are:
 - `postgres` - requirements required to use Postgres as backend data storage.
 - `ldap` - requirements used by [LDAP Auth provider][backend-auth-ldap].
 
-#### NOTE
-
-For **macOS** users, an additional step is required. [You need to install the “bonsai” Python library from source code](https://bonsai.readthedocs.io/en/latest/install.html#install-from-source-on-macos). This installation is necessary to work with LDAP.
+!!! note
+    For **macOS** users, an additional step is required. [You need to install the “bonsai” Python library from source code](https://bonsai.readthedocs.io/en/latest/install.html#install-from-source-on-macos). This installation is necessary to work with LDAP.
 
 ### Run database
 
@@ -137,9 +136,8 @@ $ python -m horizon.backend.db.migrations upgrade head
 This is a thin wrapper around [alembic](https://alembic.sqlalchemy.org/en/latest/tutorial.html#running-our-first-migration) cli,
 options and commands are just the same.
 
-#### NOTE run migrations
-
-This command should be executed after each upgrade to new Horizon version.
+!!! note "run migrations"
+    This command should be executed after each upgrade to new Horizon version.
 
 ### Run backend
 
