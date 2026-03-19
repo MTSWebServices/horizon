@@ -113,15 +113,9 @@ participant "Client"
 participant "Backend"
 participant "LDAP"
 
-<<<<<<< HEAD
 "Backend" ->  "LDAP" : bind(lookup.username, lookup.password) 
 activate "LDAP"
 Note right of "LDAP" : Open connection \npool for\nsearch queries\n(optional, recommended)
-=======
-    "Backend" ->  "LDAP" : bind(lookup.username, lookup.password)
-    activate "LDAP"
-    Note right of "LDAP" : Open connection \npool for\nsearch queries\n(optional, recommended)
->>>>>>> 813adee89e7976534de25710e354a85d03cabc4a
 
 activate "Client"
 alt Successful case
