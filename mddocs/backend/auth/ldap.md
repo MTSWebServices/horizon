@@ -113,7 +113,7 @@ participant "Client"
 participant "Backend"
 participant "LDAP"
 
-"Backend" ->  "LDAP" : bind(lookup.username, lookup.password) 
+"Backend" ->  "LDAP" : bind(lookup.username, lookup.password)
 activate "LDAP"
 Note right of "LDAP" : Open connection \npool for\nsearch queries\n(optional, recommended)
 
