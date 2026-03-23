@@ -12,9 +12,7 @@ Backend provides 2 endpoints with Prometheus compatible metrics:
 
 ## Example stats
 
-```
- !include(../../_static/stats.prom)
-```
+!include(../../_static/stats.prom)
 
 These endpoints are enabled and configured using settings below:
 

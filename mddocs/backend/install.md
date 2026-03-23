@@ -14,71 +14,11 @@ Options can be set via `.env` file or `environment` section in `docker-compose.y
 
 ### `docker-compose.yml`
 
-```default
-services:
-  db:
-    image: postgres:17
-    restart: unless-stopped
-    environment:
-      POSTGRES_DB: horizon
-      POSTGRES_USER: horizon
-      POSTGRES_PASSWORD: 123UsedForTestOnly
-      POSTGRES_INITDB_ARGS: --encoding=UTF-8 --lc-collate=C --lc-ctype=C
-    ports:
-      - 5432:5432
-    volumes:
-      - postgres_data:/var/lib/postgresql/data
-    healthcheck:
-      test: pg_isready
-      start_period: 5s
-      interval: 30s
-      timeout: 5s
-      retries: 3
-
-  backend:
-    image: mtsrus/horizon-backend:${VERSION:-latest}
-    restart: unless-stopped
-    env_file: .env.docker
-    environment:
-      # list here usernames which should be assigned SUPERADMIN role on application start
-      HORIZON__ENTRYPOINT__ADMIN_USERS: admin
-      # PROMETHEUS_MULTIPROC_DIR is required for multiple workers, see:
-      # https://prometheus.github.io/client_python/multiprocess/
-      PROMETHEUS_MULTIPROC_DIR: /tmp/prometheus-metrics
-    # tmpfs dir is cleaned up each container restart
-    tmpfs:
-      - /tmp/prometheus-metrics:mode=1777
-    ports:
-      - 8000:8000
-    depends_on:
-      db:
-        condition: service_healthy
-
-volumes:
-  postgres_data:
-```
+!include(../../docker-compose.yml)
 
 ### `.env.docker`
 
-```default
-# See Backend -> Configuration documentation
-HORIZON__DATABASE__URL=postgresql+asyncpg://horizon:123UsedForTestOnly@db:5432/horizon
-HORIZON__AUTH__PROVIDER=horizon.backend.providers.auth.dummy.DummyAuthProvider
-HORIZON__AUTH__ACCESS_TOKEN__SECRET_KEY=234UsedForTestOnly
-HORIZON__AUTH__LDAP__URL=ldap://ldap:389
-HORIZON__AUTH__LDAP__BASE_DN=ou=people,dc=ldapmock,dc=local
-HORIZON__AUTH__LDAP__LOOKUP__CREDENTIALS__USER=uid=adminuser1,ou=people,dc=ldapmock,dc=local
-HORIZON__AUTH__LDAP__LOOKUP__CREDENTIALS__PASSWORD=password
-HORIZON__SERVER__DEBUG=true
-HORIZON__SERVER__LOGGING__PRESET=colored
-HORIZON_TEST_SERVER_URL=http://backend:8000
-HORIZON__SERVER__CORS__ENABLED=True
-HORIZON__SERVER__CORS__ALLOW_ORIGINS=["http://localhost:3000"]
-HORIZON__SERVER__CORS__ALLOW_CREDENTIALS=True
-HORIZON__SERVER__CORS__ALLOW_METHODS=["*"]
-HORIZON__SERVER__CORS__ALLOW_HEADERS=["*"]
-HORIZON__SERVER__CORS__EXPOSE_HEADERS=["X-Request-ID","Location","Access-Control-Allow-Credentials"]
-```
+!include(../../env.docker)
 
 After container is started and ready, open [http://localhost:8000/docs](http://localhost:8000/docs).
 
