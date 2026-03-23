@@ -35,8 +35,6 @@ These exception classes are used in client implementations.
 
 ## Entity
 
-### *class* horizon.commons.exceptions.entity.EntityNotFoundError(entity_type: str, field: str, value: Any)
-
 ::: horizon.commons.exceptions.entity.EntityNotFoundError
     options:
         members:
