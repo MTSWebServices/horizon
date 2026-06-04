@@ -120,7 +120,6 @@ dev = [
   "types-requests~=2.33.0",
 ]
 docs = [
-  "setuptools-git-versioning~=3.1.0",
   "autodoc-pydantic~=2.2.0",
   "numpydoc~=1.10.0",
   # sphinx-design doesn't support sphinx 9
