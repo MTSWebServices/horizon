@@ -110,17 +110,17 @@ test = [
   "responses>=0.23.2",
 ]
 dev = [
-  "prek~=0.3.13",
+  "prek~=0.4.4",
   "mypy~=2.1.0",
-  "ruff~=0.15.12",
-  "sqlalchemy[mypy]~=2.0.49",
+  "ruff~=0.15.15",
+  "sqlalchemy[mypy]~=2.0.50",
   "types-pyyaml~=6.0.12",
   "types-authlib~=1.6.6",
   "types-passlib~=1.7.7",
   "types-requests~=2.33.0",
 ]
 docs = [
-  "setuptools-git-versioning~=3.0.1",
+  "setuptools-git-versioning~=3.1.0",
   "autodoc-pydantic~=2.2.0",
   "numpydoc~=1.10.0",
   # sphinx-design doesn't support sphinx 9
