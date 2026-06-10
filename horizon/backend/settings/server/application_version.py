@@ -10,10 +10,10 @@ class ApplicationVersionSettings(BaseModel):
     Examples
     --------
 
-    .. code-block:: bash
-
-        HORIZON__SERVER__APPLICATION_VERSION__ENABLED=True
-        HORIZON__SERVER__APPLICATION_VERSION__HEADER_NAME=X-Application-Version
+    ```bash
+    HORIZON__SERVER__APPLICATION_VERSION__ENABLED=True
+    HORIZON__SERVER__APPLICATION_VERSION__HEADER_NAME=X-Application-Version
+    ```
     """
 
     enabled: bool = Field(default=True, description="Set to ``True`` to enable middleware")

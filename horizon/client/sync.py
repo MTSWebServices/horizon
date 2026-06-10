@@ -45,27 +45,27 @@ class RetryConfig(BaseModel):
     """
     Configuration for request retries in case of network errors or specific status codes.
     If provided, it customizes the retry behavior for requests made by the client.
-    `urllib3 retry documentation <https://urllib3.readthedocs.io/en/stable/reference/urllib3.util.html>`_.
+    [urllib3 retry documentation](https://urllib3.readthedocs.io/en/stable/reference/urllib3.util.html).
 
     Parameters
     ----------
-    total : int, default: ``3``
+    total : int, default: `3`
         The maximum number of retry attempts to make.
 
-    backoff_factor : float, default: ``0.1``
+    backoff_factor : float, default: `0.1`
         A backoff factor to apply between attempts after the second try.
 
-    status_forcelist : list[int], default: ``[502, 503, 504]``
+    status_forcelist : list[int], default: `[502, 503, 504]`
         A set of HTTP status codes that we should force a retry on.
 
-    backoff_jitter : float, default: ``None``
+    backoff_jitter : float, default: `None`
         A random jitter amount (between 0 and 1) to add to the backoff delay.
         Helps to avoid "thundering herd" issues by randomizing the delay
         times between retries.
 
-        .. note::
+        !!! note
 
-            Requires ``urllib>2.0``
+            Requires `urllib>2.0`
     """
 
     total: int = 3
@@ -78,14 +78,14 @@ class TimeoutConfig(BaseModel):
     """
     Configuration for connection and request timeouts.
     If provided, it customizes the timeout behavior for requests made by the client.
-    `requests timeout documentation <https://requests.readthedocs.io/en/latest/user/advanced/#timeouts>`_.
+    [requests timeout documentation](https://requests.readthedocs.io/en/latest/user/advanced/#timeouts).
 
     Parameters
     ----------
-    connection_timeout : float, default: ``3``
+    connection_timeout : float, default: `3`
         The maximum number of seconds to wait for a connection to the server.
 
-    request_timeout : float, default: ``5``
+    request_timeout : float, default: `5`
         The maximum number of seconds to wait for a response from the server.
     """
 
@@ -94,25 +94,25 @@ class TimeoutConfig(BaseModel):
 
 
 class HorizonClientSync(BaseClient[OAuth2Session]):
-    """Sync Horizon client implementation, based on ``authlib`` and ``requests``.
+    """Sync Horizon client implementation, based on `authlib` and `requests`.
 
     Parameters
     ----------
 
     base_url : str
-        URL of Horizon API, e.g. ``https://some.domain.com/api``
+        URL of Horizon API, e.g. `https://some.domain.com/api`
 
-    auth : :obj:`BaseAuth <horizon.client.auth.base.BaseAuth>`
+    auth : [BaseAuth][horizon.client.auth.base.BaseAuth]
         Authentication class
 
-    retry : :obj:`RetryConfig <horizon.client.sync.RetryConfig>`
+    retry : [RetryConfig][horizon.client.sync.RetryConfig]
         Configuration for request retries.
 
-    timeout : :obj:`TimeoutConfig <horizon.client.sync.TimeoutConfig>`
+    timeout : [TimeoutConfig][horizon.client.sync.TimeoutConfig]
         Configuration for request timeouts.
 
-    session : :obj:`authlib.integrations.requests_client.OAuth2Session`
-        Custom session object. Inherited from :obj:`requests.Session`, so you can pass custom
+    session : [authlib.integrations.requests_client.OAuth2Session][]
+        Custom session object. Inherited from [requests.Session][], so you can pass custom
         session options.
 
     Examples
@@ -120,15 +120,18 @@ class HorizonClientSync(BaseClient[OAuth2Session]):
 
     Using default parameters:
 
+    ```python
     >>> from horizon.client.auth import LoginPassword
     >>> from horizon.client.sync import HorizonClientSync
     >>> client = HorizonClientSync(
     ...     base_url="https://some.domain.com/api",
     ...     auth=LoginPassword(login="me", password="12345"),
     ... )
+    ```
 
     Customize retry and timeout:
 
+    ```python
     >>> from horizon.client.auth import LoginPassword
     >>> from horizon.client.sync import HorizonClientSync, RetryConfig, TimeoutConfig
     >>> client = HorizonClientSync(
@@ -137,6 +140,7 @@ class HorizonClientSync(BaseClient[OAuth2Session]):
     ...     retry=RetryConfig(total=2, backoff_factor=10, status_forcelist=[500, 503]),
     ...     timeout=TimeoutConfig(request_timeout=3.5),
     ... )
+    ```
     """
 
     retry: RetryConfig = Field(default_factory=RetryConfig)
@@ -147,13 +151,15 @@ class HorizonClientSync(BaseClient[OAuth2Session]):
 
         Raises
         ------
-        :obj:`horizon.commons.exceptions.AuthorizationError`
+        [horizon.commons.exceptions.AuthorizationError][]
             Authorization failed
 
         Examples
         --------
 
+        ```python
         >>> client.authorize()
+        ```
         """
 
         session: OAuth2Session = cast("OAuth2Session", self.session)
@@ -173,21 +179,25 @@ class HorizonClientSync(BaseClient[OAuth2Session]):
         Examples
         --------
 
+        ```python
         >>> client.close()
+        ```
         """
         session: Session = cast("Session", self.session)
         session.close()
 
     def __enter__(self):
-        """Enter session as context manager. Similar to :obj:`requests.Session` behavior.
+        """Enter session as context manager. Similar to [requests.Session][] behavior.
 
         Exiting context manager closes opened session.
 
         Examples
         --------
 
+        ```python
         >>> with client:
         ...    ...
+        ```
         """
         return self
 
@@ -200,8 +210,10 @@ class HorizonClientSync(BaseClient[OAuth2Session]):
         Examples
         --------
 
+        ```python
         >>> client.ping()
         PingResponse(status="ok")
+        ```
         """
         return self._request(  # type: ignore[return-value]
             "GET",
@@ -215,18 +227,22 @@ class HorizonClientSync(BaseClient[OAuth2Session]):
         Examples
         --------
 
+        ```python
         >>> client.whoami()
         UserResponseV1(
             id=1,
             username="me",
         )
+        ```
 
+        ```python
         >>> client.whoami()  # for a superadmin user:
         UserResponseV1WithAdmin(
             id=1,
             username="admin",
             is_admin=True,
         )
+        ```
 
         """
         return self._request(  # type: ignore[return-value]
@@ -243,12 +259,12 @@ class HorizonClientSync(BaseClient[OAuth2Session]):
 
         Parameters
         ----------
-        query : :obj:`NamespacePaginateQueryV1 <horizon.commons.schemas.v1.namespace.NamespacePaginateQueryV1>`
+        query : [NamespacePaginateQueryV1][horizon.commons.schemas.v1.namespace.NamespacePaginateQueryV1]
             Namespace query parameters
 
         Returns
         -------
-        :obj:`PageResponseV1 <horizon.commons.schemas.v1.pagination.PageResponseV1>` of :obj:`NamespaceResponseV1 <horizon.commons.schemas.v1.namespace.NamespaceResponseV1>`
+        [PageResponseV1][horizon.commons.schemas.v1.pagination.PageResponseV1] of [NamespaceResponseV1][horizon.commons.schemas.v1.namespace.NamespaceResponseV1]
             List of namespaces, limited and filtered by query parameters.
 
         Examples
@@ -256,6 +272,7 @@ class HorizonClientSync(BaseClient[OAuth2Session]):
 
         Get all namespaces:
 
+        ```python
         >>> client.paginate_namespaces()
         PageResponseV1[NamespaceResponseV1](
             meta=PageMetaResponseV1(
@@ -270,9 +287,11 @@ class HorizonClientSync(BaseClient[OAuth2Session]):
             ),
             items=[NamespaceResponseV1(...), ...],
         )
+        ```
 
         Get all namespaces starting with a page number and page size:
 
+        ```python
         >>> from horizon.commons.schemas.v1 import NamespacePaginateQueryV1
         >>> namespace_query = NamespacePaginateQueryV1(page=2, page_size=20)
         >>> client.paginate_namespaces(query=namespace_query)
@@ -289,9 +308,11 @@ class HorizonClientSync(BaseClient[OAuth2Session]):
             ),
             items=[NamespaceResponseV1(...), ...],
         )
+        ```
 
         Search for namespace with specific name:
 
+        ```python
         >>> from horizon.commons.schemas.v1 import NamespacePaginateQueryV1
         >>> namespace_query = NamespacePaginateQueryV1(name="my_namespace")
         >>> client.paginate_namespaces(query=namespace_query)
@@ -310,6 +331,7 @@ class HorizonClientSync(BaseClient[OAuth2Session]):
                 NamespaceResponseV1(name="my_namespace", ...),
             ],
         )
+        ```
         """  # noqa: E501
         query = query or NamespacePaginateQueryV1()
         return self._request(  # type: ignore[return-value]
@@ -329,23 +351,25 @@ class HorizonClientSync(BaseClient[OAuth2Session]):
 
         Returns
         -------
-        :obj:`NamespaceResponseV1 <horizon.commons.schemas.v1.namespace.NamespaceResponseV1>`
+        [NamespaceResponseV1][horizon.commons.schemas.v1.namespace.NamespaceResponseV1]
             Namespace
 
         Raises
         ------
-        :obj:`EntityNotFoundError <horizon.commons.exceptions.entity.EntityNotFoundError>`
+        [EntityNotFoundError][horizon.commons.exceptions.entity.EntityNotFoundError]
             Namespace not found
 
         Examples
         --------
 
+        ```python
         >>> client.get_namespace(namespace_id=123)
         NamespaceResponseV1(
             id=123,
             name="my_namespace",
             ...
         )
+        ```
         """
         return self._request(  # type: ignore[return-value]
             "GET",
@@ -358,22 +382,23 @@ class HorizonClientSync(BaseClient[OAuth2Session]):
 
         Parameters
         ----------
-        namespace : :obj:`NamespaceCreateRequestV1 <horizon.commons.schemas.v1.namespace.NamespaceCreateRequestV1>`
+        namespace : [NamespaceCreateRequestV1][horizon.commons.schemas.v1.namespace.NamespaceCreateRequestV1]
             Namespace to create
 
         Returns
         -------
-        :obj:`NamespaceResponseV1 <horizon.commons.schemas.v1.namespace.NamespaceResponseV1>`
+        [NamespaceResponseV1][horizon.commons.schemas.v1.namespace.NamespaceResponseV1]
             Created namespace
 
         Raises
         ------
-        :obj:`EntityAlreadyExistsError <horizon.commons.exceptions.entity.EntityAlreadyExistsError>`
+        [EntityAlreadyExistsError][horizon.commons.exceptions.entity.EntityAlreadyExistsError]
             Namespace with the same name already exists
 
         Examples
         --------
 
+        ```python
         >>> from horizon.commons.schemas.v1 import NamespaceCreateRequestV1
         >>> to_create = NamespaceCreateRequestV1(name="my_namespace")
         >>> client.create_namespace(data=to_create)
@@ -382,6 +407,7 @@ class HorizonClientSync(BaseClient[OAuth2Session]):
             name="my_namespace",
             ...
         )
+        ```
         """
         return self._request(  # type: ignore[return-value]
             "POST",
@@ -398,26 +424,27 @@ class HorizonClientSync(BaseClient[OAuth2Session]):
         namespace_id : int
             Namespace name to update
 
-        changes : :obj:`NamespaceUpdateRequestV1 <horizon.commons.schemas.v1.namespace.NamespaceUpdateRequestV1>`
+        changes : [NamespaceUpdateRequestV1][horizon.commons.schemas.v1.namespace.NamespaceUpdateRequestV1]
             Changes to namespace object
 
         Returns
         -------
-        :obj:`NamespaceResponseV1 <horizon.commons.schemas.v1.namespace.NamespaceResponseV1>`
+        [NamespaceResponseV1][horizon.commons.schemas.v1.namespace.NamespaceResponseV1]
             Updated namespace
 
         Raises
         ------
-        :obj:`EntityNotFoundError <horizon.commons.exceptions.entity.EntityNotFoundError>`
+        [EntityNotFoundError][horizon.commons.exceptions.entity.EntityNotFoundError]
             Namespace not found
-        :obj:`EntityAlreadyExistsError <horizon.commons.exceptions.entity.EntityAlreadyExistsError>`
+        [EntityAlreadyExistsError][horizon.commons.exceptions.entity.EntityAlreadyExistsError]
             Namespace with the same name already exists
-        :obj:`PermissionDeniedError <horizon.commons.exceptions.permission.PermissionDeniedError>`
+        [PermissionDeniedError][horizon.commons.exceptions.permission.PermissionDeniedError]
             Permission denied for performing the requested action.
 
         Examples
         --------
 
+        ```python
         >>> from horizon.commons.schemas.v1 import NamespaceUpdateRequestV1
         >>> to_update = NamespaceUpdateRequestV1(name="new_namespace_name")
         >>> client.update_namespace(namespace_id=123, changes=to_update)
@@ -426,6 +453,7 @@ class HorizonClientSync(BaseClient[OAuth2Session]):
             name="new_namespace_name",
             ...
         )
+        ```
         """
         return self._request(  # type: ignore[return-value]
             "PATCH",
@@ -444,15 +472,17 @@ class HorizonClientSync(BaseClient[OAuth2Session]):
 
         Raises
         ------
-        :obj:`EntityNotFoundError <horizon.commons.exceptions.entity.EntityNotFoundError>`
+        [EntityNotFoundError][horizon.commons.exceptions.entity.EntityNotFoundError]
             Namespace not found
-        :obj:`PermissionDeniedError <horizon.commons.exceptions.permission.PermissionDeniedError>`
+        [PermissionDeniedError][horizon.commons.exceptions.permission.PermissionDeniedError]
             Permission denied for performing the requested action.
 
         Examples
         --------
 
+        ```python
         >>> client.delete_namespace(namespace_id=123)
+        ```
         """
         self._request(
             "DELETE",
@@ -467,12 +497,12 @@ class HorizonClientSync(BaseClient[OAuth2Session]):
 
         Parameters
         ----------
-        query : :obj:`NamespaceHistoryPaginateQueryV1 <horizon.commons.schemas.v1.namespace_history.NamespaceHistoryPaginateQueryV1>`
+        query : [NamespaceHistoryPaginateQueryV1][horizon.commons.schemas.v1.namespace_history.NamespaceHistoryPaginateQueryV1]
             Namespace history query parameters
 
         Returns
         -------
-        :obj:`PageResponseV1 <horizon.commons.schemas.v1.pagination.PageResponseV1>` of :obj:`NamespaceHistoryResponseV1 <horizon.commons.schemas.v1.namespace_history.NamespaceHistoryResponseV1>`
+        [PageResponseV1][horizon.commons.schemas.v1.pagination.PageResponseV1] of [NamespaceHistoryResponseV1][horizon.commons.schemas.v1.namespace_history.NamespaceHistoryResponseV1]
             List of namespace history items, limited and filtered by query parameters.
 
         Examples
@@ -480,6 +510,7 @@ class HorizonClientSync(BaseClient[OAuth2Session]):
 
         Get all changes of specific namespace:
 
+        ```python
         >>> from horizon.commons.schemas.v1 import NamespacePaginateQueryV1
         >>> namespace_query = NamespacePaginateQueryV1(namespace_id=234)
         >>> client.paginate_namespace(query=namespace_query)
@@ -496,9 +527,11 @@ class HorizonClientSync(BaseClient[OAuth2Session]):
             ),
             items=[NamespaceHistoryResponseV1(namespace_id=234, ...), ...],
         )
+        ```
 
         Get all changes of specific namespace starting with a page number and page size:
 
+        ```python
         >>> from horizon.commons.schemas.v1 import NamespacePaginateQueryV1
         >>> namespace_query = NamespacePaginateQueryV1(namespace_id=234, page=2, page_size=20)
         >>> client.paginate_namespace(query=namespace_query)
@@ -515,6 +548,7 @@ class HorizonClientSync(BaseClient[OAuth2Session]):
             ),
             items=[NamespaceHistoryResponseV1(namespace_id=234, ...), ...],
         )
+        ```
         """  # noqa: E501
         return self._request(  # type: ignore[return-value]
             "GET",
@@ -531,12 +565,12 @@ class HorizonClientSync(BaseClient[OAuth2Session]):
 
         Parameters
         ----------
-        query : :obj:`HWMPaginateQueryV1 <horizon.commons.schemas.v1.hwm.HWMPaginateQueryV1>`
+        query : [HWMPaginateQueryV1][horizon.commons.schemas.v1.hwm.HWMPaginateQueryV1]
             HWM query parameters
 
         Returns
         -------
-        :obj:`PageResponseV1 <horizon.commons.schemas.v1.pagination.PageResponseV1>` of :obj:`HWMResponseV1 <horizon.commons.schemas.v1.hwm.HWMResponseV1>`
+        [PageResponseV1][horizon.commons.schemas.v1.pagination.PageResponseV1] of [HWMResponseV1][horizon.commons.schemas.v1.hwm.HWMResponseV1]
             List of HWM, limited and filtered by query parameters.
 
         Examples
@@ -544,6 +578,7 @@ class HorizonClientSync(BaseClient[OAuth2Session]):
 
         Get all HWM in namespace with specific id:
 
+        ```python
         >>> from horizon.commons.schemas.v1 import HWMPaginateQueryV1
         >>> hwm_query = HWMPaginateQueryV1(namespace_id=123)
         >>> client.paginate_hwm(query=hwm_query)
@@ -560,9 +595,11 @@ class HorizonClientSync(BaseClient[OAuth2Session]):
             ),
             items=[HWMResponseV1(namespace_id=123, ...), ...],
         )
+        ```
 
         Get all HWM in namespace starting with a page number and page size:
 
+        ```python
         >>> from horizon.commons.schemas.v1 import HWMPaginateQueryV1
         >>> hwm_query = HWMPaginateQueryV1(namespace_id=123, page=2, page_size=20)
         >>> client.paginate_hwm(query=hwm_query)
@@ -579,9 +616,11 @@ class HorizonClientSync(BaseClient[OAuth2Session]):
             ),
             items=[HWMResponseV1(namespace_id=123, ...), ...],
         )
+        ```
 
         Search for HWM with specific namespace and name:
 
+        ```python
         >>> from horizon.commons.schemas.v1 import HWMPaginateQueryV1
         >>> hwm_query = HWMPaginateQueryV1(namespace_id=123, name="my_hwm")
         >>> client.paginate_hwm(query=hwm_query)
@@ -600,6 +639,7 @@ class HorizonClientSync(BaseClient[OAuth2Session]):
                 HWMResponseV1(namespace_id=123, name="my_hwm", ...),
             ],
         )
+        ```
         """  # noqa: E501
         return self._request(  # type: ignore[return-value]
             "GET",
@@ -618,17 +658,18 @@ class HorizonClientSync(BaseClient[OAuth2Session]):
 
         Returns
         -------
-        :obj:`HWMResponseV1 <horizon.commons.schemas.v1.hwm.HWMResponseV1>`
+        [HWMResponseV1][horizon.commons.schemas.v1.hwm.HWMResponseV1]
             HWM
 
         Raises
         ------
-        :obj:`EntityNotFoundError <horizon.commons.exceptions.entity.EntityNotFoundError>`
+        [EntityNotFoundError][horizon.commons.exceptions.entity.EntityNotFoundError]
             HWM not found
 
         Examples
         --------
 
+        ```python
         >>> client.get_hwm(hwm_id=234)
         HWMResponseV1(
             id=234,
@@ -636,6 +677,7 @@ class HorizonClientSync(BaseClient[OAuth2Session]):
             name="my_hwm",
             ...
         )
+        ```
         """
         return self._request(  # type: ignore[return-value]
             "GET",
@@ -648,26 +690,27 @@ class HorizonClientSync(BaseClient[OAuth2Session]):
 
         Parameters
         ----------
-        data : :obj:`HWMCreateRequestV1 <horizon.commons.schemas.v1.hwm.HWMCreateRequestV1>`
+        data : [HWMCreateRequestV1][horizon.commons.schemas.v1.hwm.HWMCreateRequestV1]
             HWM data
 
         Returns
         -------
-        :obj:`HWMResponseV1 <horizon.commons.schemas.v1.hwm.HWMResponseV1>`
+        [HWMResponseV1][horizon.commons.schemas.v1.hwm.HWMResponseV1]
             Created HWM
 
         Raises
         ------
-        :obj:`EntityNotFoundError <horizon.commons.exceptions.entity.EntityNotFoundError>`
+        [EntityNotFoundError][horizon.commons.exceptions.entity.EntityNotFoundError]
             Namespace not found
-        :obj:`EntityAlreadyExistsError <horizon.commons.exceptions.entity.EntityAlreadyExistsError>`
+        [EntityAlreadyExistsError][horizon.commons.exceptions.entity.EntityAlreadyExistsError]
             HWM with the same name already exists
-        :obj:`PermissionDeniedError <horizon.commons.exceptions.permission.PermissionDeniedError>`
+        [PermissionDeniedError][horizon.commons.exceptions.permission.PermissionDeniedError]
             Permission denied for performing the requested action.
 
         Examples
         --------
 
+        ```python
         >>> from horizon.commons.schemas.v1 import HWMCreateRequestV1
         >>> to_create = HWMCreateRequestV1(
         ...     namespace_id=123,
@@ -684,6 +727,7 @@ class HorizonClientSync(BaseClient[OAuth2Session]):
             value=5678,
             ...,
         )
+        ```
         """
         return self._request(  # type: ignore[return-value]
             "POST",
@@ -699,26 +743,27 @@ class HorizonClientSync(BaseClient[OAuth2Session]):
         ----------
         hwm_id : int
             HWM id to update
-        changes : :obj:`HWMUpdateRequestV1 <horizon.commons.schemas.v1.hwm.HWMUpdateRequestV1>`
+        changes : [HWMUpdateRequestV1][horizon.commons.schemas.v1.hwm.HWMUpdateRequestV1]
             HWM changes
 
         Returns
         -------
-        :obj:`HWMResponseV1 <horizon.commons.schemas.v1.hwm.HWMResponseV1>`
+        [HWMResponseV1][horizon.commons.schemas.v1.hwm.HWMResponseV1]
             Updated HWM
 
         Raises
         ------
-        :obj:`EntityNotFoundError <horizon.commons.exceptions.entity.EntityNotFoundError>`
+        [EntityNotFoundError][horizon.commons.exceptions.entity.EntityNotFoundError]
             HWM not found
-        :obj:`EntityAlreadyExistsError <horizon.commons.exceptions.entity.EntityAlreadyExistsError>`
+        [EntityAlreadyExistsError][horizon.commons.exceptions.entity.EntityAlreadyExistsError]
             HWM with the same name already exists
-        :obj:`PermissionDeniedError <horizon.commons.exceptions.permission.PermissionDeniedError>`
+        [PermissionDeniedError][horizon.commons.exceptions.permission.PermissionDeniedError]
             Permission denied for performing the requested action.
 
         Examples
         --------
 
+        ```python
         >>> from horizon.commons.schemas.v1 import HWMUpdateRequestV1
         >>> to_update = HWMUpdateRequestV1(type="column_int", value=5678)
         >>> client.update_hwm(hwm_id=234, changes=to_update)
@@ -730,6 +775,7 @@ class HorizonClientSync(BaseClient[OAuth2Session]):
             value=5678,
             ...,
         )
+        ```
         """
         return self._request(  # type: ignore[return-value]
             "PATCH",
@@ -748,15 +794,17 @@ class HorizonClientSync(BaseClient[OAuth2Session]):
 
         Raises
         ------
-        :obj:`EntityNotFoundError <horizon.commons.exceptions.entity.EntityNotFoundError>`
+        [EntityNotFoundError][horizon.commons.exceptions.entity.EntityNotFoundError]
             HWM not found
-        :obj:`PermissionDeniedError <horizon.commons.exceptions.permission.PermissionDeniedError>`
+        [PermissionDeniedError][horizon.commons.exceptions.permission.PermissionDeniedError]
             Permission denied for performing the requested action.
 
         Examples
         --------
 
+        ```python
         >>> client.delete_hwm(hwm_id=234)
+        ```
         """
         self._request(
             "DELETE",
@@ -766,29 +814,30 @@ class HorizonClientSync(BaseClient[OAuth2Session]):
     def bulk_copy_hwm(self, data: HWMBulkCopyRequestV1) -> HWMListResponseV1:
         """Copy HWMs from one namespace to another.
 
-        .. note::
+        !!! note
 
             Method ignores HWMs that are not related to provided source namespace, or does not exist.
 
         Parameters
         ----------
-        data : :obj:`HWMBulkCopyRequestV1 <horizon.commons.schemas.v1.hwm.HWMBulkCopyRequestV1>`
+        data : [HWMBulkCopyRequestV1][horizon.commons.schemas.v1.hwm.HWMBulkCopyRequestV1]
             HWM copy data
 
         Returns
         -------
-        :obj:`HWMListResponseV1 <horizon.commons.schemas.v1.hwm.HWMListResponseV1>`
+        [HWMListResponseV1][horizon.commons.schemas.v1.hwm.HWMListResponseV1]
             Copied HWMs
 
         Raises
         ------
-        :obj:`EntityNotFoundError <horizon.commons.exceptions.entity.EntityNotFoundError>`
+        [EntityNotFoundError][horizon.commons.exceptions.entity.EntityNotFoundError]
             Raised if any of the specified namespaces not found.
-        :obj:`PermissionDeniedError <horizon.commons.exceptions.permission.PermissionDeniedError>`
+        [PermissionDeniedError][horizon.commons.exceptions.permission.PermissionDeniedError]
             Permission denied for performing the requested action.
 
         Examples
         --------
+        ```python
         >>> from horizon.commons.schemas.v1 import HWMBulkCopyRequestV1
         >>> copy_data = HWMBulkCopyRequestV1(
         ...     source_namespace_id=123,
@@ -798,6 +847,7 @@ class HorizonClientSync(BaseClient[OAuth2Session]):
         ... )
         >>> copied_hwms = client.bulk_copy_hwm(data=copy_data)
         [HWMResponseV1(...), HWMResponseV1(...), HWMResponseV1(...)]
+        ```
         """
         return self._request(  # type: ignore[return-value]
             "POST",
@@ -809,7 +859,7 @@ class HorizonClientSync(BaseClient[OAuth2Session]):
     def bulk_delete_hwm(self, namespace_id: int, hwm_ids: List[int]) -> None:
         """Bulk delete HWMs.
 
-        .. note::
+        !!! note
 
             Method ignores HWMs that are not related to provided namespace.
 
@@ -822,16 +872,18 @@ class HorizonClientSync(BaseClient[OAuth2Session]):
 
         Raises
         ------
-        :obj:`PermissionDeniedError <horizon.commons.exceptions.permission.PermissionDeniedError>`
+        [PermissionDeniedError][horizon.commons.exceptions.permission.PermissionDeniedError]
             Permission denied for performing the requested action.
 
         Examples
         --------
 
+        ```python
         >>> client.bulk_delete_hwm(
         ...     namespace_id=123,
         ...     hwm_ids=[234, 345, 456]
         ... )
+        ```
         """
 
         data = HWMBulkDeleteRequestV1(namespace_id=namespace_id, hwm_ids=hwm_ids)
@@ -851,20 +903,22 @@ class HorizonClientSync(BaseClient[OAuth2Session]):
 
         Returns
         -------
-        :obj:`PermissionsResponseV1 <horizon.commons.schemas.v1.permission.PermissionsResponseV1>`
+        [PermissionsResponseV1][horizon.commons.schemas.v1.permission.PermissionsResponseV1]
             The permissions of the namespace.
 
         Raises
         ------
-        :obj:`EntityNotFoundError <horizon.commons.exceptions.entity.EntityNotFoundError>`
+        [EntityNotFoundError][horizon.commons.exceptions.entity.EntityNotFoundError]
             Namespace or provided user not found.
-        :obj:`PermissionDeniedError <horizon.commons.exceptions.permission.PermissionDeniedError>`
+        [PermissionDeniedError][horizon.commons.exceptions.permission.PermissionDeniedError]
             Permission denied for performing the requested action.
 
         Examples
         --------
 
+        ```python
         >>> client.get_namespace_permissions(namespace_id=234)
+        ```
         """
 
         return self._request(  # type: ignore[return-value]
@@ -884,26 +938,27 @@ class HorizonClientSync(BaseClient[OAuth2Session]):
         ----------
         namespace_id : int
             The ID of the namespace to update permissions for.
-        changes : :obj:`PermissionsUpdateRequestV1 <horizon.commons.schemas.v1.permission.PermissionsUpdateRequestV1>`
+        changes : [PermissionsUpdateRequestV1][horizon.commons.schemas.v1.permission.PermissionsUpdateRequestV1]
             The changes to apply to the namespace's permissions.
 
         Returns
         -------
-        :obj:`PermissionsResponseV1 <horizon.commons.schemas.v1.permission.PermissionsResponseV1>`
+        [PermissionsResponseV1][horizon.commons.schemas.v1.permission.PermissionsResponseV1]
             Actual permissions of the namespace.
 
         Raises
         ------
-        :obj:`EntityNotFoundError <horizon.commons.exceptions.entity.EntityNotFoundError>`
+        [EntityNotFoundError][horizon.commons.exceptions.entity.EntityNotFoundError]
             Namespace or provided user not found.
-        :obj:`PermissionDeniedError <horizon.commons.exceptions.permission.PermissionDeniedError>`
+        [PermissionDeniedError][horizon.commons.exceptions.permission.PermissionDeniedError]
             Permission denied for performing the requested action.
-        :obj:`BadRequestError <horizon.commons.exceptions.bad_request.BadRequestError>`
+        [BadRequestError][horizon.commons.exceptions.bad_request.BadRequestError]
             Bad request with incorrect operating logic.
 
         Examples
         --------
 
+        ```python
         >>> from horizon.commons.schemas.v1 import PermissionsUpdateRequestV1, PermissionUpdateRequestItemV1
         >>> to_update = PermissionsUpdateRequestV1(
         ...     permissions=[
@@ -913,6 +968,7 @@ class HorizonClientSync(BaseClient[OAuth2Session]):
         ...     ]
         ... )
         >>> client.update_namespace_permissions(namespace_id=234, changes=to_update)
+        ```
         """
         return self._request(  # type: ignore[return-value]
             "PATCH",
@@ -929,12 +985,12 @@ class HorizonClientSync(BaseClient[OAuth2Session]):
 
         Parameters
         ----------
-        query : :obj:`HWMHistoryPaginateQueryV1 <horizon.commons.schemas.v1.hwm_history.HWMHistoryPaginateQueryV1>`
+        query : [HWMHistoryPaginateQueryV1][horizon.commons.schemas.v1.hwm_history.HWMHistoryPaginateQueryV1]
             HWM history query parameters
 
         Returns
         -------
-        :obj:`PageResponseV1 <horizon.commons.schemas.v1.pagination.PageResponseV1>` of :obj:`HWMHistoryResponseV1 <horizon.commons.schemas.v1.hwm_history.HWMHistoryResponseV1>`
+        [PageResponseV1][horizon.commons.schemas.v1.pagination.PageResponseV1] of [HWMHistoryResponseV1][horizon.commons.schemas.v1.hwm_history.HWMHistoryResponseV1]
             List of HWM history items, limited and filtered by query parameters.
 
         Examples
@@ -942,6 +998,7 @@ class HorizonClientSync(BaseClient[OAuth2Session]):
 
         Get all changes of specific HWM:
 
+        ```python
         >>> from horizon.commons.schemas.v1 import HWMPaginateQueryV1
         >>> hwm_query = HWMPaginateQueryV1(hwm_id=234)
         >>> client.paginate_hwm(query=hwm_query)
@@ -958,9 +1015,11 @@ class HorizonClientSync(BaseClient[OAuth2Session]):
             ),
             items=[HWMHistoryResponseV1(hwm_id=234, ...), ...],
         )
+        ```
 
         Get all changes of specific HWM starting with a page number and page size:
 
+        ```python
         >>> from horizon.commons.schemas.v1 import HWMPaginateQueryV1
         >>> hwm_query = HWMPaginateQueryV1(hwm_id=234, page=2, page_size=20)
         >>> client.paginate_hwm(query=hwm_query)
@@ -977,6 +1036,7 @@ class HorizonClientSync(BaseClient[OAuth2Session]):
             ),
             items=[HWMHistoryResponseV1(hwm_id=234, ...), ...],
         )
+        ```
         """  # noqa: E501
         return self._request(  # type: ignore[return-value]
             "GET",
@@ -1023,7 +1083,7 @@ class HorizonClientSync(BaseClient[OAuth2Session]):
         json: dict | None = None,
         params: dict | None = None,
     ) -> ResponseSchema | None:
-        """Send request to backend and return ``response_class``, ``None`` or raise an exception."""
+        """Send request to backend and return `response_class`, `None` or raise an exception."""
 
         session: OAuth2Session = cast("OAuth2Session", self.session)
         if not session.token or session.token.is_expired():
