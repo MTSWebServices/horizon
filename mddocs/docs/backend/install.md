@@ -14,11 +14,19 @@ Options can be set via `.env` file or `environment` section in `docker-compose.y
 
 ### `docker-compose.yml`
 
-!include(../../docker-compose.yml)
+```yaml
+--8<--
+docker-compose.yml
+--8<--
+```
 
 ### `.env.docker`
 
-!include(../../env.docker)
+```bash
+--8<--
+.env.docker
+--8<--
+```
 
 After container is started and ready, open [http://localhost:8000/docs](http://localhost:8000/docs).
 

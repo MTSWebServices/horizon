@@ -151,7 +151,7 @@ class HorizonClientSync(BaseClient[OAuth2Session]):
 
         Raises
         ------
-        [horizon.commons.exceptions.AuthorizationError][]
+        horizon.commons.exceptions.auth.AuthorizationError
             Authorization failed
 
         Examples
@@ -259,12 +259,12 @@ class HorizonClientSync(BaseClient[OAuth2Session]):
 
         Parameters
         ----------
-        query : [NamespacePaginateQueryV1][horizon.commons.schemas.v1.namespace.NamespacePaginateQueryV1]
+        query : NamespacePaginateQueryV1
             Namespace query parameters
 
         Returns
         -------
-        [PageResponseV1][horizon.commons.schemas.v1.pagination.PageResponseV1] of [NamespaceResponseV1][horizon.commons.schemas.v1.namespace.NamespaceResponseV1]
+        PageResponseV1[NamespaceResponseV1]
             List of namespaces, limited and filtered by query parameters.
 
         Examples
@@ -332,7 +332,7 @@ class HorizonClientSync(BaseClient[OAuth2Session]):
             ],
         )
         ```
-        """  # noqa: E501
+        """
         query = query or NamespacePaginateQueryV1()
         return self._request(  # type: ignore[return-value]
             "GET",
@@ -351,12 +351,12 @@ class HorizonClientSync(BaseClient[OAuth2Session]):
 
         Returns
         -------
-        [NamespaceResponseV1][horizon.commons.schemas.v1.namespace.NamespaceResponseV1]
+        NamespaceResponseV1
             Namespace
 
         Raises
         ------
-        [EntityNotFoundError][horizon.commons.exceptions.entity.EntityNotFoundError]
+        horizon.commons.exceptions.entity.EntityNotFoundError
             Namespace not found
 
         Examples
@@ -382,17 +382,17 @@ class HorizonClientSync(BaseClient[OAuth2Session]):
 
         Parameters
         ----------
-        namespace : [NamespaceCreateRequestV1][horizon.commons.schemas.v1.namespace.NamespaceCreateRequestV1]
+        namespace : NamespaceCreateRequestV1
             Namespace to create
 
         Returns
         -------
-        [NamespaceResponseV1][horizon.commons.schemas.v1.namespace.NamespaceResponseV1]
+        NamespaceResponseV1
             Created namespace
 
         Raises
         ------
-        [EntityAlreadyExistsError][horizon.commons.exceptions.entity.EntityAlreadyExistsError]
+        horizon.commons.exceptions.entity.EntityAlreadyExistsError
             Namespace with the same name already exists
 
         Examples
@@ -424,21 +424,21 @@ class HorizonClientSync(BaseClient[OAuth2Session]):
         namespace_id : int
             Namespace name to update
 
-        changes : [NamespaceUpdateRequestV1][horizon.commons.schemas.v1.namespace.NamespaceUpdateRequestV1]
+        changes : NamespaceUpdateRequestV1
             Changes to namespace object
 
         Returns
         -------
-        [NamespaceResponseV1][horizon.commons.schemas.v1.namespace.NamespaceResponseV1]
+        NamespaceResponseV1
             Updated namespace
 
         Raises
         ------
-        [EntityNotFoundError][horizon.commons.exceptions.entity.EntityNotFoundError]
+        horizon.commons.exceptions.entity.EntityNotFoundError
             Namespace not found
-        [EntityAlreadyExistsError][horizon.commons.exceptions.entity.EntityAlreadyExistsError]
+        horizon.commons.exceptions.entity.EntityAlreadyExistsError
             Namespace with the same name already exists
-        [PermissionDeniedError][horizon.commons.exceptions.permission.PermissionDeniedError]
+        horizon.commons.exceptions.permission.PermissionDeniedError
             Permission denied for performing the requested action.
 
         Examples
@@ -472,9 +472,9 @@ class HorizonClientSync(BaseClient[OAuth2Session]):
 
         Raises
         ------
-        [EntityNotFoundError][horizon.commons.exceptions.entity.EntityNotFoundError]
+        horizon.commons.exceptions.entity.EntityNotFoundError
             Namespace not found
-        [PermissionDeniedError][horizon.commons.exceptions.permission.PermissionDeniedError]
+        horizon.commons.exceptions.permission.PermissionDeniedError
             Permission denied for performing the requested action.
 
         Examples
@@ -497,12 +497,12 @@ class HorizonClientSync(BaseClient[OAuth2Session]):
 
         Parameters
         ----------
-        query : [NamespaceHistoryPaginateQueryV1][horizon.commons.schemas.v1.namespace_history.NamespaceHistoryPaginateQueryV1]
+        query : NamespaceHistoryPaginateQueryV1
             Namespace history query parameters
 
         Returns
         -------
-        [PageResponseV1][horizon.commons.schemas.v1.pagination.PageResponseV1] of [NamespaceHistoryResponseV1][horizon.commons.schemas.v1.namespace_history.NamespaceHistoryResponseV1]
+        PageResponseV1[NamespaceHistoryResponseV1]
             List of namespace history items, limited and filtered by query parameters.
 
         Examples
@@ -549,7 +549,7 @@ class HorizonClientSync(BaseClient[OAuth2Session]):
             items=[NamespaceHistoryResponseV1(namespace_id=234, ...), ...],
         )
         ```
-        """  # noqa: E501
+        """
         return self._request(  # type: ignore[return-value]
             "GET",
             f"{self.base_url}/v1/namespace-history/",
@@ -565,12 +565,12 @@ class HorizonClientSync(BaseClient[OAuth2Session]):
 
         Parameters
         ----------
-        query : [HWMPaginateQueryV1][horizon.commons.schemas.v1.hwm.HWMPaginateQueryV1]
+        query : HWMPaginateQueryV1
             HWM query parameters
 
         Returns
         -------
-        [PageResponseV1][horizon.commons.schemas.v1.pagination.PageResponseV1] of [HWMResponseV1][horizon.commons.schemas.v1.hwm.HWMResponseV1]
+        PageResponseV1[HWMResponseV1]
             List of HWM, limited and filtered by query parameters.
 
         Examples
@@ -640,7 +640,7 @@ class HorizonClientSync(BaseClient[OAuth2Session]):
             ],
         )
         ```
-        """  # noqa: E501
+        """
         return self._request(  # type: ignore[return-value]
             "GET",
             f"{self.base_url}/v1/hwm/",
@@ -658,12 +658,12 @@ class HorizonClientSync(BaseClient[OAuth2Session]):
 
         Returns
         -------
-        [HWMResponseV1][horizon.commons.schemas.v1.hwm.HWMResponseV1]
+        HWMResponseV1
             HWM
 
         Raises
         ------
-        [EntityNotFoundError][horizon.commons.exceptions.entity.EntityNotFoundError]
+        horizon.commons.exceptions.entity.EntityNotFoundError
             HWM not found
 
         Examples
@@ -690,21 +690,21 @@ class HorizonClientSync(BaseClient[OAuth2Session]):
 
         Parameters
         ----------
-        data : [HWMCreateRequestV1][horizon.commons.schemas.v1.hwm.HWMCreateRequestV1]
+        data : HWMCreateRequestV1
             HWM data
 
         Returns
         -------
-        [HWMResponseV1][horizon.commons.schemas.v1.hwm.HWMResponseV1]
+        HWMResponseV1
             Created HWM
 
         Raises
         ------
-        [EntityNotFoundError][horizon.commons.exceptions.entity.EntityNotFoundError]
+        horizon.commons.exceptions.entity.EntityNotFoundError
             Namespace not found
-        [EntityAlreadyExistsError][horizon.commons.exceptions.entity.EntityAlreadyExistsError]
+        horizon.commons.exceptions.entity.EntityAlreadyExistsError
             HWM with the same name already exists
-        [PermissionDeniedError][horizon.commons.exceptions.permission.PermissionDeniedError]
+        horizon.commons.exceptions.permission.PermissionDeniedError
             Permission denied for performing the requested action.
 
         Examples
@@ -743,21 +743,21 @@ class HorizonClientSync(BaseClient[OAuth2Session]):
         ----------
         hwm_id : int
             HWM id to update
-        changes : [HWMUpdateRequestV1][horizon.commons.schemas.v1.hwm.HWMUpdateRequestV1]
+        changes : HWMUpdateRequestV1
             HWM changes
 
         Returns
         -------
-        [HWMResponseV1][horizon.commons.schemas.v1.hwm.HWMResponseV1]
+        HWMResponseV1
             Updated HWM
 
         Raises
         ------
-        [EntityNotFoundError][horizon.commons.exceptions.entity.EntityNotFoundError]
+        horizon.commons.exceptions.entity.EntityNotFoundError
             HWM not found
-        [EntityAlreadyExistsError][horizon.commons.exceptions.entity.EntityAlreadyExistsError]
+        horizon.commons.exceptions.entity.EntityAlreadyExistsError
             HWM with the same name already exists
-        [PermissionDeniedError][horizon.commons.exceptions.permission.PermissionDeniedError]
+        horizon.commons.exceptions.permission.PermissionDeniedError
             Permission denied for performing the requested action.
 
         Examples
@@ -794,9 +794,9 @@ class HorizonClientSync(BaseClient[OAuth2Session]):
 
         Raises
         ------
-        [EntityNotFoundError][horizon.commons.exceptions.entity.EntityNotFoundError]
+        horizon.commons.exceptions.entity.EntityNotFoundError
             HWM not found
-        [PermissionDeniedError][horizon.commons.exceptions.permission.PermissionDeniedError]
+        horizon.commons.exceptions.permission.PermissionDeniedError
             Permission denied for performing the requested action.
 
         Examples
@@ -820,19 +820,19 @@ class HorizonClientSync(BaseClient[OAuth2Session]):
 
         Parameters
         ----------
-        data : [HWMBulkCopyRequestV1][horizon.commons.schemas.v1.hwm.HWMBulkCopyRequestV1]
+        data : HWMBulkCopyRequestV1
             HWM copy data
 
         Returns
         -------
-        [HWMListResponseV1][horizon.commons.schemas.v1.hwm.HWMListResponseV1]
+        HWMListResponseV1
             Copied HWMs
 
         Raises
         ------
-        [EntityNotFoundError][horizon.commons.exceptions.entity.EntityNotFoundError]
+        horizon.commons.exceptions.entity.EntityNotFoundError
             Raised if any of the specified namespaces not found.
-        [PermissionDeniedError][horizon.commons.exceptions.permission.PermissionDeniedError]
+        horizon.commons.exceptions.permission.PermissionDeniedError
             Permission denied for performing the requested action.
 
         Examples
@@ -872,7 +872,7 @@ class HorizonClientSync(BaseClient[OAuth2Session]):
 
         Raises
         ------
-        [PermissionDeniedError][horizon.commons.exceptions.permission.PermissionDeniedError]
+        horizon.commons.exceptions.permission.PermissionDeniedError
             Permission denied for performing the requested action.
 
         Examples
@@ -903,14 +903,14 @@ class HorizonClientSync(BaseClient[OAuth2Session]):
 
         Returns
         -------
-        [PermissionsResponseV1][horizon.commons.schemas.v1.permission.PermissionsResponseV1]
+        PermissionsResponseV1
             The permissions of the namespace.
 
         Raises
         ------
-        [EntityNotFoundError][horizon.commons.exceptions.entity.EntityNotFoundError]
+        horizon.commons.exceptions.entity.EntityNotFoundError
             Namespace or provided user not found.
-        [PermissionDeniedError][horizon.commons.exceptions.permission.PermissionDeniedError]
+        horizon.commons.exceptions.permission.PermissionDeniedError
             Permission denied for performing the requested action.
 
         Examples
@@ -938,21 +938,21 @@ class HorizonClientSync(BaseClient[OAuth2Session]):
         ----------
         namespace_id : int
             The ID of the namespace to update permissions for.
-        changes : [PermissionsUpdateRequestV1][horizon.commons.schemas.v1.permission.PermissionsUpdateRequestV1]
+        changes : PermissionsUpdateRequestV1
             The changes to apply to the namespace's permissions.
 
         Returns
         -------
-        [PermissionsResponseV1][horizon.commons.schemas.v1.permission.PermissionsResponseV1]
+        PermissionsResponseV1
             Actual permissions of the namespace.
 
         Raises
         ------
-        [EntityNotFoundError][horizon.commons.exceptions.entity.EntityNotFoundError]
+        horizon.commons.exceptions.entity.EntityNotFoundError
             Namespace or provided user not found.
-        [PermissionDeniedError][horizon.commons.exceptions.permission.PermissionDeniedError]
+        horizon.commons.exceptions.permission.PermissionDeniedError
             Permission denied for performing the requested action.
-        [BadRequestError][horizon.commons.exceptions.bad_request.BadRequestError]
+        horizon.commons.exceptions.bad_request.BadRequestError
             Bad request with incorrect operating logic.
 
         Examples
@@ -985,12 +985,12 @@ class HorizonClientSync(BaseClient[OAuth2Session]):
 
         Parameters
         ----------
-        query : [HWMHistoryPaginateQueryV1][horizon.commons.schemas.v1.hwm_history.HWMHistoryPaginateQueryV1]
+        query : HWMHistoryPaginateQueryV1
             HWM history query parameters
 
         Returns
         -------
-        [PageResponseV1][horizon.commons.schemas.v1.pagination.PageResponseV1] of [HWMHistoryResponseV1][horizon.commons.schemas.v1.hwm_history.HWMHistoryResponseV1]
+        PageResponseV1[HWMHistoryResponseV1]
             List of HWM history items, limited and filtered by query parameters.
 
         Examples
@@ -1037,7 +1037,7 @@ class HorizonClientSync(BaseClient[OAuth2Session]):
             items=[HWMHistoryResponseV1(hwm_id=234, ...), ...],
         )
         ```
-        """  # noqa: E501
+        """
         return self._request(  # type: ignore[return-value]
             "GET",
             f"{self.base_url}/v1/hwm-history/",

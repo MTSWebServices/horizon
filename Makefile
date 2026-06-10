@@ -100,4 +100,4 @@ docs-cleanup: ##@Docs Cleanup docs
 docs-fresh: docs-cleanup docs-build ##@Docs Cleanup & build docs
 
 docs-openapi: ##@Docs Generate OpenAPI schema
-	${PYTHON} -m horizon.backend.export_openapi_schema docs/_static/openapi.json
+	${PYTHON} -m horizon.backend.export_openapi_schema mddocs/docs/_static/openapi.json

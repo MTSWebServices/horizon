@@ -144,6 +144,7 @@ mddocs = [
   "mkdocs-autorefs~=1.4.4",
   "pymdown-extensions~=10.21.2",
   "griffe-inherited-docstrings~=1.1.3",
+  "mkdocs-literate-nav~=0.6.1",
 ]
 
 [tool.uv]

@@ -29,7 +29,7 @@ Please follow [instruction](https://docs.github.com/en/get-started/quickstart/fo
 Open terminal and run these commands:
 
 ```bash
-git clone https://github.com/MobileTeleSystems/horizon -b develop
+git clone https://github.com/MTSWebServices/horizon -b develop
 
 cd horizon
 ```

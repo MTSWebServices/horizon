@@ -6,13 +6,21 @@ Backend provides 2 endpoints with Prometheus compatible metrics:
 
 ## Example metrics
 
-!include(../../_static/metrics.prom)
+```
+--8<--
+mddocs/docs/_static/metrics.prom
+--8<--
+```
 
 - `GET /monitoring/stats` - usage statistics, like number of users, namespaces, HWMs.
 
 ## Example stats
 
-!include(../../_static/stats.prom)
+```
+--8<--
+mddocs/docs/_static/stats.prom
+--8<--
+```
 
 These endpoints are enabled and configured using settings below:
 

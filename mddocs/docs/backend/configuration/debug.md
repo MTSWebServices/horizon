@@ -53,9 +53,11 @@ This is done by adding a specific filter to logging handler:
 
 ### `logging.yml`
 
+```yaml
 --8<--
 horizon/backend/settings/server/log/plain.yml:6:12,17:18,25
 --8<--
+```
 
 Resulting logs look like:
 

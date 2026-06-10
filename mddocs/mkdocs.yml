@@ -27,8 +27,13 @@ theme:
 extra_css:
   - _static/custom.css
 
+extra_javascript:
+  - https://unpkg.com/mermaid@11/dist/mermaid.min.js
+
 plugins:
   - autorefs
+  - literate-nav:
+      nav_file: nav.md
   - mkdocstrings:
       default_handler: python
       handlers:
@@ -43,6 +48,7 @@ plugins:
             docstring_style: numpy
             docstring_section_style: list
             inherited_members: true
+            show_if_no_docstring: true
 
 markdown_extensions:
   - footnotes
@@ -51,7 +57,7 @@ markdown_extensions:
   - admonition
   - pymdownx.details
   - pymdownx.snippets:
-      base_path: .
+      base_path: ..
       check_paths: true
   - toc:
       permalink: true
@@ -60,4 +66,8 @@ markdown_extensions:
   - pymdownx.emoji:
       emoji_index: !!python/name:material.extensions.emoji.twemoji
       emoji_generator: !!python/name:material.extensions.emoji.to_svg
-  - pymdownx.superfences
+  - pymdownx.superfences:
+      custom_fences:
+        - name: mermaid
+          class: mermaid
+          format: !!python/name:pymdownx.superfences.fence_code_format

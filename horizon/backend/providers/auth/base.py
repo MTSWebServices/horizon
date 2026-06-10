@@ -28,7 +28,7 @@ class AuthProvider(ABC):
         Examples
         --------
 
-        ```
+        ```python
         from fastapi import FastAPI
         from my_awesome_auth_provider.settings import MyAwesomeAuthProviderSettings
         from horizon.backend.dependencies import Stub
@@ -81,22 +81,24 @@ class AuthProvider(ABC):
         """
         This method should perform authentication and return JWT token.
 
-        Parameters
-        ----------
-        See:
+        See OAuth2 token endpoint documentation:
 
-        * https://auth0.com/docs/get-started/authentication-and-authorization-flow/call-your-api-using-resource-owner-password-flow
-        * https://connect2id.com/products/server/docs/api/token
+        * <https://auth0.com/docs/get-started/authentication-and-authorization-flow/call-your-api-using-resource-owner-password-flow>
+        * <https://connect2id.com/products/server/docs/api/token>
 
         Returns
         -------
         Dict:
-            ```python
-            {
-                "access_token": "some.jwt.token",
-                "token_type": "bearer",
-                "expires_in": 3600,
-            }
-            ```
+            Access token response.
+
+        Examples
+        --------
+        ```python
+        {
+            "access_token": "some.jwt.token",
+            "token_type": "bearer",
+            "expires_in": 3600,
+        }
+        ```
         """
         ...
