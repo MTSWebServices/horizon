@@ -13,14 +13,14 @@ class AuthProvider(ABC):
     """Basic class for all Auth providers.
 
     Constructor is called by FastAPI, and can use Dependency injection mechanism.
-    See [setup][] for more details.
+    See [setup][horizon.backend.providers.auth.AuthProvider.setup] for more details.
     """
 
     @classmethod
     @abstractmethod
     def setup(cls, app: FastAPI) -> FastAPI:
         """
-        This method is called by [horizon.backend.application_factory][].
+        This method is called by `application_factory`.
 
         Here you should add dependency overrides for auth provider,
         and return new `app` object.
@@ -63,7 +63,7 @@ class AuthProvider(ABC):
 
         Returns
         -------
-        [horizon.backend.db.models.User][]
+        `User`
             Current user object
         """
         ...
@@ -84,8 +84,9 @@ class AuthProvider(ABC):
         Parameters
         ----------
         See:
-          * https://auth0.com/docs/get-started/authentication-and-authorization-flow/call-your-api-using-resource-owner-password-flow
-          * https://connect2id.com/products/server/docs/api/token
+
+        * https://auth0.com/docs/get-started/authentication-and-authorization-flow/call-your-api-using-resource-owner-password-flow
+        * https://connect2id.com/products/server/docs/api/token
 
         Returns
         -------

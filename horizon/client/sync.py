@@ -49,16 +49,16 @@ class RetryConfig(BaseModel):
 
     Parameters
     ----------
-    total : int, default: `3`
+    total : int, default: 3
         The maximum number of retry attempts to make.
 
-    backoff_factor : float, default: `0.1`
+    backoff_factor : float, default: 0.1
         A backoff factor to apply between attempts after the second try.
 
-    status_forcelist : list[int], default: `[502, 503, 504]`
+    status_forcelist : list[int], default: [502, 503, 504]
         A set of HTTP status codes that we should force a retry on.
 
-    backoff_jitter : float, default: `None`
+    backoff_jitter : float, default: None
         A random jitter amount (between 0 and 1) to add to the backoff delay.
         Helps to avoid "thundering herd" issues by randomizing the delay
         times between retries.
@@ -82,10 +82,10 @@ class TimeoutConfig(BaseModel):
 
     Parameters
     ----------
-    connection_timeout : float, default: `3`
+    connection_timeout : float, default: 3
         The maximum number of seconds to wait for a connection to the server.
 
-    request_timeout : float, default: `5`
+    request_timeout : float, default: 5
         The maximum number of seconds to wait for a response from the server.
     """
 
@@ -111,8 +111,8 @@ class HorizonClientSync(BaseClient[OAuth2Session]):
     timeout : [TimeoutConfig][horizon.client.sync.TimeoutConfig]
         Configuration for request timeouts.
 
-    session : [authlib.integrations.requests_client.OAuth2Session][]
-        Custom session object. Inherited from [requests.Session][], so you can pass custom
+    session : OAuth2Session
+        Custom session object. Inherited from `requests.Session`, so you can pass custom
         session options.
 
     Examples
@@ -187,7 +187,7 @@ class HorizonClientSync(BaseClient[OAuth2Session]):
         session.close()
 
     def __enter__(self):
-        """Enter session as context manager. Similar to [requests.Session][] behavior.
+        """Enter session as context manager. Similar to `requests.Session` behavior.
 
         Exiting context manager closes opened session.
 

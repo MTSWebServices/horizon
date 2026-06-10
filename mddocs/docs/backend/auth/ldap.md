@@ -20,8 +20,8 @@ After successful auth, username is saved to backend database. It is then used fo
 
 There are 2 strategies to check for user in LDAP:
 
-- Try to call `bind` request in LDAP with `DN` (`DistinguishedName`) and user password. `DN` is generated using [bind_dn_template][horizon.backend.settings.auth.ldap.LDAPSettings.bind_dn_template]
-- First try to *lookup* for user (`search` request) in LDAP to get user's `DN` using some query, and then try to call `bind` using this `DN`. See [lookup settings][horizon.backend.settings.auth.ldap.LDAPSettings.lookup]
+- Try to call `bind` request in LDAP with `DN` (`DistinguishedName`) and user password. `DN` is generated using `bind_dn_template`
+- First try to *lookup* for user (`search` request) in LDAP to get user's `DN` using some query, and then try to call `bind` using this `DN`. See `lookup` settings
 
 By default, **lookup strategy is used**, as it can find user in a complex LDAP/ActiveDirectory environment. For example:
 
@@ -30,7 +30,7 @@ By default, **lookup strategy is used**, as it can find user in a complex LDAP/A
 - filter for entries, like `(&(uid={login})(objectClass=person)`
 - filter for users matching a specific group or some other condition, like `(&(uid={login})(memberOf=cn=MyPrettyGroup,ou=Groups,dc=mycompany,dc=com))`
 
-After user is found in LDAP, its [uid_attribute][horizon.backend.settings.auth.ldap.LDAPSettings.uid_attribute] is used for audit records.
+After user is found in LDAP, its `uid_attribute` is used for audit records.
 
 ## Interaction schema { #ldap-interaction-schema }
 

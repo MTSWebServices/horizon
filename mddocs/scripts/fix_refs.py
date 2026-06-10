@@ -5,7 +5,7 @@ Fix unresolved doc-anchor references in converted docstrings.
 
 Replaces two kinds of unresolved cross-references:
   1. [label][]  — converted from RST :ref:, resolved via REF_MAP
-  2. [text][onetl.module.ClassName]  — Python-path refs that autorefs cannot
+  2. [text][horizon.module.ClassName]  — Python-path refs that autorefs cannot
      resolve (because show_root_heading: false suppresses anchor generation),
      resolved via PYTHON_PATH_MAP
 
@@ -17,7 +17,7 @@ Usage:
 
 Options:
     --dry-run        Print changes without writing files.
-    --path PATH      Directory to process recursively (default: onetl/).
+    --path PATH      Directory to process recursively (default: horizon/).
     --file FILE      Process a single file instead of a directory.
     --docs-path PATH Also fix broken links in docs .md files under PATH.
 """
@@ -37,51 +37,8 @@ from pathlib import Path
 # ---------------------------------------------------------------------------
 
 REF_MAP: dict[str, tuple[str, str]] = {
-    # Core classes
-    "db-reader": ("DB Reader", "/db/reader/"),
-    "file-downloader": ("File Downloader", "/file/file_downloader/"),
-    "file-uploader": ("File Uploader", "/file/file_uploader/"),
-    "file-mover": ("File Mover", "/file/file_mover/"),
-    # Strategies
-    "strategy": ("Read Strategies", "/strategy/"),
-    # Connections
-    "db-connections": ("DB Connections", "/connection/db_connection/"),
-    "file-connections": ("File Connections", "/connection/file_connection/"),
-    "file-df-connections": ("File DF Connections", "/connection/file_df_connection/"),
-    # File utilities
-    "file-filters": ("File Filters", "/file/file_filters/"),
-    "file-limits": ("File Limits", "/file/file_limits/"),
-    # HWM
-    "hwm": ("HWM", "/hwm_store/"),
-    # Hooks
-    "hooks-design": ("Hooks design", "/hooks/design/"),
-    "slot-decorator": ("@slot decorator", "/hooks/slot/"),
-    "slot": ("@slot", "/hooks/slot/"),
-    # Installation
-    "install-files": ("File connections install", "/install/files/"),
-    "install-spark": ("Spark install", "/install/spark/"),
-    "install-kerberos": ("Kerberos support", "/install/kerberos/"),
-    # Prerequisites per connector
-    "kafka-prerequisites": ("Kafka prerequisites", "/connection/db_connection/kafka/prerequisites/"),
-    "clickhouse-prerequisites": ("Clickhouse prerequisites", "/connection/db_connection/clickhouse/prerequisites/"),
-    "greenplum-prerequisites": ("Greenplum prerequisites", "/connection/db_connection/greenplum/prerequisites/"),
-    "hive-prerequisites": ("Hive prerequisites", "/connection/db_connection/hive/prerequisites/"),
-    "iceberg-prerequisites": ("Iceberg prerequisites", "/connection/db_connection/iceberg/prerequisites/"),
-    "mongodb-prerequisites": ("MongoDB prerequisites", "/connection/db_connection/mongodb/prerequisites/"),
-    "mssql-prerequisites": ("MSSQL prerequisites", "/connection/db_connection/mssql/prerequisites/"),
-    "mysql-prerequisites": ("MySQL prerequisites", "/connection/db_connection/mysql/prerequisites/"),
-    "oracle-prerequisites": ("Oracle prerequisites", "/connection/db_connection/oracle/prerequisites/"),
-    "postgres-prerequisites": ("Postgres prerequisites", "/connection/db_connection/postgres/prerequisites/"),
-    "spark-hdfs-prerequisites": (
-        "Spark HDFS prerequisites",
-        "/connection/file_df_connection/spark_hdfs/prerequisites/",
-    ),
-    "spark-s3-prerequisites": ("Spark S3 prerequisites", "/connection/file_df_connection/spark_s3/prerequisites/"),
-    # Slots
-    "hdfs-slots": ("HDFS Slots", "/connection/file_connection/hdfs/slots/"),
-    "spark-hdfs-slots": ("Spark HDFS Slots", "/connection/file_df_connection/spark_hdfs/slots/"),
-    # Other
-    "kafka": ("Kafka", "/connection/db_connection/kafka/"),
+    # All :ref: labels were converted manually during RST→MD migration.
+    # Add entries here if new label-style references appear.
 }
 
 
@@ -94,37 +51,8 @@ REF_MAP: dict[str, tuple[str, str]] = {
 # ---------------------------------------------------------------------------
 
 PYTHON_PATH_MAP: dict[str, str] = {
-    # Strategies
-    "onetl.strategy.incremental_strategy.IncrementalStrategy": "/strategy/incremental_strategy/#DBR-onetl-strategy-incremental-strategy",
-    "onetl.strategy.snapshot_strategy.SnapshotStrategy": "/strategy/snapshot_strategy/#DBR-onetl-strategy-snapshot-strategy",
-    "onetl.strategy.snapshot_strategy.SnapshotBatchStrategy": "/strategy/snapshot_batch_strategy/#DBR-onetl-strategy-snapshot-batch-strategy",
-    # DB
-    "onetl.db.db_reader.db_reader.DBReader": "/db/reader/#DBR-onetl-db-reader",
-    "onetl.connection.file_connection.hdfs.connection.HDFS": "/connection/file_connection/hdfs/connection/#DBR-onetl-connection-file-connection-hdfs-connection-0",
-    "onetl.connection.file_connection.s3.S3": "/connection/file_connection/s3/#DBR-onetl-connection-file-connection-s3-connection",
-    # File downloader
-    "onetl.file.file_downloader.file_downloader.FileDownloader": "/file/file_downloader/file_downloader/#DBR-onetl-file-downloader-0",
-    "onetl.file.file_downloader.options.FileDownloaderOptions": "/file/file_downloader/options/#DBR-onetl-file-downloader-options",
-    "onetl.file.file_downloader.file_downloader.FileDownloader.Options.delete_source": "/file/file_downloader/options/#onetl.file.file_downloader.options.FileDownloaderOptions.delete_source",
-    "onetl.file.file_downloader.file_downloader.FileDownloader.Options.mode": "/file/file_downloader/options/#DBR-onetl-file-downloader-options",
-    # File mover / uploader
-    "onetl.file.file_mover.options.FileMoverOptions": "/file/file_mover/options/#DBR-onetl-file-mover-options",
-    "onetl.file.file_uploader.options.FileUploaderOptions": "/file/file_uploader/options/#DBR-onetl-file-uploader-options",
-    # File DF
-    "onetl.file.file_df_reader.file_df_reader.FileDFReader": "/file_df/file_df_reader/file_df_reader/#DBR-onetl-file-df-reader-filedf-reader-0",
-    "onetl.file.file_df_writer.file_df_writer.FileDFWriter": "/file_df/file_df_writer/file_df_writer/#DBR-onetl-file-df-writer-filedf-writer-0",
-    # Filters
-    "onetl.base.base_file_filter.BaseFileFilter": "/file/file_filters/base/#DBR-onetl-file-filters-base-interface",
-    "onetl.file.filter.exclude_dir.ExcludeDir": "/file/file_filters/exclude_dir/#DBR-onetl-file-filters-exclude-dir-excludedir",
-    "onetl.file.filter.glob.Glob": "/file/file_filters/glob/#DBR-onetl-file-filters-glob",
-    "onetl.file.filter.regexp.Regexp": "/file/file_filters/regexp/#DBR-onetl-file-filters-regexp",
-    # Formats
-    "onetl.file.format.jsonline.JSONLine": "/file_df/file_formats/jsonline/#DBR-onetl-file-df-file-formats-jsonline",
-    # Limits
-    "onetl.base.base_file_limit.BaseFileLimit": "/file/file_limits/base/#DBR-onetl-file-limits-base-interface",
-    "onetl.file.limit.max_files_count.MaxFilesCount": "/file/file_limits/max_files_count/#DBR-onetl-file-limits-max-files-count-maxfilescount",
-    # Postgres options (wrong python path used in docstrings → correct anchor)
-    "onetl.connection.db_connection.postgres.Postgres.ReadOptions.fetchsize": "/connection/db_connection/postgres/read/#onetl.connection.db_connection.postgres.options.PostgresReadOptions.fetchsize",
+    # Add entries here for [text][horizon.*] refs that autorefs cannot resolve
+    # because show_root_heading: false suppresses the anchor, mapping to explicit URLs.
 }
 
 
@@ -135,9 +63,7 @@ PYTHON_PATH_MAP: dict[str, str] = {
 # class name (not a full onetl.* path and not a kebab-case REF_MAP key).
 # ---------------------------------------------------------------------------
 
-LABEL_MAP: dict[str, str] = {
-    "MongoDBReadOptions": "/connection/db_connection/mongodb/read/#onetl.connection.db_connection.mongodb.options.MongoDBReadOptions",
-}
+LABEL_MAP: dict[str, str] = {}
 
 
 # ---------------------------------------------------------------------------
@@ -148,12 +74,7 @@ LABEL_MAP: dict[str, str] = {
 # Output format: [display text][DBR-anchor]
 # ---------------------------------------------------------------------------
 
-ANCHOR_REF_MAP: dict[str, tuple[str, str]] = {
-    # Python path → (display text, DBR anchor)
-    # Use for [onetl.path][] refs where target is a { #DBR-... } anchor in .md files.
-    # NOTE: do NOT use for NumPy parameter type fields — griffe parses them as
-    # Python expressions and mangles [text][anchor] into subscript with spaces.
-}
+ANCHOR_REF_MAP: dict[str, tuple[str, str]] = {}
 
 
 # ---------------------------------------------------------------------------
@@ -164,22 +85,10 @@ ANCHOR_REF_MAP: dict[str, tuple[str, str]] = {
 # ---------------------------------------------------------------------------
 
 CODE_PATH_MAP: dict[str, str] = {
-    # Exceptions — keep full dotted path (used in Raises sections)
-    "onetl.exception.DirectoryNotFoundError": "onetl.exception.DirectoryNotFoundError",
-    "onetl.exception.DirectoryNotEmptyError": "onetl.exception.DirectoryNotEmptyError",
-    "onetl.exception.DirectoryExistsError": "onetl.exception.DirectoryExistsError",
-    "onetl.exception.NotAFileError": "onetl.exception.NotAFileError",
-    "onetl.exception.FileSizeMismatchError": "onetl.exception.FileSizeMismatchError",
-    "onetl.exception.NoDataError": "onetl.exception.NoDataError",
-    # Interface/abstract types — keep full path (used as type annotations)
-    "onetl.connection.BaseDBConnection": "onetl.connection.BaseDBConnection",
-    "onetl.connection.DBConnection": "onetl.connection.DBConnection",
-    "onetl.connection.BaseDBConnection.ReadOptions": "onetl.connection.BaseDBConnection.ReadOptions",
-    "onetl.connection.BaseDBConnection.WriteOptions": "onetl.connection.BaseDBConnection.WriteOptions",
-    # Protocol/option types — use short name
-    "onetl.base.PathWithStatsProtocol": "PathWithStatsProtocol",
-    "onetl.base.path_protocol.PathProtocol": "PathProtocol",
-    "onetl.base.path_stat_protocol.PathStatProtocol": "PathStatProtocol",
+    # Functions/classes not documented on any page → inline code (no link)
+    "horizon.backend.application_factory": "`application_factory`",
+    # Internal types not documented in mddocs
+    "horizon.backend.db.models.User": "`User`",
 }
 
 
@@ -192,23 +101,9 @@ CODE_PATH_MAP: dict[str, str] = {
 # ---------------------------------------------------------------------------
 
 PLAIN_REF_MAP: dict[str, str] = {
-    # Wrong path in docstring → plain name (griffe resolves ExprName via canonical path)
-    "onetl.file.file_downloader.download_result.DownloadResult": "DownloadResult",
-    # Base types — griffe resolves these via canonical path
-    "onetl.base.base_file_df_connection.BaseFileDFConnection": "BaseFileDFConnection",
-    "onetl.base.base_file_format.BaseReadableFileFormat": "BaseReadableFileFormat",
-    "onetl.base.base_file_format.BaseWritableFileFormat": "BaseWritableFileFormat",
-    "onetl.base.base_file_filter.BaseFileFilter": "BaseFileFilter",
-    "onetl.base.base_file_limit.BaseFileLimit": "BaseFileLimit",
-    "onetl.base.path_protocol.PathProtocol": "PathProtocol",
-    # Options/result types
-    "onetl.file.file_df_reader.options.FileDFReaderOptions": "FileDFReaderOptions",
-    "onetl.file.file_df_writer.options.FileDFWriterOptions": "FileDFWriterOptions",
-    "onetl.file.file_mover.move_result.MoveResult": "MoveResult",
-    "onetl.file.file_uploader.upload_result.UploadResult": "UploadResult",
-    # Connection types where display text differs from last path component
-    "onetl.connection.db_connection.kafka.kafka_plaintext_protocol.KafkaPlaintextProtocol": "KafkaPlaintextProtocol",
-    "onetl.connection.db_connection.kafka.connection.Kafka": "Kafka",
+    # Wrong Python paths in docstrings → correct inline code
+    # (target is not documented, so just render as code)
+    "horizon.backend.main.application_factory": "`application_factory`",
 }
 
 
@@ -226,33 +121,15 @@ PLAIN_REF_MAP: dict[str, str] = {
 # is outside the docs/ directory (e.g. pyproject.toml in the repo root).
 # ---------------------------------------------------------------------------
 
-DOCS_BROKEN_LINKS: dict[str, str] = {
-    "../../pyproject.toml": "https://github.com/MTSWebServices/onetl/blob/develop/pyproject.toml",
-}
+DOCS_BROKEN_LINKS: dict[str, str] = {}
 
 
 SHORTNAME_MAP: dict[str, str] = {
-    # Method refs in body text → inline code
-    "execute": "`execute`",
-    "check": "`check`",
-    "sql": "`sql`",
-    "HDFS": "[`HDFS`](/connection/file_connection/hdfs/connection/#DBR-onetl-connection-file-connection-hdfs-connection-0)",
-    "HWM": "[HWM](/hwm_store/)",
-    # Connection class refs
-    "SparkHDFS": "[SparkHDFS](/connection/file_df_connection/spark_hdfs/connection/#DBR-onetl-connection-file-df-connection-spark-hdfs-connection)",
-    # Field refs that have no anchor in generated docs → inline code
-    "escape": "`escape`",
-    # Hook slot methods → links to docs pages
-    "skip_hooks": "[skip_hooks](/hooks/support_hooks/#onetl.hooks.support_hooks.skip_hooks)",
-    "suspend_hooks": "[suspend_hooks](/hooks/support_hooks/#onetl.hooks.support_hooks.suspend_hooks)",
-    "resume_hooks": "[resume_hooks](/hooks/support_hooks/#onetl.hooks.support_hooks.resume_hooks)",
-    "stop_all_hooks": "[stop_all_hooks](/hooks/global_state/#onetl.hooks.hooks_state.stop_all_hooks)",
-    "resume_all_hooks": "[resume_all_hooks](/hooks/global_state/#onetl.hooks.hooks_state.resume_all_hooks)",
-    # Type refs in parameter type fields → plain name (mkdocstrings resolves them)
-    "IcebergCatalog": "IcebergCatalog",
-    "IcebergWarehouse": "IcebergWarehouse",
-    "Options": "Options",
-    "re.Pattern": "re.Pattern",
+    # Short method refs that autorefs can't resolve without scope → full path
+    "setup": "[setup][horizon.backend.providers.auth.AuthProvider.setup]",
+    # External library refs → inline code (no link)
+    "requests.Session": "`requests.Session`",
+    "authlib.integrations.requests_client.OAuth2Session": "`OAuth2Session`",
 }
 
 
@@ -522,8 +399,8 @@ def _fix_refs(text: str) -> tuple[str, list[str]]:
     new_text = re.sub(r"\[([a-z][a-z0-9]*(?:-[a-z0-9]+)*)\]\[\]", replace_ref, text)
     new_text = re.sub(r"\[([^\]]+)\]\[([a-z][a-z0-9]*(?:-[a-z0-9]+)*)\]", replace_text_ref, new_text)
     new_text = re.sub(r"\[([^\]]+)\]\[([A-Z][A-Za-z0-9]*)\]", replace_label_ref, new_text)
-    new_text = re.sub(r"\[([^\]]+)\]\[(onetl\.[a-zA-Z0-9_.]+)\]", replace_python_path, new_text)
-    new_text = re.sub(r"\[(onetl\.[a-zA-Z0-9_.]+)\]\[\]", replace_python_path_self, new_text)
+    new_text = re.sub(r"\[([^\]]+)\]\[(horizon\.[a-zA-Z0-9_.]+)\]", replace_python_path, new_text)
+    new_text = re.sub(r"\[(horizon\.[a-zA-Z0-9_.]+)\]\[\]", replace_python_path_self, new_text)
     new_text = re.sub(r"\[([A-Za-z][\w.]*)\]\[\]", replace_shortname, new_text)
     # Global: List of X → list[X] (Returns sections and body text)
     new_text = re.sub(r"\bList of ([^\s,]+)", r"list[\1]", new_text)
@@ -676,7 +553,7 @@ def main() -> None:
         formatter_class=argparse.RawDescriptionHelpFormatter,
     )
     parser.add_argument("--dry-run", action="store_true", help="Show changes without writing files")
-    parser.add_argument("--path", default="onetl/", help="Directory to process (default: onetl/)")
+    parser.add_argument("--path", default="horizon/", help="Directory to process (default: horizon/)")
     parser.add_argument("--file", help="Process a single file")
     parser.add_argument("--docs-path", help="Also fix broken links in docs .md files under PATH")
     args = parser.parse_args()

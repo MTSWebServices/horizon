@@ -19,7 +19,7 @@ class Settings(BaseSettings):
 
     Backend can be configured in 2 ways:
 
-    * By explicitly passing `settings` object as an argument to [application_factory][horizon.backend.main.application_factory]
+    * By explicitly passing `settings` object as an argument to `application_factory`
     * By setting up environment variables matching a specific key.
 
         All environment variable names are written in uppercase and should be prefixed with `HORIZON__`.
@@ -40,7 +40,7 @@ class Settings(BaseSettings):
     # same as settings.auth.provider = horizon.backend.providers.auth.dummy.DummyAuthProvider
     HORIZON__AUTH__PROVIDER=horizon.backend.providers.auth.dummy.DummyAuthProvider
     ```
-    """  # noqa: E501
+    """
 
     database: DatabaseSettings = Field(description="[Database settings][backend-configuration-database]")
     server: ServerSettings = Field(
