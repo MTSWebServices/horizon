@@ -26,7 +26,7 @@ class BaseAuth(ABC):
 
     @abstractmethod
     def fetch_token_kwargs(self, base_url: AnyHttpUrl) -> dict[str, Any]:
-        """Return key-values arguments for ``client.fetch_token(...)`` method.
+        """Return key-values arguments for `client.fetch_token(...)` method.
 
         Empty dict means that this method should not be called.
         """

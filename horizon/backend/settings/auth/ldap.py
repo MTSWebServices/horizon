@@ -22,7 +22,7 @@ if TYPE_CHECKING:
 elif pydantic_version < "2":
 
     class LDAPUrl(AnyUrl):
-        """LDAP connection url, like ``ldap://127.0.0.1:389`` or ``ldaps://127.0.0.1:636``"""
+        """LDAP connection url, like `ldap://127.0.0.1:389` or `ldaps://127.0.0.1:636`"""
 
         allowed_schemes = ["ldap", "ldaps"]  # noqa: RUF012
         host_required = True
@@ -43,10 +43,10 @@ class LDAPCredentials(BaseModel):
     Examples
     --------
 
-    .. code-block:: bash
-
-        HORIZON__AUTH__LDAP__LOOKUP__CREDENTIALS__USER=uid=techuser,ou=users,dc=example,dc=com
-        HORIZON__AUTH__LDAP__LOOKUP__CREDENTIALS__PASSWORD=somepassword
+    ```bash
+    HORIZON__AUTH__LDAP__LOOKUP__CREDENTIALS__USER=uid=techuser,ou=users,dc=example,dc=com
+    HORIZON__AUTH__LDAP__LOOKUP__CREDENTIALS__PASSWORD=somepassword
+    ```
     """
 
     user: str = Field(
@@ -63,11 +63,11 @@ class LDAPConnectionPoolSettings(BaseModel):
     Examples
     --------
 
-    .. code-block:: bash
-
-        HORIZON__AUTH__LDAP__LOOKUP__POOL__ENABLED=True
-        HORIZON__AUTH__LDAP__LOOKUP__POOL__MAX=10
-        HORIZON__AUTH__LDAP__LOOKUP__POOL__CHECK_ON_STARTUP=True
+    ```bash
+    HORIZON__AUTH__LDAP__LOOKUP__POOL__ENABLED=True
+    HORIZON__AUTH__LDAP__LOOKUP__POOL__MAX=10
+    HORIZON__AUTH__LDAP__LOOKUP__POOL__CHECK_ON_STARTUP=True
+    ```
     """
 
     enabled: bool = Field(
@@ -90,13 +90,13 @@ class LDAPLookupSettings(BaseModel):
     Examples
     --------
 
-    .. code-block:: bash
-
-        HORIZON__AUTH__LDAP__LOOKUP__ENABLED=True
-        HORIZON__AUTH__LDAP__LOOKUP__POOL__ENABLED=True
-        HORIZON__AUTH__LDAP__LOOKUP__CREDENTIALS__USER=uid=techuser,ou=users,dc=example,dc=com
-        HORIZON__AUTH__LDAP__LOOKUP__CREDENTIALS__PASSWORD=somepassword
-        HORIZON__AUTH__LDAP__LOOKUP__QUERY=(uid={login})
+    ```bash
+    HORIZON__AUTH__LDAP__LOOKUP__ENABLED=True
+    HORIZON__AUTH__LDAP__LOOKUP__POOL__ENABLED=True
+    HORIZON__AUTH__LDAP__LOOKUP__CREDENTIALS__USER=uid=techuser,ou=users,dc=example,dc=com
+    HORIZON__AUTH__LDAP__LOOKUP__CREDENTIALS__PASSWORD=somepassword
+    HORIZON__AUTH__LDAP__LOOKUP__QUERY=(uid={login})
+    ```
     """
 
     enabled: bool = Field(
@@ -121,13 +121,13 @@ class LDAPLookupSettings(BaseModel):
             """
             LDAP query send in lookup request.
 
-            Usually lookup is performed against attributes ``uid`` (LDAP) or ``sAMAccountName`` (ActiveDirectory).
+            Usually lookup is performed against attributes `uid` (LDAP) or `sAMAccountName` (ActiveDirectory).
             You can also pass any query string supported by LDAP.
-            See `Bonsai documentation <https://bonsai.readthedocs.io/en/latest/tutorial.html#searching>`_.
+            See [Bonsai documentation](https://bonsai.readthedocs.io/en/latest/tutorial.html#searching).
 
-            Supported substitution values (see :obj:`horizon.backend.settings.auth.ldap.LDAPSettings`.):
-              * ``{uid_attribute}``
-              * ``{login}``
+            Supported substitution values (see [horizon.backend.settings.auth.ldap.LDAPSettings][].):
+              * `{uid_attribute}`
+              * `{login}`
             """,
         ),
     )
@@ -135,9 +135,9 @@ class LDAPLookupSettings(BaseModel):
         default=LDAPSearchScope.ONELEVEL,
         description=textwrap.dedent(
             """
-            Lookup scope. Use ``SUBTREE`` for ActiveDirectory.
+            Lookup scope. Use `SUBTREE` for ActiveDirectory.
 
-            See `Bonsai documentation <https://bonsai.readthedocs.io/en/latest/api.html#bonsai.LDAPSearchScope.ONE>`_.
+            See [Bonsai documentation](https://bonsai.readthedocs.io/en/latest/api.html#bonsai.LDAPSearchScope.ONE).
             """,
         ),
     )
@@ -155,10 +155,10 @@ class LDAPSettings(BaseModel):
     Examples
     --------
 
-    .. code-block:: bash
-
-        HORIZON__AUTH__LDAP__URL=ldap://ldap.domain.com:389
-        HORIZON__AUTH__LDAP__UID_ATTRIBUTE=sAMAccountName
+    ```bash
+    HORIZON__AUTH__LDAP__URL=ldap://ldap.domain.com:389
+    HORIZON__AUTH__LDAP__UID_ATTRIBUTE=sAMAccountName
+    ```
     """
 
     url: LDAPUrl = Field(
@@ -181,7 +181,7 @@ class LDAPSettings(BaseModel):
             """
             Attribute containing username.
 
-            Usually ``uid`` (LDAP) or ``sAMAccountName`` (ActiveDirectory).
+            Usually `uid` (LDAP) or `sAMAccountName` (ActiveDirectory).
             """,
         ),
     )
@@ -193,9 +193,9 @@ class LDAPSettings(BaseModel):
             You can pass any DN value supported by LDAP.
 
             Supported substitution values:
-              * ``{login}``
-              * ``{uid_attribute}`` (see :obj:`~uid_attribute`)
-              * ``{base_dn}`` (see :obj:`~base_dn`)
+              * `{login}`
+              * `{uid_attribute}` (see [uid_attribute][])
+              * `{base_dn}` (see [base_dn][])
             """,
         ),
     )
@@ -212,15 +212,15 @@ class LDAPAuthProviderSettings(BaseModel):
     Examples
     --------
 
-    .. code-block:: bash
-
-        HORIZON__AUTH__PROVIDER=horizon.backend.providers.auth.ldap.LDAPAuthProvider
-        HORIZON__AUTH__ACCESS_KEY__SECRET_KEY=secret
-        HORIZON__AUTH__LDAP__URL=ldap://ldap.domain.com:389
-        HORIZON__AUTH__LDAP__LOOKUP__ENABLED=True
-        HORIZON__AUTH__LDAP__LOOKUP__POOL__ENABLED=True
-        HORIZON__AUTH__LDAP__LOOKUP__CREDENTIALS__USER=uid=techuser,ou=users,dc=example,dc=com
-        HORIZON__AUTH__LDAP__LOOKUP__CREDENTIALS__PASSWORD=somepassword
+    ```bash
+    HORIZON__AUTH__PROVIDER=horizon.backend.providers.auth.ldap.LDAPAuthProvider
+    HORIZON__AUTH__ACCESS_KEY__SECRET_KEY=secret
+    HORIZON__AUTH__LDAP__URL=ldap://ldap.domain.com:389
+    HORIZON__AUTH__LDAP__LOOKUP__ENABLED=True
+    HORIZON__AUTH__LDAP__LOOKUP__POOL__ENABLED=True
+    HORIZON__AUTH__LDAP__LOOKUP__CREDENTIALS__USER=uid=techuser,ou=users,dc=example,dc=com
+    HORIZON__AUTH__LDAP__LOOKUP__CREDENTIALS__PASSWORD=somepassword
+    ```
     """
 
     access_token: JWTSettings = Field(description="Access-token related settings")

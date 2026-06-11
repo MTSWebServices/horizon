@@ -14,10 +14,12 @@ class BadRequestError(ApplicationError):
     Examples
     --------
 
+    ```python
     >>> from horizon.commons.exceptions import BadRequestError
     >>> raise BadRequestError("Duplicate username detected. Each username must appear only once.")
     Traceback (most recent call last):
     horizon.commons.exceptions.BadRequestError: Duplicate username detected. Each username must appear only once.
+    ```
     """
 
     reason: str

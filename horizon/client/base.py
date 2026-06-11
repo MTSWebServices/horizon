@@ -68,7 +68,7 @@ class BaseClient(GenericModel, Generic[SessionClass]):
 
     @validator("base_url")
     def _validate_url(cls, value: AnyHttpUrl):  # noqa: N805
-        """``http://localhost:8000/`` -> ``http://localhost:8000``"""
+        """`http://localhost:8000/` -> `http://localhost:8000`"""
         if value.path:
             return urlparse(str(value))._replace(path=value.path.rstrip("/")).geturl()
         return value

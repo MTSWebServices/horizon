@@ -11,10 +11,10 @@ class DummyAuthProviderSettings(BaseModel):
     Examples
     --------
 
-    .. code-block:: bash
-
-        HORIZON__AUTH__PROVIDER=horizon.backend.providers.auth.dummy.DummyAuthProvider
-        HORIZON__AUTH__ACCESS_KEY__SECRET_KEY=secret
+    ```bash
+    HORIZON__AUTH__PROVIDER=horizon.backend.providers.auth.dummy.DummyAuthProvider
+    HORIZON__AUTH__ACCESS_KEY__SECRET_KEY=secret
+    ```
     """
 
     access_token: JWTSettings = Field(description="Access-token related settings")

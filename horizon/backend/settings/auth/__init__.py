@@ -19,13 +19,13 @@ class AuthSettings(BaseModel):
     Examples
     --------
 
-    .. code-block:: bash
+    ```bash
+    # set settings.auth.provider = horizon.backend.providers.auth.dummy.DummyAuthProvider
+    HORIZON__AUTH__PROVIDER=horizon.backend.providers.auth.dummy.DummyAuthProvider
 
-        # set settings.auth.provider = horizon.backend.providers.auth.dummy.DummyAuthProvider
-        HORIZON__AUTH__PROVIDER=horizon.backend.providers.auth.dummy.DummyAuthProvider
-
-        # pass access_key.secret_key = "secret" to DummyAuthProviderSettings
-        HORIZON__AUTH__ACCESS_KEY__SECRET_KEY=secret
+    # pass access_key.secret_key = "secret" to DummyAuthProviderSettings
+    HORIZON__AUTH__ACCESS_KEY__SECRET_KEY=secret
+    ```
     """
 
     provider: ImportString = Field(  # type: ignore[assignment]

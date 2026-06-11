@@ -10,16 +10,16 @@ from pydantic import AnyHttpUrl, BaseModel, Field
 class SwaggerSettings(BaseModel):
     """Swagger UI settings.
 
-    SwaggerUI is served at ``/docs`` endpoint.
+    SwaggerUI is served at `/docs` endpoint.
 
     Examples
     --------
 
-    .. code-block:: bash
-
-        HORIZON__SERVER__OPENAPI__SWAGGER__ENABLED=True
-        HORIZON__SERVER__OPENAPI__SWAGGER__JS_URL=/static/swagger/swagger-ui-bundle.js
-        HORIZON__SERVER__OPENAPI__SWAGGER__CSS_URL=/static/swagger/swagger-ui.css
+    ```bash
+    HORIZON__SERVER__OPENAPI__SWAGGER__ENABLED=True
+    HORIZON__SERVER__OPENAPI__SWAGGER__JS_URL=/static/swagger/swagger-ui-bundle.js
+    HORIZON__SERVER__OPENAPI__SWAGGER__CSS_URL=/static/swagger/swagger-ui.css
+    ```
     """
 
     enabled: bool = Field(default=True, description="Set to ``True`` to enable Swagger UI endpoint")
@@ -36,7 +36,7 @@ class SwaggerSettings(BaseModel):
         description=textwrap.dedent(
             """
             Additional parameters to pass to Swagger UI.
-            See `FastAPI documentation <https://fastapi.tiangolo.com/how-to/configure-swagger-ui/>`_.
+            See [FastAPI documentation](https://fastapi.tiangolo.com/how-to/configure-swagger-ui/).
             """,
         ),
     )
@@ -45,15 +45,15 @@ class SwaggerSettings(BaseModel):
 class RedocSettings(BaseModel):
     """ReDoc settings.
 
-    ReDOc is served at ``/redoc`` endpoint.
+    ReDOc is served at `/redoc` endpoint.
 
     Examples
     --------
 
-    .. code-block:: bash
-
-        HORIZON__SERVER__OPENAPI__REDOC__ENABLED=True
-        HORIZON__SERVER__OPENAPI__REDOC__JS_URL=/static/redoc/redoc.standalone.js
+    ```bash
+    HORIZON__SERVER__OPENAPI__REDOC__ENABLED=True
+    HORIZON__SERVER__OPENAPI__REDOC__JS_URL=/static/redoc/redoc.standalone.js
+    ```
     """
 
     enabled: bool = Field(default=True, description="Set to ``True`` to enable Redoc UI endpoint")
@@ -64,20 +64,20 @@ class RedocSettings(BaseModel):
 
 
 class LogoSettings(BaseModel):
-    """OpenAPI's ``x-logo`` documentation settings.
+    """OpenAPI's `x-logo` documentation settings.
 
-    See `OpenAPI spec <https://redocly.com/docs/api-reference-docs/specification-extensions/x-logo/>`_
+    See [OpenAPI spec](https://redocly.com/docs/api-reference-docs/specification-extensions/x-logo/)
     for more details.
 
     Examples
     --------
 
-    .. code-block:: bash
-
-        HORIZON__SERVER__OPENAPI__LOGO__URL=/static/logo.svg
-        HORIZON__SERVER__OPENAPI__LOGO__BACKGROUND_COLOR=ffffff
-        HORIZON__SERVER__OPENAPI__LOGO__ALT_TEXT=Horizon logo
-        HORIZON__SERVER__OPENAPI__LOGO__HREF=http://mycompany.domain.com
+    ```bash
+    HORIZON__SERVER__OPENAPI__LOGO__URL=/static/logo.svg
+    HORIZON__SERVER__OPENAPI__LOGO__BACKGROUND_COLOR=ffffff
+    HORIZON__SERVER__OPENAPI__LOGO__ALT_TEXT=Horizon logo
+    HORIZON__SERVER__OPENAPI__LOGO__HREF=http://mycompany.domain.com
+    ```
     """
 
     url: str = Field(
@@ -104,9 +104,9 @@ class FaviconSettings(BaseModel):
     Examples
     --------
 
-    .. code-block:: bash
-
-        HORIZON__SERVER__OPENAPI__FAVICON__URL=/static/icon.svg
+    ```bash
+    HORIZON__SERVER__OPENAPI__FAVICON__URL=/static/icon.svg
+    ```
     """
 
     url: str = Field(
@@ -118,16 +118,16 @@ class FaviconSettings(BaseModel):
 class OpenAPISettings(BaseModel):
     """OpenAPI Settings.
 
-    OpenAPI.json is served at ``/openapi.json`` endpoint.
+    OpenAPI.json is served at `/openapi.json` endpoint.
 
     Examples
     --------
 
-    .. code-block:: bash
-
-        HORIZON__SERVER__OPENAPI__ENABLED=True
-        HORIZON__SERVER__OPENAPI__SWAGGER__ENABLED=True
-        HORIZON__SERVER__OPENAPI__REDOC__ENABLED=True
+    ```bash
+    HORIZON__SERVER__OPENAPI__ENABLED=True
+    HORIZON__SERVER__OPENAPI__SWAGGER__ENABLED=True
+    HORIZON__SERVER__OPENAPI__REDOC__ENABLED=True
+    ```
     """
 
     enabled: bool = Field(default=True, description="Set to ``True`` to enable OpenAPI.json endpoint")

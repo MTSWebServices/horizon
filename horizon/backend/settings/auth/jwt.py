@@ -12,10 +12,10 @@ class JWTSettings(BaseModel):
     Examples
     --------
 
-    .. code-block:: bash
-
-        HORIZON__AUTH__ACCESS_KEY__SECRET_KEY=somesecret
-        HORIZON__AUTH__ACCESS_KEY__EXPIRE_SECONDS=3600  # 1 hour
+    ```bash
+    HORIZON__AUTH__ACCESS_KEY__SECRET_KEY=somesecret
+    HORIZON__AUTH__ACCESS_KEY__EXPIRE_SECONDS=3600  # 1 hour
+    ```
     """
 
     secret_key: SecretStr = Field(
@@ -33,7 +33,7 @@ class JWTSettings(BaseModel):
             """
             Algorithm used for signing JWT tokens.
 
-            See `authlib <https://docs.authlib.org/en/latest/specs/rfc7518.html>`_
+            See [authlib](https://docs.authlib.org/en/latest/specs/rfc7518.html)
             documentation.
             """,
         ),

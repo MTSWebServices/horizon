@@ -137,6 +137,15 @@ docs = [
   # uncomment after https://github.com/zqmillet/sphinx-plantuml/pull/4
   # "sphinx-plantuml~=1.0.0",
 ]
+mddocs = [
+  "mkdocs~=1.6.1",
+  "mkdocs-material~=9.7.6",
+  "mkdocstrings[python]~=1.0.3",
+  "mkdocs-autorefs~=1.4.4",
+  "pymdown-extensions~=10.21.2",
+  "griffe-inherited-docstrings~=1.1.3",
+  "mkdocs-literate-nav~=0.6.1",
+]
 
 [tool.uv]
 default-groups = []
@@ -144,6 +153,7 @@ default-groups = []
 [tool.uv.dependency-groups]
 dev = {requires-python = ">=3.10"}
 docs = {requires-python = ">=3.10"}
+mddocs = {requires-python = ">=3.10"}
 
 
 [tool.pytest.ini_options]
@@ -208,6 +218,7 @@ ignore = ["ARG", "ANN", "D", "COM812", "TD", "FIX002", "FA100", "UP035", "UP006"
 "tests/*" = ["S", "A", "PLR0913", "PLR2004", "FBT001", "SLF001"]
 "tests/*/fixtures/*" = ["INP001"]
 "tests/fixtures/*" = ["INP001"]
+"mddocs/scripts/*" = ["T201", "INP001", "C901", "PLR0915", "PLR0912", "E501"]
 
 [tool.ruff.lint.flake8-pytest-style]
 parametrize-names-type = "list"

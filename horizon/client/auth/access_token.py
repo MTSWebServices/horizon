@@ -15,7 +15,7 @@ from horizon.client.auth.base import BaseAuth, Session
 class AccessToken(BaseAuth, BaseModel):
     """Authorization using access token.
 
-    Token is passed in ``Authorization: Bearer ${token}`` header,
+    Token is passed in `Authorization: Bearer ${token}` header,
     and does not support refreshing.
 
     Parameters
@@ -26,8 +26,10 @@ class AccessToken(BaseAuth, BaseModel):
     Examples
     --------
 
+    ```python
     >>> from horizon.client.auth import AccessToken
     >>> auth = AccessToken(token="my.access.token")
+    ```
     """
 
     token: str

@@ -12,9 +12,9 @@ from horizon.client.auth.base import BaseAuth
 
 
 class LoginPassword(BaseAuth, BaseModel):
-    """Authorization using OAuth2 + ``grant_type=password``.
+    """Authorization using OAuth2 + `grant_type=password`.
 
-    Resulting access is passed in ``Authorization: Bearer ${token}`` header.
+    Resulting access is passed in `Authorization: Bearer ${token}` header.
     Tokens can be refreshed.
 
     Parameters
@@ -28,8 +28,10 @@ class LoginPassword(BaseAuth, BaseModel):
     Examples
     --------
 
+    ```python
     >>> from horizon.client.auth import LoginPassword
     >>> auth = LoginPassword(login="me", password="12345")
+    ```
     """
 
     login: str

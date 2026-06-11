@@ -17,31 +17,29 @@ class LoggingSettings(BaseModel):
     Examples
     --------
 
-    Using ``json`` preset:
+    Using `json` preset:
 
-    .. code-block:: bash
-
-        HORIZON__SERVER__LOGGING__SETUP=True
-        HORIZON__SERVER__LOGGING__PRESET=json
-
+    ```bash
+    HORIZON__SERVER__LOGGING__SETUP=True
+    HORIZON__SERVER__LOGGING__PRESET=json
+    ```
     Passing custom logging config file:
 
-    .. code-block:: bash
+    ```bash
+    HORIZON__SERVER__LOGGING__SETUP=True
+    HORIZON__SERVER__LOGGING__CUSTOM_CONFIG_PATH=/some/logging.yml
+    ```
+    Setup logging in some other way, e.g. using [uvicorn args](https://www.uvicorn.org/settings/#logging):
 
-        HORIZON__SERVER__LOGGING__SETUP=True
-        HORIZON__SERVER__LOGGING__CUSTOM_CONFIG_PATH=/some/logging.yml
-
-    Setup logging in some other way, e.g. using `uvicorn args <https://www.uvicorn.org/settings/#logging>`_:
-
-    .. code-block:: bash
-
-        $ export HORIZON__SERVER__LOGGING__SETUP=False
-        $ python -m horizon.backend --log-level debug
+    ```bash
+    $ export HORIZON__SERVER__LOGGING__SETUP=False
+    $ python -m horizon.backend --log-level debug
+    ```
     """
 
     setup: bool = Field(
         default=True,
-        description="If ``True``, setup logging during application start",
+        description="If `True`, setup logging during application start",
     )
     preset: Literal["json", "plain", "colored"] = Field(
         default="plain",
@@ -49,28 +47,34 @@ class LoggingSettings(BaseModel):
             """
             Name of logging preset to use.
 
-            There are few logging presets bundled to ``data-horizon[backend]`` package:
+            There are few logging presets bundled to `data-horizon[backend]` package:
 
-            .. dropdown:: ``plain`` preset
+            ??? note "`plain` preset"
 
                 This preset is recommended to use in environment which do not support colored output,
                 e.g. CI jobs
 
-                .. literalinclude:: ../../../horizon/backend/settings/server/log/plain.yml
+                --8<--
+                horizon/backend/settings/server/log/plain.yml
+                --8<--
 
-            .. dropdown:: ``colored`` preset
+            ??? note "`colored` preset"
 
                 This preset is recommended to use in development environment,
                 as it simplifies debugging. Each log record is output with color specific for a log level
 
-                .. literalinclude:: ../../../horizon/backend/settings/server/log/colored.yml
+                --8<--
+                horizon/backend/settings/server/log/colored.yml
+                --8<--
 
-            .. dropdown:: ``json`` preset
+            ??? note "`json` preset"
 
                 This preset is recommended to use in production environment,
                 as it allows to avoid writing complex log parsing configs. Each log record is output as JSON line
 
-                .. literalinclude:: ../../../horizon/backend/settings/server/log/json.yml
+                --8<--
+                horizon/backend/settings/server/log/json.yml
+                --8<--
             """,
         ),
     )
@@ -79,10 +83,10 @@ class LoggingSettings(BaseModel):
         default=None,
         description=textwrap.dedent(
             """
-            Path to custom logging configuration file. If set, overrides :obj:`~preset` value.
+            Path to custom logging configuration file. If set, overrides [preset][] value.
 
             File content should be in YAML format and conform
-            `logging.dictConfig <https://docs.python.org/3/library/logging.config.html#logging-config-dictschema>`_.
+            [logging.dictConfig](https://docs.python.org/3/library/logging.config.html#logging-config-dictschema).
             """,
         ),
     )

@@ -9,15 +9,15 @@ from pydantic import BaseModel, Field, validator
 class StaticFilesSettings(BaseModel):
     """Static files serving settings.
 
-    Files are served at ``/static`` endpoint.
+    Files are served at `/static` endpoint.
 
     Examples
     --------
 
-    .. code-block:: bash
-
-        HORIZON__SERVER__STATIC_FILES__ENABLED=True
-        HORIZON__SERVER__STATIC_FILES__DIRECTORY=/app/horizon/backend/static
+    ```bash
+    HORIZON__SERVER__STATIC_FILES__ENABLED=True
+    HORIZON__SERVER__STATIC_FILES__DIRECTORY=/app/horizon/backend/static
+    ```
     """
 
     enabled: bool = Field(default=True, description="Set to ``True`` to enable static file serving")
