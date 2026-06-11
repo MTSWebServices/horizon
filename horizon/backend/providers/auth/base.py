@@ -63,7 +63,7 @@ class AuthProvider(ABC):
 
         Returns
         -------
-        `User`
+        User
             Current user object
         """
         ...

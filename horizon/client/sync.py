@@ -102,13 +102,13 @@ class HorizonClientSync(BaseClient[OAuth2Session]):
     base_url : str
         URL of Horizon API, e.g. `https://some.domain.com/api`
 
-    auth : [BaseAuth][horizon.client.auth.base.BaseAuth]
+    auth : horizon.client.auth.base.BaseAuth
         Authentication class
 
-    retry : [RetryConfig][horizon.client.sync.RetryConfig]
+    retry : RetryConfig
         Configuration for request retries.
 
-    timeout : [TimeoutConfig][horizon.client.sync.TimeoutConfig]
+    timeout : TimeoutConfig
         Configuration for request timeouts.
 
     session : OAuth2Session
