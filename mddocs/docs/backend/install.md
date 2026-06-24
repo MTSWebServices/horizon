@@ -16,7 +16,7 @@ Options can be set via `.env` file or `environment` section in `docker-compose.y
 
 ```yaml
 --8<--
-docker-compose.yml
+"docker-compose.yml"
 --8<--
 ```
 
