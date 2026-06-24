@@ -57,7 +57,8 @@ markdown_extensions:
   - admonition
   - pymdownx.details
   - pymdownx.snippets:
-      base_path: ..
+      # When building locally from mddocs/ directory, change base_path to: .
+      base_path: mddocs
       check_paths: true
   - toc:
       permalink: true
