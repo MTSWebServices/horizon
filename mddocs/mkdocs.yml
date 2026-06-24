@@ -62,7 +62,7 @@ markdown_extensions:
         # - ../..
         - .
         # - ..
-        - mddocs
+        # - mddocs
       check_paths: true
   - toc:
       permalink: true
