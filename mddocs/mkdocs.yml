@@ -60,7 +60,6 @@ markdown_extensions:
       # When building locally from mddocs/ directory, change base_path to: .
       base_path:
         - ..
-        - .
       check_paths: false
   - toc:
       permalink: true
