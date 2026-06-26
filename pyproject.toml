@@ -47,7 +47,7 @@ dynamic = ["version"]
 
 [tool.setuptools.packages.find]
 include = ["horizon*"]
-exclude = ["docs", "tests"]
+exclude = ["mddocs", "tests"]
 
 [tool.setuptools.package-data]
 "*" = ["py.typed", "*.yml",  "*.ini", "VERSION"]
@@ -119,24 +119,6 @@ dev = [
   "types-passlib~=1.7.7",
   "types-requests~=2.33.0",
 ]
-docs = [
-  "autodoc-pydantic~=2.2.0",
-  "numpydoc~=1.10.0",
-  # sphinx-design doesn't support sphinx 9
-  "sphinx<9",
-  "furo~=2025.12.19",
-  "sphinx-copybutton~=0.5.2",
-  "sphinxcontrib-towncrier~=0.5.0a0",
-  "towncrier~=25.8.0",
-  "sphinx-issues~=6.0.0",
-  "sphinx-design~=0.6.1",
-  "sphinx-favicon~=1.1.0",
-  "sphinx-argparse~=0.5.2",
-  # https://github.com/mgeier/sphinx-last-updated-by-git/pull/77
-  "sphinx-last-updated-by-git~= 0.3.8",
-  # uncomment after https://github.com/zqmillet/sphinx-plantuml/pull/4
-  # "sphinx-plantuml~=1.0.0",
-]
 mddocs = [
   "mkdocs~=1.6.1",
   "mkdocs-material~=9.7.6",
@@ -145,6 +127,9 @@ mddocs = [
   "pymdown-extensions~=10.21.2",
   "griffe-inherited-docstrings~=1.1.3",
   "mkdocs-literate-nav~=0.6.1",
+  "mkdocs-towncrier>=0.1.5,<1",
+  "towncrier~=25.8.0",
+  "setuptools<82",
 ]
 
 [tool.uv]
@@ -152,7 +137,6 @@ default-groups = []
 
 [tool.uv.dependency-groups]
 dev = {requires-python = ">=3.10"}
-docs = {requires-python = ">=3.10"}
 mddocs = {requires-python = ">=3.10"}
 
 
@@ -199,7 +183,7 @@ partial_also = [
 [tool.ruff]
 target-version = "py37"
 line-length = 120
-extend-exclude = ["docs/", "Makefile"]
+extend-exclude = ["mddocs/", "Makefile"]
 
 [tool.ruff.lint]
 select = ["ALL"]
@@ -240,10 +224,12 @@ ignore-words-list = "selectin"
 [tool.towncrier]
 name = "Horizon"
 package = "horizon"
-filename = "docs/changelog/NEXT_RELEASE.rst"
-directory = "docs/changelog/next_release/"
-title_format = "{version} ({project_date})"
-issue_format = ":issue:`{issue}`"
+filename = "mddocs/docs/changelog/RELEASE_TEMPLATE.md"
+start_string = "<!-- towncrier release notes start -->\n"
+underlines = ["", "", ""]
+directory = "mddocs/docs/changelog/next_release/"
+title_format = "## [{version}](https://github.com/MTSWebServices/horizon/tree/{version}) - {project_date}"
+issue_format = "[#{issue}](https://github.com/MTSWebServices/horizon/issues/{issue})"
 
 [[tool.towncrier.type]]
 directory = "breaking"

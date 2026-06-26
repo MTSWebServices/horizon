@@ -2,7 +2,6 @@
 
 include .env.local
 
-VERSION = develop
 VIRTUAL_ENV ?= .venv
 PYTHON = ${VIRTUAL_ENV}/bin/python
 PIP = ${VIRTUAL_ENV}/bin/pip
@@ -38,7 +37,6 @@ venv-cleanup: ##@Env Cleanup venv
 
 venv-install: ##@Env Install requirements to venv
 	${UV} sync --inexact --frozen --all-extras --all-groups $(ARGS)
-	${UV} pip install --no-deps sphinx-plantuml
 
 
 
@@ -89,15 +87,27 @@ prod-cleanup: ##@Application Stop production server
 docs: docs-build docs-open ##@Docs Generate & open docs
 
 docs-build: ##@Docs Generate docs
-	$(MAKE) -C docs html
+	PYTHONPATH=. ${VIRTUAL_ENV}/bin/mkdocs build --config-file mddocs/mkdocs.yml
 
 docs-open: ##@Docs Open docs
-	xdg-open docs/_build/html/index.html
+	xdg-open mddocs/generated/index.html
 
 docs-cleanup: ##@Docs Cleanup docs
-	$(MAKE) -C docs clean
+	rm -rf mddocs/generated/
 
 docs-fresh: docs-cleanup docs-build ##@Docs Cleanup & build docs
+
+docs-serve: ##@Docs Run docs server
+	PYTHONPATH=. ${VIRTUAL_ENV}/bin/mkdocs serve --config-file mddocs/mkdocs.yml
+
+docs-generate-changelog: ##@Docs Generate changelog
+	cp "mddocs/docs/changelog/RELEASE_TEMPLATE.md" "mddocs/docs/changelog/temp_RELEASE_TEMPLATE.md"
+	${UV} run towncrier build "--version=$(shell cat horizon/VERSION)" --yes
+	mv "mddocs/docs/changelog/RELEASE_TEMPLATE.md" "mddocs/docs/changelog/$(shell cat horizon/VERSION).md"
+	mv "mddocs/docs/changelog/temp_RELEASE_TEMPLATE.md" "mddocs/docs/changelog/RELEASE_TEMPLATE.md"
+	awk '/##/,0' "mddocs/docs/changelog/$(shell cat horizon/VERSION).md" > temp && mv temp "mddocs/docs/changelog/$(shell cat horizon/VERSION).md"
+	sed "s#\(.*NEXT_RELEASE.*\)#\1\n- [$(shell cat horizon/VERSION) ($(shell date --rfc-3339=date))][$(shell cat horizon/VERSION | tr '.' '-')]#" "mddocs/docs/changelog/index.md" > temp && mv temp "mddocs/docs/changelog/index.md"
+	sed "s#\(.*NEXT_RELEASE.*\)#\1\n    * [$(shell cat horizon/VERSION)](changelog/$(shell cat horizon/VERSION).md)#" "mddocs/docs/nav.md" > temp && mv temp "mddocs/docs/nav.md"
 
 docs-openapi: ##@Docs Generate OpenAPI schema
 	${PYTHON} -m horizon.backend.export_openapi_schema mddocs/docs/_static/openapi.json
