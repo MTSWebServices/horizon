@@ -36,6 +36,7 @@
     * [Entities](design/entities.md)
     * [Permissions](design/permissions.md)
 * [Changelog](changelog/index.md)
+    * [Next release](changelog/NEXT_RELEASE.md)
     * [1.1.2](changelog/1.1.2.md)
     * [1.1.1](changelog/1.1.1.md)
     * [1.0.2](changelog/1.0.2.md)

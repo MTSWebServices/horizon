@@ -34,7 +34,7 @@ services:
       - 8000:8000
     volumes:
       - ./horizon:/app/horizon
-      - ./docs/_static:/app/docs/_static
+      - ./docs/_static:/app/mddocs/docs/_static
       - ./reports:/app/reports
       - ./tests:/app/tests
       - ./pyproject.toml:/app/pyproject.toml

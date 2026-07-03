@@ -31,6 +31,7 @@ extra_javascript:
   - https://unpkg.com/mermaid@11/dist/mermaid.min.js
 
 plugins:
+  - towncrier
   - autorefs
   - literate-nav:
       nav_file: nav.md
@@ -57,7 +58,9 @@ markdown_extensions:
   - admonition
   - pymdownx.details
   - pymdownx.snippets:
-      base_path: ..
+      # When building locally from mddocs/ directory, change base_path to: .
+      base_path:
+        - .
       check_paths: true
   - toc:
       permalink: true

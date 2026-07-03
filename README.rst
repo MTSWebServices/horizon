@@ -40,7 +40,7 @@ Data.Horizon
 
 |Logo|
 
-.. |Logo| image:: docs/_static/logo.svg
+.. |Logo| image:: mddocs/docs/_static/logo.svg
     :width: 400
     :alt: Horizon logo
     :target: https://github.com/MTSWebServices/horizon/
