@@ -52,7 +52,7 @@ jobs:
 
       # https://docs.docker.com/build/ci/github-actions/cache/#local-cache
       - name: Cache Docker layers
-        uses: actions/cache@v5
+        uses: actions/cache@v6
         with:
           path: ${{ runner.temp }}/.buildx-cache
           key: ${{ runner.os }}-buildx-${{ hashFiles('docker/Dockerfile.backend', 'pyproject.toml', 'uv.lock') }}
@@ -97,7 +97,7 @@ jobs:
 
       # astral-sh/setup-uv cannot restore multiple keys
       - name: Cache uv
-        uses: actions/cache@v5
+        uses: actions/cache@v6
         with:
           path: ~/.cache/uv
           key: ${{ runner.os }}-python${{ env.DEFAULT_PYTHON }}-pydantic${{ matrix.pydantic-version }}-${{ hashFiles('uv.lock') }}
