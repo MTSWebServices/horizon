@@ -1,6 +1,6 @@
 # Changelog
 
-* [Next release](./NEXT_RELEASE)
+* [Next release](./NEXT_RELEASE.md)
 * [1.1.2 (2025-04-07)][1.1.2]
 * [1.1.1 (2025-01-28)][1.1.1]
 * [1.0.2 (2024-11-21)][1.0.2]

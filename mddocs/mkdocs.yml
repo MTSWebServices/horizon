@@ -3,6 +3,10 @@ site_url: !ENV READTHEDOCS_CANONICAL_URL
 docs_dir: docs
 site_dir: generated
 
+exclude_docs: |
+  changelog/RELEASE_TEMPLATE.md
+  changelog/next_release/
+
 theme:
   name: material
   logo: _static/logo.svg
