@@ -36,7 +36,7 @@ extra_javascript:
   - _static/javascripts/mermaid_zoom.js
 
 plugins:
-  - towncrier
+  - search
   - autorefs
   - literate-nav:
       nav_file: nav.md
@@ -55,6 +55,7 @@ plugins:
             docstring_section_style: list
             inherited_members: true
             show_if_no_docstring: true
+  - towncrier
 
 markdown_extensions:
   - footnotes
