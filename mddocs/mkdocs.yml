@@ -29,7 +29,7 @@ theme:
         name: Switch to light mode
 
 extra_css:
-  - _static/custom.css
+  - _static/stylesheets/custom.css
   - _static/stylesheets/mermaid_zoom.css
 
 extra_javascript:
