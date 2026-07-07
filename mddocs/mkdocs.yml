@@ -30,9 +30,10 @@ theme:
 
 extra_css:
   - _static/custom.css
+  - _static/stylesheets/mermaid_zoom.css
 
 extra_javascript:
-  - https://unpkg.com/mermaid@11/dist/mermaid.min.js
+  - _static/javascripts/mermaid_zoom.js
 
 plugins:
   - towncrier
