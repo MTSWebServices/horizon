@@ -111,7 +111,7 @@ test = [
 ]
 dev = [
   "prek~=0.4.4",
-  "mypy~=2.1.0",
+  "mypy>=2.1,<2.3",
   "ruff~=0.15.15",
   "sqlalchemy[mypy]~=2.0.50",
   "types-pyyaml~=6.0.12",
