@@ -19,21 +19,30 @@ class LoggingSettings(BaseModel):
 
     Using `json` preset:
 
-    ```bash
-    HORIZON__SERVER__LOGGING__SETUP=True
-    HORIZON__SERVER__LOGGING__PRESET=json
+    ```yaml title="config.yml"
+    server:
+      logging:
+        setup: true
+        preset: json
     ```
     Passing custom logging config file:
 
-    ```bash
-    HORIZON__SERVER__LOGGING__SETUP=True
-    HORIZON__SERVER__LOGGING__CUSTOM_CONFIG_PATH=/some/logging.yml
+    ```yaml title="config.yml"
+    server:
+      logging:
+        setup: true
+        custom_config_path: /some/logging.yml
     ```
     Setup logging in some other way, e.g. using [uvicorn args](https://www.uvicorn.org/settings/#logging):
 
+    ```yaml title="config.yml"
+    server:
+      logging:
+        setup: false
+    ```
+
     ```bash
-    $ export HORIZON__SERVER__LOGGING__SETUP=False
-    $ python -m horizon.backend --log-level debug
+    python -m horizon.backend --log-level debug
     ```
     """
 

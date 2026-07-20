@@ -22,15 +22,23 @@ class ServerSettings(BaseModel):
     Examples
     --------
 
-    ```bash
-    HORIZON__SERVER__DEBUG=True
-    HORIZON__SERVER__LOGGING__PRESET=colored
-    HORIZON__SERVER__MONITORING__ENABLED=True
-    HORIZON__SERVER__CORS__ENABLED=True
-    HORIZON__SERVER__REQUEST_ID__ENABLED=True
-    HORIZON__SERVER__OPENAPI__ENABLED=True
-    HORIZON__SERVER__OPENAPI__SWAGGER__ENABLED=True
-    HORIZON__SERVER__OPENAPI__REDOC__ENABLED=True
+    ```yaml title="config.yml"
+    server:
+      debug: true
+      logging:
+        preset: colored
+      monitoring:
+        enabled: true
+      cors:
+        enabled: true
+      request_id:
+        enabled: true
+      openapi:
+        enabled: true
+        swagger:
+          enabled: true
+        redoc:
+          enabled: true
     ```
     """
 

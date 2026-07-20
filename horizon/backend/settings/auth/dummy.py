@@ -11,9 +11,11 @@ class DummyAuthProviderSettings(BaseModel):
     Examples
     --------
 
-    ```bash
-    HORIZON__AUTH__PROVIDER=horizon.backend.providers.auth.dummy.DummyAuthProvider
-    HORIZON__AUTH__ACCESS_KEY__SECRET_KEY=secret
+    ```yaml title="config.yml"
+    auth:
+      provider: horizon.backend.providers.auth.dummy.DummyAuthProvider
+      access_token:
+        secret_key: secret
     ```
     """
 

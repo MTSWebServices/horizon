@@ -18,10 +18,11 @@ class DatabaseSettings(BaseModel):
     Examples
     --------
 
-    ```bash
-    HORIZON__DATABASE__URL=postgresql+asyncpg://postgres:postgres@localhost:5432/horizon
-    # custom option passed directly to engine factory
-    HORIZON__DATABASE__POOL_PRE_PING=True
+    ```yaml title="config.yml"
+    database:
+      url: postgresql+asyncpg://postgres:postgres@localhost:5432/horizon
+      # custom option passed directly to engine factory
+      pool_pre_ping: true
     ```
     """
 

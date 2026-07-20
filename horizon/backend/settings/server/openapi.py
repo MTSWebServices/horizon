@@ -15,10 +15,13 @@ class SwaggerSettings(BaseModel):
     Examples
     --------
 
-    ```bash
-    HORIZON__SERVER__OPENAPI__SWAGGER__ENABLED=True
-    HORIZON__SERVER__OPENAPI__SWAGGER__JS_URL=/static/swagger/swagger-ui-bundle.js
-    HORIZON__SERVER__OPENAPI__SWAGGER__CSS_URL=/static/swagger/swagger-ui.css
+    ```yaml title="config.yml"
+    server:
+      openapi:
+        swagger:
+          enabled: true
+          js_url: /static/swagger/swagger-ui-bundle.js
+          css_url: /static/swagger/swagger-ui.css
     ```
     """
 
@@ -50,9 +53,12 @@ class RedocSettings(BaseModel):
     Examples
     --------
 
-    ```bash
-    HORIZON__SERVER__OPENAPI__REDOC__ENABLED=True
-    HORIZON__SERVER__OPENAPI__REDOC__JS_URL=/static/redoc/redoc.standalone.js
+    ```yaml title="config.yml"
+    server:
+      openapi:
+        redoc:
+          enabled: true
+          js_url: /static/redoc/redoc.standalone.js
     ```
     """
 
@@ -72,11 +78,14 @@ class LogoSettings(BaseModel):
     Examples
     --------
 
-    ```bash
-    HORIZON__SERVER__OPENAPI__LOGO__URL=/static/logo.svg
-    HORIZON__SERVER__OPENAPI__LOGO__BACKGROUND_COLOR=ffffff
-    HORIZON__SERVER__OPENAPI__LOGO__ALT_TEXT=Horizon logo
-    HORIZON__SERVER__OPENAPI__LOGO__HREF=http://mycompany.domain.com
+    ```yaml title="config.yml"
+    server:
+      openapi:
+        logo:
+          url: /static/logo.svg
+          background_color: ffffff
+          alt_text: Horizon logo
+          href: http://mycompany.domain.com
     ```
     """
 
@@ -104,8 +113,11 @@ class FaviconSettings(BaseModel):
     Examples
     --------
 
-    ```bash
-    HORIZON__SERVER__OPENAPI__FAVICON__URL=/static/icon.svg
+    ```yaml title="config.yml"
+    server:
+      openapi:
+        favicon:
+          url: /static/icon.svg
     ```
     """
 
@@ -123,10 +135,14 @@ class OpenAPISettings(BaseModel):
     Examples
     --------
 
-    ```bash
-    HORIZON__SERVER__OPENAPI__ENABLED=True
-    HORIZON__SERVER__OPENAPI__SWAGGER__ENABLED=True
-    HORIZON__SERVER__OPENAPI__REDOC__ENABLED=True
+    ```yaml title="config.yml"
+    server:
+      openapi:
+        enabled: true
+        swagger:
+          enabled: true
+        redoc:
+          enabled: true
     ```
     """
 

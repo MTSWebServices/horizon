@@ -20,10 +20,12 @@ class MonitoringSettings(BaseModel):
     Examples
     --------
 
-    ```bash
-    HORIZON__SERVER__MONITORING__ENABLED=True
-    HORIZON__SERVER__MONITORING__SKIP_PATHS=["/some/path"]
-    HORIZON__SERVER__MONITORING__SKIP_METHODS=["OPTIONS"]
+    ```yaml title="config.yml"
+    server:
+      monitoring:
+        enabled: true
+        skip_paths: [/some/path]
+        skip_methods: [OPTIONS]
     ```
     """
 

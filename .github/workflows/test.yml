@@ -108,15 +108,15 @@ jobs:
 
       - name: Install dependencies
         run: |
-          uv sync --all-extras --group test
+          uv sync --frozen --all-extras --group test
           if [ "${{ matrix.pydantic-version }}" == "1" ]; then
-            uv run pip install "pydantic<2.0.0"
+            uv pip install "pydantic<2.0.0"
           fi
 
       - name: Run Tests
         run: |
-          source .env.local
-          uv run coverage run -m pytest --junitxml=reports/junit/test-${{ matrix.os }}-${{ matrix.python-version }}-${{ matrix.pydantic-version }}.xml
+          source .env.local.test
+          uv run --no-sync coverage run -m pytest --junitxml=reports/junit/test-${{ matrix.os }}-${{ matrix.python-version }}-${{ matrix.pydantic-version }}.xml
 
       - name: Dump backend logs on failure
         if: failure()
@@ -186,7 +186,7 @@ jobs:
 
       - name: Install dependencies
         run: |
-          uv sync --group test
+          uv sync --frozen --group test
 
       - name: Combine Coverage Data
         run: |

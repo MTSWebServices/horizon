@@ -12,7 +12,7 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql/data
     healthcheck:
-      test: pg_isready
+      test: [CMD-SHELL, 'pg_isready -d $${POSTGRES_DB} -U $${POSTGRES_USER}']
       start_period: 5s
       interval: 30s
       timeout: 5s
@@ -21,16 +21,15 @@ services:
   backend:
     image: mtsrus/horizon-backend:${VERSION:-latest}
     restart: unless-stopped
-    env_file: .env.docker
     environment:
-      # list here usernames which should be assigned SUPERADMIN role on application start
-      HORIZON__ENTRYPOINT__ADMIN_USERS: admin
       # PROMETHEUS_MULTIPROC_DIR is required for multiple workers, see:
       # https://prometheus.github.io/client_python/multiprocess/
       PROMETHEUS_MULTIPROC_DIR: /tmp/prometheus-metrics
     # tmpfs dir is cleaned up each container restart
     tmpfs:
       - /tmp/prometheus-metrics:mode=1777
+    volumes:
+      - ./config.docker.yml:/app/config.yml:ro
     ports:
       - 8000:8000
     depends_on:

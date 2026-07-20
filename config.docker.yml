@@ -1,0 +1,26 @@
+database:
+  url: postgresql+asyncpg://horizon:123UsedForTestOnly@db:5432/horizon
+
+auth:
+  provider: horizon.backend.providers.auth.dummy.DummyAuthProvider
+  access_token:
+    secret_key: 234UsedForTestOnly
+  ldap:
+    url: ldap://ldap:389
+    base_dn: ou=people,dc=ldapmock,dc=local
+    lookup:
+      credentials:
+        user: uid=adminuser1,ou=people,dc=ldapmock,dc=local
+        password: password
+
+server:
+  debug: true
+  logging:
+    preset: colored
+  cors:
+    enabled: true
+    allow_origins: [http://localhost:3000]
+    allow_credentials: true
+    allow_methods: ['*']
+    allow_headers: ['*']
+    expose_headers: [X-Request-ID, Location, Access-Control-Allow-Credentials]

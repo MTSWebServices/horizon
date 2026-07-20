@@ -21,9 +21,15 @@ class LDAPCachePasswordHashSettings(BaseModel):
     Examples
     --------
 
-    ```bash
-    HORIZON__AUTH__CACHE__PASSWORD_HASH__ALGORITHM=argon2
-    HORIZON__AUTH__CACHE__PASSWORD_HASH__OPTIONS={"time_cost": 2, "memory_cost": 1024, "parallelism": 1}
+    ```yaml title="config.yml"
+    auth:
+      cache:
+        password_hash:
+          algorithm: argon2
+          options:
+            time_cost: 2
+            memory_cost: 1024
+            parallelism: 1
     ```
     """
 
@@ -50,8 +56,10 @@ class LDAPCacheSettings(BaseModel):
     Examples
     --------
 
-    ```bash
-    HORIZON__AUTH__CACHE__EXPIRE_SECONDS=3600  # 1 hour
+    ```yaml title="config.yml"
+    auth:
+      cache:
+        expire_seconds: 3600  # 1 hour
     ```
     """
 
@@ -79,15 +87,23 @@ class CachedLDAPAuthProviderSettings(LDAPAuthProviderSettings):
     Examples
     --------
 
-    ```bash
-    HORIZON__AUTH__PROVIDER=horizon.backend.providers.auth.cached_ldap.CachedLDAPAuthProvider
-    HORIZON__AUTH__ACCESS_KEY__SECRET_KEY=secret
-    HORIZON__AUTH__LDAP__URL=ldap://ldap.domain.com:389
-    HORIZON__AUTH__LDAP__LOOKUP__ENABLED=True
-    HORIZON__AUTH__LDAP__LOOKUP__POOL__ENABLED=True
-    HORIZON__AUTH__LDAP__LOOKUP__CREDENTIALS__USER=uid=techuser,ou=users,dc=example,dc=com
-    HORIZON__AUTH__LDAP__LOOKUP__CREDENTIALS__PASSWORD=somepassword
-    HORIZON__AUTH__CACHE__EXPIRE_SECONDS=3600  # 1 hour
+    ```yaml title="config.yml"
+    auth:
+      provider: horizon.backend.providers.auth.cached_ldap.CachedLDAPAuthProvider
+      access_token:
+        secret_key: secret
+      ldap:
+        url: ldap://ldap.domain.com:389
+        base_dn: ou=users,dc=example,dc=com
+        lookup:
+          enabled: true
+          pool:
+            enabled: true
+          credentials:
+            user: uid=techuser,ou=users,dc=example,dc=com
+            password: somepassword
+      cache:
+        expire_seconds: 3600  # 1 hour
     ```
     """
 

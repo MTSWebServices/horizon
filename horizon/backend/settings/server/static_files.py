@@ -14,9 +14,11 @@ class StaticFilesSettings(BaseModel):
     Examples
     --------
 
-    ```bash
-    HORIZON__SERVER__STATIC_FILES__ENABLED=True
-    HORIZON__SERVER__STATIC_FILES__DIRECTORY=/app/horizon/backend/static
+    ```yaml title="config.yml"
+    server:
+      static_files:
+        enabled: true
+        directory: /app/horizon/backend/static
     ```
     """
 

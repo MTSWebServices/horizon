@@ -14,9 +14,11 @@ class RequestIDSettings(BaseModel):
     Examples
     --------
 
-    ```bash
-    HORIZON__SERVER__REQUEST_ID__ENABLED=True
-    HORIZON__SERVER__REQUEST_ID__UPDATE_REQUEST_HEADER=True
+    ```yaml title="config.yml"
+    server:
+      request_id:
+        enabled: true
+        update_request_header: true
     ```
     """
 
