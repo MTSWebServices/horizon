@@ -72,7 +72,11 @@ def create_parser() -> argparse.ArgumentParser:
     subparsers = parser.add_subparsers(dest="command", required=True)
 
     parser_add = subparsers.add_parser("add", help="Add admin privileges to users")
-    parser_add.add_argument("usernames", nargs="+", help="Usernames to add as admins")
+    parser_add.add_argument(
+        "usernames",
+        nargs="*",
+        help="Usernames to add as admins, defaults to settings.admin_users",
+    )
     parser_add.set_defaults(func=add_admins)
 
     parser_remove = subparsers.add_parser("remove", help="Remove admin privileges from users")
@@ -103,5 +107,8 @@ if __name__ == "__main__":
     SessionLocal = async_sessionmaker(autocommit=False, autoflush=False, bind=engine, class_=AsyncSession)
     parser = create_parser()
     args = parser.parse_args()
+    if args.command == "add" and not args.usernames:
+        args.usernames = settings.admin_users
+
     session = SessionLocal()
     asyncio.run(main(args, session))

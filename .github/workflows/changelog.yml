@@ -39,7 +39,7 @@ jobs:
 
       - name: Install dependencies
         run: |
-          uv sync --group mddocs
+          uv sync --frozen --group mddocs
 
       - name: Check changelog entry exists
         run: |

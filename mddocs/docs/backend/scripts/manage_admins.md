@@ -15,11 +15,13 @@ positional arguments:
 ## add
 
 ```console
-$ python -m horizon.backend.scripts.manage_admins add [-h] usernames [usernames ...]
+$ python -m horizon.backend.scripts.manage_admins add [-h] [usernames ...]
 
 positional arguments:
-  usernames   Usernames to add as admins
+  usernames   Usernames to add as admins, defaults to settings.admin_users
 ```
+
+When no usernames are passed, the command uses the `admin_users` list from application settings.
 
 ## remove
 

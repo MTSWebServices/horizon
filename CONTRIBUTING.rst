@@ -114,7 +114,8 @@ Then start development server:
 
 And open http://localhost:8000/docs
 
-Settings are stored in ``.env.local`` file.
+Application settings are stored in ``config.yml``. The ``.env.local.test`` file contains
+test-only environment variables.
 
 Working with migrations
 ~~~~~~~~~~~~~~~~~~~~~~~
@@ -204,7 +205,8 @@ And then start it:
 
 Then open http://localhost:8000/docs
 
-Settings are stored in ``.env.docker`` file.
+Application settings are stored in ``config.docker.yml``. The ``.env.docker.test``
+file contains test-only variables.
 
 Build documentation
 ~~~~~~~~~~~~~~~~~~~

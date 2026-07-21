@@ -10,7 +10,8 @@
 ### Installation process
 
 Docker will download backend image of Horizon & Postgres, and run them.
-Options can be set via `.env` file or `environment` section in `docker-compose.yml`
+Application settings are loaded from `config.docker.yml`.
+Settings omitted from the YAML file can be passed through the `environment` section in `docker-compose.yml`.
 
 ### `docker-compose.yml`
 
@@ -20,17 +21,17 @@ docker-compose.yml
 --8<--
 ```
 
-### `.env.docker`
+### `config.docker.yml`
 
-```bash
+```yaml
 --8<--
-.env.docker
+config.docker.yml
 --8<--
 ```
 
 After container is started and ready, open [http://localhost:8000/docs](http://localhost:8000/docs).
 
-Users listed in `HORIZON__ENTRYPOINT__ADMIN_USERS` env variable will be automatically promoted to `SUPERADMIN` role.
+Users listed in the `admin_users` configuration field are automatically promoted to the `SUPERADMIN` role.
 
 ## Without docker
 
@@ -61,14 +62,21 @@ Available *extras* are:
 
 ### Run database
 
-Start Postgres instance somewhere, and set up database url using environment variables:
+Start Postgres instance somewhere, and set up the database URL in `config.yml`:
 
-```bash
-HORIZON__DATABASE__URL=postgresql+asyncpg://user:password@postgres-host:5432/database_name
+```yaml
+database:
+  url: postgresql+asyncpg://user:password@postgres-host:5432/database_name
 ```
 
 You can use virtually any database supported by [SQLAlchemy](https://docs.sqlalchemy.org/en/20/core/engines.html#database-urls),
 but the only one we really tested is Postgres.
+
+If the value is omitted from `config.yml`, it can be passed using an environment variable:
+
+```bash
+export HORIZON__DATABASE__URL=postgresql+asyncpg://user:password@postgres-host:5432/database_name
+```
 
 See [Database settings][backend-configuration-database] for more options.
 
@@ -103,9 +111,18 @@ After server is started and ready, open [http://localhost:8000/docs](http://loca
 
 ### Add admin users
 
-To promote specific users to `SUPERADMIN` role, run the following script:
+List users which should automatically receive the `SUPERADMIN` role in `config.yml`:
+
+```yaml
+admin_users:
+  - admin1
+  - admin2
+```
+
+Then run the following script without arguments, or pass usernames explicitly:
 
 ```console
+$ python -m horizon.backend.scripts.manage_admins add
 $ python -m horizon.backend.scripts.manage_admins add admin1 admin2
 ...
 ```

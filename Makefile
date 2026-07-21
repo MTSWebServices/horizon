@@ -1,6 +1,9 @@
 #!make
 
-include .env.local
+include .env.local.test
+
+HORIZON_CONFIG_FILE ?= config.yml
+export HORIZON_CONFIG_FILE
 
 VIRTUAL_ENV ?= .venv
 PYTHON = ${VIRTUAL_ENV}/bin/python

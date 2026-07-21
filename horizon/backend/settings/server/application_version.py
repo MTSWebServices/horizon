@@ -10,9 +10,11 @@ class ApplicationVersionSettings(BaseModel):
     Examples
     --------
 
-    ```bash
-    HORIZON__SERVER__APPLICATION_VERSION__ENABLED=True
-    HORIZON__SERVER__APPLICATION_VERSION__HEADER_NAME=X-Application-Version
+    ```yaml title="config.yml"
+    server:
+      application_version:
+        enabled: true
+        header_name: X-Application-Version
     ```
     """
 

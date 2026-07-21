@@ -43,9 +43,13 @@ class LDAPCredentials(BaseModel):
     Examples
     --------
 
-    ```bash
-    HORIZON__AUTH__LDAP__LOOKUP__CREDENTIALS__USER=uid=techuser,ou=users,dc=example,dc=com
-    HORIZON__AUTH__LDAP__LOOKUP__CREDENTIALS__PASSWORD=somepassword
+    ```yaml title="config.yml"
+    auth:
+      ldap:
+        lookup:
+          credentials:
+            user: uid=techuser,ou=users,dc=example,dc=com
+            password: somepassword
     ```
     """
 
@@ -63,10 +67,13 @@ class LDAPConnectionPoolSettings(BaseModel):
     Examples
     --------
 
-    ```bash
-    HORIZON__AUTH__LDAP__LOOKUP__POOL__ENABLED=True
-    HORIZON__AUTH__LDAP__LOOKUP__POOL__MAX=10
-    HORIZON__AUTH__LDAP__LOOKUP__POOL__CHECK_ON_STARTUP=True
+    ```yaml title="config.yml"
+    auth:
+      ldap:
+        lookup:
+          pool:
+            enabled: true
+            max: 10
     ```
     """
 
@@ -90,12 +97,17 @@ class LDAPLookupSettings(BaseModel):
     Examples
     --------
 
-    ```bash
-    HORIZON__AUTH__LDAP__LOOKUP__ENABLED=True
-    HORIZON__AUTH__LDAP__LOOKUP__POOL__ENABLED=True
-    HORIZON__AUTH__LDAP__LOOKUP__CREDENTIALS__USER=uid=techuser,ou=users,dc=example,dc=com
-    HORIZON__AUTH__LDAP__LOOKUP__CREDENTIALS__PASSWORD=somepassword
-    HORIZON__AUTH__LDAP__LOOKUP__QUERY=(uid={login})
+    ```yaml title="config.yml"
+    auth:
+      ldap:
+        lookup:
+          enabled: true
+          pool:
+            enabled: true
+          credentials:
+            user: uid=techuser,ou=users,dc=example,dc=com
+            password: somepassword
+          query_template: (uid={login})
     ```
     """
 
@@ -155,9 +167,12 @@ class LDAPSettings(BaseModel):
     Examples
     --------
 
-    ```bash
-    HORIZON__AUTH__LDAP__URL=ldap://ldap.domain.com:389
-    HORIZON__AUTH__LDAP__UID_ATTRIBUTE=sAMAccountName
+    ```yaml title="config.yml"
+    auth:
+      ldap:
+        url: ldap://ldap.domain.com:389
+        base_dn: ou=users,dc=example,dc=com
+        uid_attribute: sAMAccountName
     ```
     """
 
@@ -212,14 +227,21 @@ class LDAPAuthProviderSettings(BaseModel):
     Examples
     --------
 
-    ```bash
-    HORIZON__AUTH__PROVIDER=horizon.backend.providers.auth.ldap.LDAPAuthProvider
-    HORIZON__AUTH__ACCESS_KEY__SECRET_KEY=secret
-    HORIZON__AUTH__LDAP__URL=ldap://ldap.domain.com:389
-    HORIZON__AUTH__LDAP__LOOKUP__ENABLED=True
-    HORIZON__AUTH__LDAP__LOOKUP__POOL__ENABLED=True
-    HORIZON__AUTH__LDAP__LOOKUP__CREDENTIALS__USER=uid=techuser,ou=users,dc=example,dc=com
-    HORIZON__AUTH__LDAP__LOOKUP__CREDENTIALS__PASSWORD=somepassword
+    ```yaml title="config.yml"
+    auth:
+      provider: horizon.backend.providers.auth.ldap.LDAPAuthProvider
+      access_token:
+        secret_key: secret
+      ldap:
+        url: ldap://ldap.domain.com:389
+        base_dn: ou=users,dc=example,dc=com
+        lookup:
+          enabled: true
+          pool:
+            enabled: true
+          credentials:
+            user: uid=techuser,ou=users,dc=example,dc=com
+            password: somepassword
     ```
     """
 

@@ -12,9 +12,11 @@ class JWTSettings(BaseModel):
     Examples
     --------
 
-    ```bash
-    HORIZON__AUTH__ACCESS_KEY__SECRET_KEY=somesecret
-    HORIZON__AUTH__ACCESS_KEY__EXPIRE_SECONDS=3600  # 1 hour
+    ```yaml title="config.yml"
+    auth:
+      access_token:
+        secret_key: somesecret
+        expire_seconds: 3600  # 1 hour
     ```
     """
 
