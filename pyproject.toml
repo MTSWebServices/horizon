@@ -112,10 +112,10 @@ test = [
 dev = [
   "prek~=0.4.4",
   "mypy>=2.1,<2.4",
-  "ruff~=0.15.15",
+  "ruff>=0.15.15,<0.17.0",
   "sqlalchemy[mypy]~=2.0.50",
   "types-pyyaml~=6.0.12",
-  "types-authlib~=1.6.6",
+  "types-authlib>=1.6.6,<1.8.0",
   "types-passlib~=1.7.7",
   "types-requests~=2.33.0",
 ]
