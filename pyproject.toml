@@ -198,6 +198,8 @@ ignore = ["ARG", "ANN", "D", "COM812", "TD", "FIX002", "FA100", "UP035", "UP006"
 "horizon/backend/db/repositories/*" = ["TC"]
 "horizon/backend/db/migrations/*" = ["INP001", "E501"]
 "horizon/backend/providers/auth/*" = ["PLR0913"]
+# Conflict with generating openapi scheme for docs in ci
+"horizon/backend/services/uow.py" = ["FA102"]
 
 "tests/*" = ["S", "A", "PLR0913", "PLR2004", "FBT001", "SLF001"]
 "tests/*/fixtures/*" = ["INP001"]
