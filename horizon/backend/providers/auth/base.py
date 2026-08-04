@@ -69,7 +69,7 @@ class AuthProvider(ABC):
         ...
 
     @abstractmethod
-    async def get_token(
+    async def get_token(  # noqa: PLR0917
         self,
         grant_type: Optional[str] = None,
         login: Optional[str] = None,

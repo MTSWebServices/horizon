@@ -74,7 +74,7 @@ class LDAPAuthProvider(AuthProvider):
             raise AuthorizationError(msg)
         return user
 
-    async def get_token(
+    async def get_token(  # noqa: PLR0917
         self,
         grant_type: Optional[str] = None,
         login: Optional[str] = None,

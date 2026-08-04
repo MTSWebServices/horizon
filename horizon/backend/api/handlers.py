@@ -38,7 +38,7 @@ def http_exception_handler(_request: Request, exc: HTTPException) -> Response:
 
 
 def unknown_exception_handler(request: Request, exc: Exception) -> Response:
-    logger.exception("Got unhandled error: %s", exc, exc_info=exc)
+    logger.exception("Got unhandled error: %s", exc, exc_info=exc)  # noqa: LOG004
 
     server: ServerSettings = request.app.state.settings.server
     details = None
@@ -59,7 +59,7 @@ def unknown_exception_handler(request: Request, exc: Exception) -> Response:
 
 
 def service_exception_handler(request: Request, exc: ServiceError) -> Response:
-    logger.exception("Got service error: %s", exc, exc_info=exc)
+    logger.exception("Got service error: %s", exc, exc_info=exc)  # noqa: LOG004
 
     server: ServerSettings = request.app.state.settings.server
     details = None

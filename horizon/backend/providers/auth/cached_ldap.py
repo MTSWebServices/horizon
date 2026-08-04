@@ -47,7 +47,7 @@ class CachedLDAPAuthProvider(LDAPAuthProvider):
         app.dependency_overrides[AIOConnectionPool] = lambda: pool
         return app
 
-    async def get_token(
+    async def get_token(  # noqa: PLR0917
         self,
         grant_type: Optional[str] = None,
         login: Optional[str] = None,

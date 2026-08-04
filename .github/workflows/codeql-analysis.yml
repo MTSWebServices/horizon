@@ -59,8 +59,11 @@ jobs:
         run: |
           uv sync --frozen --all-extras --group dev
 
-      - name: Run mypy
-        run: uv run mypy horizon
+      - name: Run linters
+        run: |
+          uv run ruff format --check
+          uv run ruff check
+          uv run -m mypy horizon
 
   codeql:
     name: CodeQL
