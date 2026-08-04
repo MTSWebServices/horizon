@@ -110,9 +110,9 @@ test = [
   "responses>=0.23.2",
 ]
 dev = [
-  "prek~=0.4.4",
-  "mypy>=2.1,<2.4",
-  "ruff>=0.15.15,<0.17.0",
+  "mypy~=2.3.0",
+  "prek~=0.4.12",
+  "ruff~=0.16.1",
   "sqlalchemy[mypy]~=2.0.50",
   "types-pyyaml~=6.0.12",
   "types-authlib>=1.6.6,<1.8.0",
@@ -190,7 +190,7 @@ select = ["ALL"]
 # UP035, UP006 - Set -> set, Dict -> dict... ignore for support python version before 3.9
 # FA100, UP045 - Optional[str] -> str | None, doesn't work before 3.10
 # B905 - zip(strict=True) was added in Python 3.9
-ignore = ["ARG", "ANN", "D", "COM812", "TD", "FIX002", "FA100", "UP035", "UP006", "UP007", "UP045"]
+ignore = ["ARG", "ANN", "D", "COM812", "TD", "FIX002", "FA100", "UP035", "UP006", "UP007", "UP045", "CPY001"]
 
 [tool.ruff.lint.per-file-ignores]
 "horizon/commons/schemas/*" = ["TC"]
@@ -199,7 +199,7 @@ ignore = ["ARG", "ANN", "D", "COM812", "TD", "FIX002", "FA100", "UP035", "UP006"
 "horizon/backend/db/migrations/*" = ["INP001", "E501"]
 "horizon/backend/providers/auth/*" = ["PLR0913"]
 
-"tests/*" = ["S", "A", "PLR0913", "PLR2004", "FBT001", "SLF001"]
+"tests/*" = ["S", "A", "PLR0913", "PLR2004", "FBT001", "SLF001", "PLR0917"]
 "tests/*/fixtures/*" = ["INP001"]
 "tests/fixtures/*" = ["INP001"]
 "mddocs/scripts/*" = ["T201", "INP001", "C901", "PLR0915", "PLR0912", "E501"]
