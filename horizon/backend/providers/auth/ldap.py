@@ -21,13 +21,11 @@ from bonsai import InvalidDN, LDAPClient
 from bonsai.asyncio import AIOConnectionPool, AIOLDAPConnection
 from bonsai.errors import AuthenticationError, LDAPError
 from devtools import pformat
-from fastapi import Depends, FastAPI
-from typing_extensions import Annotated
+from fastapi import FastAPI
 
 from horizon.backend.db.models import User
-from horizon.backend.dependencies import Stub
 from horizon.backend.providers.auth.base import AuthProvider
-from horizon.backend.services import UnitOfWork
+from horizon.backend.services.uow import UnitOfWork
 from horizon.backend.settings.auth.ldap import LDAPAuthProviderSettings
 from horizon.backend.utils.jwt import decode_jwt, sign_jwt
 from horizon.commons.exceptions import (
@@ -44,31 +42,27 @@ LDAPUnrecoverableError = (LDAPError, TimeoutError)
 class LDAPAuthProvider(AuthProvider):
     def __init__(
         self,
-        auth_settings: Annotated[LDAPAuthProviderSettings, Depends(Stub(LDAPAuthProviderSettings))],
-        pool: Annotated[Optional[AIOConnectionPool], Depends(Stub(AIOConnectionPool))],
-        unit_of_work: Annotated[UnitOfWork, Depends()],
+        auth_settings: LDAPAuthProviderSettings,
+        pool: Optional[AIOConnectionPool],
     ) -> None:
         self._pool: Optional[AIOConnectionPool] = pool
         self._auth_settings: LDAPAuthProviderSettings = auth_settings
-        self._uow: UnitOfWork = unit_of_work
 
     @classmethod
     def setup(cls, app: FastAPI) -> FastAPI:
         auth_settings = LDAPAuthProviderSettings.parse_obj(app.state.settings.auth.dict(exclude={"provider"}))
         log.info("Using %s provider with settings:\n%s", cls.__name__, pformat(auth_settings))
-        app.dependency_overrides[AuthProvider] = cls
-        app.dependency_overrides[LDAPAuthProviderSettings] = lambda: auth_settings
         pool = cls._create_lookup_pool(auth_settings)
-        app.dependency_overrides[AIOConnectionPool] = lambda: pool
+        app.state.auth_provider = cls(auth_settings=auth_settings, pool=pool)
         return app
 
-    async def get_current_user(self, access_token: str) -> User:
+    async def get_current_user(self, access_token: str, uow: UnitOfWork) -> User:
         if not access_token:
             msg = "Missing auth credentials"
             raise AuthorizationError(msg)
 
         user_id = self._get_user_id_from_token(access_token)
-        user = await self._uow.user.get_by_id(user_id)
+        user = await uow.user.get_by_id(user_id)
         if not user.is_active:
             msg = f"User {user.username!r} is disabled"
             raise AuthorizationError(msg)
@@ -76,6 +70,7 @@ class LDAPAuthProvider(AuthProvider):
 
     async def get_token(
         self,
+        uow: UnitOfWork,
         grant_type: Optional[str] = None,
         login: Optional[str] = None,
         password: Optional[str] = None,
@@ -91,10 +86,10 @@ class LDAPAuthProvider(AuthProvider):
         username = await self._resolve_username_from_ldap(login, password)
 
         log.info("Get/create user %r in database", username)
-        async with self._uow:
+        async with uow:
             # and only then create user in database.
             # avoid creating fake users by spamming auth endpoint
-            user = await self._uow.user.get_or_create(username=username)
+            user = await uow.user.get_or_create(username=username)
 
         log.info("User id %r found", user.id)
         if not user.is_active:

@@ -5,8 +5,9 @@ from fastapi import APIRouter, Depends
 from fastapi.security import OAuth2PasswordRequestForm
 from typing_extensions import Annotated
 
-from horizon.backend.dependencies.stub import Stub
 from horizon.backend.providers.auth import AuthProvider
+from horizon.backend.services.auth import get_auth_provider
+from horizon.backend.services.uow import UnitOfWork
 from horizon.commons.errors import get_error_responses
 from horizon.commons.errors.schemas import InvalidRequestSchema, NotAuthorizedSchema
 from horizon.commons.schemas.v1 import AuthTokenResponseV1
@@ -21,9 +22,11 @@ router = APIRouter(prefix="/auth", tags=["Auth"])
 )
 async def login(
     form_data: Annotated[OAuth2PasswordRequestForm, Depends()],
-    auth_provider: Annotated[AuthProvider, Depends(Stub(AuthProvider))],
+    auth_provider: Annotated[AuthProvider, Depends(get_auth_provider)],
+    uow: Annotated[UnitOfWork, Depends()],
 ) -> AuthTokenResponseV1:
     token = await auth_provider.get_token(
+        uow=uow,
         grant_type=form_data.grant_type,
         login=form_data.username,
         password=form_data.password,
