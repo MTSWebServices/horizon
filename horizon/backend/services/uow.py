@@ -17,7 +17,7 @@ from horizon.backend.db.repositories import (
 )
 
 
-async def get_session(request: Request) -> AsyncGenerator[AsyncSession]:
+async def get_session(request: Request) -> AsyncGenerator[AsyncSession, None]:
     async with request.app.state.session_factory() as session:
         yield session
 
