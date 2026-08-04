@@ -1,10 +1,10 @@
 # SPDX-FileCopyrightText: 2023-present MTS PJSC
 # SPDX-License-Identifier: Apache-2.0
-from __future__ import annotations
 
-from typing import TYPE_CHECKING
+from collections.abc import AsyncGenerator
 
 from fastapi import Depends, Request
+from sqlalchemy.ext.asyncio import AsyncSession
 from typing_extensions import Annotated
 
 from horizon.backend.db.repositories import (
@@ -15,11 +15,6 @@ from horizon.backend.db.repositories import (
     NamespaceRepository,
     UserRepository,
 )
-
-if TYPE_CHECKING:
-    from collections.abc import AsyncGenerator
-
-    from sqlalchemy.ext.asyncio import AsyncSession
 
 
 async def get_session(request: Request) -> AsyncGenerator[AsyncSession]:
