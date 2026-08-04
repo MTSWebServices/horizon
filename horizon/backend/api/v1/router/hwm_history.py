@@ -4,7 +4,8 @@
 from fastapi import APIRouter, Depends
 from typing_extensions import Annotated
 
-from horizon.backend.services import UnitOfWork, current_user
+from horizon.backend.services.current_user import current_user
+from horizon.backend.services.uow import UnitOfWork
 from horizon.commons.errors import get_error_responses
 from horizon.commons.schemas.v1 import (
     HWMHistoryPaginateQueryV1,

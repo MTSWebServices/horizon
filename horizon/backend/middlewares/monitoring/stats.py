@@ -10,9 +10,8 @@ from prometheus_client import (
 from starlette.responses import PlainTextResponse
 from typing_extensions import Annotated
 
-from horizon.backend.dependencies.stub import Stub
 from horizon.backend.services.uow import UnitOfWork
-from horizon.backend.settings import Settings
+from horizon.backend.settings import Settings, get_settings
 from horizon.backend.settings.server import MonitoringSettings
 from horizon.backend.utils.slug import slugify
 
@@ -27,7 +26,7 @@ router = APIRouter(tags=["Monitoring"], prefix="/monitoring")
 async def stats(
     request: Request,
     unit_of_work: Annotated[UnitOfWork, Depends()],
-    settings: Annotated[Settings, Depends(Stub(Settings))],
+    settings: Annotated[Settings, Depends(get_settings)],
 ) -> PlainTextResponse:
     # asyncio.gather cannot be used here https://docs.sqlalchemy.org/en/20/errors.html#error-isce
     user_count_value = await unit_of_work.user.count()

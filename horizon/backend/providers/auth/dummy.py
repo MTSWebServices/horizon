@@ -6,13 +6,11 @@ from time import time
 from typing import Any, Dict, List, Optional, Tuple
 
 from devtools import pformat
-from fastapi import Depends, FastAPI
-from typing_extensions import Annotated
+from fastapi import FastAPI
 
 from horizon.backend.db.models import User
-from horizon.backend.dependencies import Stub
 from horizon.backend.providers.auth.base import AuthProvider
-from horizon.backend.services import UnitOfWork
+from horizon.backend.services.uow import UnitOfWork
 from horizon.backend.settings.auth.dummy import DummyAuthProviderSettings
 from horizon.backend.utils.jwt import decode_jwt, sign_jwt
 from horizon.commons.exceptions.auth import AuthorizationError
@@ -23,27 +21,24 @@ log = logging.getLogger(__name__)
 class DummyAuthProvider(AuthProvider):
     def __init__(
         self,
-        settings: Annotated[DummyAuthProviderSettings, Depends(Stub(DummyAuthProviderSettings))],
-        unit_of_work: Annotated[UnitOfWork, Depends()],
+        settings: DummyAuthProviderSettings,
     ) -> None:
         self._settings = settings
-        self._uow = unit_of_work
 
     @classmethod
     def setup(cls, app: FastAPI) -> FastAPI:
         settings = DummyAuthProviderSettings.parse_obj(app.state.settings.auth.dict(exclude={"provider"}))
         log.info("Using %s provider with settings:\n%s", cls.__name__, pformat(settings))
-        app.dependency_overrides[AuthProvider] = cls
-        app.dependency_overrides[DummyAuthProviderSettings] = lambda: settings
+        app.state.auth_provider = cls(settings=settings)
         return app
 
-    async def get_current_user(self, access_token: str) -> User:
+    async def get_current_user(self, access_token: str, uow: UnitOfWork) -> User:
         if not access_token:
             msg = "Missing auth credentials"
             raise AuthorizationError(msg)
 
         user_id = self._get_user_id_from_token(access_token)
-        user = await self._uow.user.get_by_id(user_id)
+        user = await uow.user.get_by_id(user_id)
         if not user.is_active:
             msg = f"User {user.username!r} is disabled"
             raise AuthorizationError(msg)
@@ -51,6 +46,7 @@ class DummyAuthProvider(AuthProvider):
 
     async def get_token(  # noqa: PLR0917
         self,
+        uow: UnitOfWork,
         grant_type: Optional[str] = None,
         login: Optional[str] = None,
         password: Optional[str] = None,
@@ -63,8 +59,8 @@ class DummyAuthProvider(AuthProvider):
             raise AuthorizationError(msg)
 
         log.info("Get/create user %r in database", login)
-        async with self._uow:
-            user = await self._uow.user.get_or_create(username=login)
+        async with uow:
+            user = await uow.user.get_or_create(username=login)
 
         log.info("Used with id %r found", user.id)
         if not user.is_active:

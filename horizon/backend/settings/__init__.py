@@ -6,6 +6,7 @@ from pathlib import Path
 from typing import Any, Dict, List, Tuple
 
 import yaml
+from fastapi import Request
 from pydantic import Field
 
 from horizon.backend.settings.auth import AuthSettings
@@ -115,3 +116,7 @@ class Settings(BaseSettings):
                 env_settings,
                 file_secret_settings,
             )
+
+
+async def get_settings(request: Request) -> Settings:
+    return request.app.state.settings

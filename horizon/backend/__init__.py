@@ -49,15 +49,7 @@ def application_factory(settings: Settings) -> FastAPI:
     application.add_exception_handler(HTTPException, http_exception_handler)  # type: ignore[arg-type]
     application.add_exception_handler(Exception, unknown_exception_handler)
 
-    engine = async_engine_from_config(settings.database.dict(), prefix="")
-    session_factory = create_session_factory(engine)
-
-    application.dependency_overrides.update(
-        {
-            Settings: lambda: settings,
-            AsyncSession: session_factory,  # type: ignore[dict-item]
-        },
-    )
+    application.state.session_factory = create_session_factory(settings.database)
 
     # get AuthProvider class from settings, and perform setup
     auth_class: Type[AuthProvider] = settings.auth.provider  # type: ignore[assignment]

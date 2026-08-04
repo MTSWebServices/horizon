@@ -6,7 +6,8 @@ from fastapi import APIRouter, Depends, status
 from typing_extensions import Annotated
 
 from horizon.backend.db.models import NamespaceUserRoleInt, User
-from horizon.backend.services import UnitOfWork, current_user
+from horizon.backend.services.current_user import current_user
+from horizon.backend.services.uow import UnitOfWork
 from horizon.commons.errors import get_error_responses
 from horizon.commons.schemas.v1 import (
     HWMBulkCopyRequestV1,

@@ -1,7 +1,8 @@
 # SPDX-FileCopyrightText: 2023-present MTS PJSC
 # SPDX-License-Identifier: Apache-2.0
+from collections.abc import AsyncGenerator
 
-from fastapi import Depends
+from fastapi import Depends, Request
 from sqlalchemy.ext.asyncio import AsyncSession
 from typing_extensions import Annotated
 
@@ -13,13 +14,17 @@ from horizon.backend.db.repositories import (
     NamespaceRepository,
     UserRepository,
 )
-from horizon.backend.dependencies import Stub
+
+
+async def get_session(request: Request) -> AsyncGenerator[AsyncSession]:
+    async with request.app.state.session_factory() as session:
+        yield session
 
 
 class UnitOfWork:
     def __init__(
         self,
-        session: Annotated[AsyncSession, Depends(Stub(AsyncSession))],
+        session: Annotated[AsyncSession, Depends(get_session)],
     ):
         self._session = session
         self.namespace = NamespaceRepository(session=session)

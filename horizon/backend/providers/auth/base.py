@@ -7,6 +7,7 @@ from typing import Any, Dict, List, Optional
 from fastapi import FastAPI
 
 from horizon.backend.db.models import User
+from horizon.backend.services.uow import UnitOfWork
 
 
 class AuthProvider(ABC):
@@ -22,7 +23,7 @@ class AuthProvider(ABC):
         """
         This method is called by `application_factory`.
 
-        Here you should add dependency overrides for auth provider,
+        Here you should configure your auth provider, set `app.state.auth_provider`
         and return new `app` object.
 
         Examples
@@ -35,24 +36,22 @@ class AuthProvider(ABC):
 
         class MyAwesomeAuthProvider(AuthProvider):
             def setup(app):
-                app.dependency_overrides[AuthProvider] = MyAwesomeAuthProvider
-
-                # `settings_object_factory` returns MyAwesomeAuthProviderSettings object
-                app.dependency_overrides[MyAwesomeAuthProviderSettings] = settings_object_factory
+                settings_dict = app.state.settings.auth.model_dump(exclude={"provider})
+                settings = MyAwesomeAuthProviderSettings.model_validate(settings_dict)
+                app.state.auth_provider = MyAwesomeAuthProviderSettings(settings)
                 return app
 
             def __init__(
                 self,
-                settings: Annotated[MyAwesomeAuthProviderSettings, Depends(Stub(MyAwesomeAuthProviderSettings))],
+                settings: MyAwesomeAuthProviderSettings,
             ):
-                # settings object is set automatically by FastAPI's dependency_overrides
                 self.settings = settings
         ```
         """
         ...
 
     @abstractmethod
-    async def get_current_user(self, access_token: str) -> User:
+    async def get_current_user(self, access_token: str, uow: UnitOfWork) -> User:
         """
         This method should return currently logged in user.
 
@@ -71,6 +70,7 @@ class AuthProvider(ABC):
     @abstractmethod
     async def get_token(  # noqa: PLR0917
         self,
+        uow: UnitOfWork,
         grant_type: Optional[str] = None,
         login: Optional[str] = None,
         password: Optional[str] = None,
