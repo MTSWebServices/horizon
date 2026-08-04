@@ -5,7 +5,6 @@ from typing import TYPE_CHECKING, Type
 
 from fastapi import FastAPI, HTTPException
 from fastapi.exceptions import RequestValidationError
-from sqlalchemy.ext.asyncio import AsyncSession, async_engine_from_config
 
 import horizon
 from horizon.backend.api.handlers import (
