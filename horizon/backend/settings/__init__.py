@@ -8,7 +8,7 @@ from typing import Any
 import yaml
 from fastapi import Request
 from pydantic import Field
-from pydantic_settings import BaseSettings
+from pydantic_settings import BaseSettings, SettingsConfigDict
 
 from horizon.backend.settings.auth import AuthSettings
 from horizon.backend.settings.database import DatabaseSettings
@@ -57,6 +57,11 @@ class Settings(BaseSettings):
       - admin
     ```
     """
+
+    model_config = SettingsConfigDict(
+        env_prefix="HORIZON__",
+        env_nested_delimiter="__",
+    )
 
     admin_users: list[str] = Field(
         default_factory=list,

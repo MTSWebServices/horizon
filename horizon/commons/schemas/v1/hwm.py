@@ -73,13 +73,12 @@ class HWMUpdateRequestV1(BaseModel):
     model_config = ConfigDict(arbitrary_types_allowed=True)
 
     @model_validator(mode="after")
-    def _any_field_set(cls, values):  # noqa: N805
+    def _any_field_set(self):
         """Validate that at least one field is set."""
-        values_set = {k for k, v in values.items() if not isinstance(v, Unset)}
-        if not values_set:
+        if not any(not isinstance(v, Unset) for v in self.model_dump().values()):
             msg = "At least one field must be set."
             raise ValueError(msg)
-        return values
+        return self
 
 
 class HWMBulkCopyRequestV1(BaseModel):
@@ -98,13 +97,12 @@ class HWMBulkCopyRequestV1(BaseModel):
         return v
 
     @model_validator(mode="after")
-    def _check_namespace_ids(cls, values):  # noqa: N805
+    def _check_namespace_ids(self):
         """Validator to ensure source and target namespace IDs are different."""
-        source_namespace_id, target_namespace_id = values.get("source_namespace_id"), values.get("target_namespace_id")
-        if source_namespace_id == target_namespace_id:
+        if self.source_namespace_id == self.target_namespace_id:
             msg = "Source and target namespace IDs must not be the same."
             raise ValueError(msg)
-        return values
+        return self
 
 
 class HWMBulkDeleteRequestV1(BaseModel):

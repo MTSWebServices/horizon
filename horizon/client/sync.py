@@ -1046,10 +1046,10 @@ class HorizonClientSync(BaseClient[OAuth2Session]):
         )
 
     # retry validator is called after "session" validators, when session already created by default or passed directly
-    @model_validator(mode="before")
-    def _configure_retries(cls, values):  # noqa: N805
-        session = values.get("session")
-        retry_config = values.get("retry")
+    @model_validator(mode="after")
+    def _configure_retries(self):
+        session = self.session
+        retry_config = self.retry
 
         optional_retry_args = {}
         if retry_config.backoff_jitter is not None:
@@ -1067,7 +1067,7 @@ class HorizonClientSync(BaseClient[OAuth2Session]):
         session.mount("https://", adapter)
         session.mount("http://", adapter)
 
-        return values
+        return self
 
     @field_validator("session")
     def _set_client_info(cls, session: Session):  # noqa: N805

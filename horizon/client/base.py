@@ -13,7 +13,9 @@ from pydantic import (
     AnyHttpUrl,
     BaseModel,
     ConfigDict,
+    Field,
     PrivateAttr,
+    TypeAdapter,
     ValidationError,
     ValidationInfo,
     field_validator,
@@ -53,7 +55,7 @@ class BaseClient(BaseModel, Generic[SessionClass]):
 
     base_url: AnyHttpUrl
     auth: BaseAuth
-    session: SessionClass | None = None
+    session: SessionClass | None = Field(default=None, validate_default=True)
 
     _backend_version_tuple: tuple[int, ...] = PrivateAttr(default_factory=tuple)
 
@@ -86,10 +88,8 @@ class BaseClient(BaseModel, Generic[SessionClass]):
 
     def _parse_body(self, body: dict, response_class: type[ResponseSchema]) -> ResponseSchema:
         try:
-            return response_class.model_validate(body)
+            return TypeAdapter(response_class).validate_python(body)
         except ValidationError as e:
-            # Response does not match expected schema. Probably API was changed.
-            # ValidationError does not contain body, so we attaching it to response.
             raise e from ValueError(body)
 
     def _handle_backend_version(self, backend_version: str | None):

@@ -57,10 +57,9 @@ class NamespaceUpdateRequestV1(BaseModel):
     model_config = ConfigDict(arbitrary_types_allowed=True)
 
     @model_validator(mode="after")
-    def _any_field_set(cls, values):  # noqa: N805
+    def _any_field_set(self):
         """Validate that at least one field is set."""
-        values_set = {k for k, v in values.items() if not isinstance(v, Unset)}
-        if not values_set:
+        if not any(not isinstance(v, Unset) for v in self.model_dump().values()):
             msg = "At least one field must be set."
             raise ValueError(msg)
-        return values
+        return self
