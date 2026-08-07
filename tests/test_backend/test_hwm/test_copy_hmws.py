@@ -4,7 +4,6 @@ from http import HTTPStatus
 from typing import TYPE_CHECKING
 
 import pytest
-from pydantic import __version__ as pydantic_version
 from sqlalchemy import select
 
 from horizon.backend.db.models import HWM, Namespace, NamespaceUserRoleInt
@@ -64,21 +63,13 @@ async def test_copy_hwms_same_source_and_target_namespace(
 
     assert response.status_code == HTTPStatus.UNPROCESSABLE_ENTITY
 
-    if pydantic_version >= "2":
-        detail = {
-            "code": "value_error",
-            "context": {},
-            "input": body,
-            "location": ["body"],
-            "message": "Value error, Source and target namespace IDs must not be the same.",
-        }
-    else:
-        detail = {
-            "code": "value_error",
-            "location": ["body", "__root__"],
-            "message": "Source and target namespace IDs must not be the same.",
-        }
-
+    detail = {
+        "code": "value_error",
+        "context": {},
+        "input": body,
+        "location": ["body"],
+        "message": "Value error, Source and target namespace IDs must not be the same.",
+    }
     expected_body = {
         "error": {
             "code": "invalid_request",
@@ -146,7 +137,11 @@ async def test_copy_hwms(
         if with_history:
             assert len(copied_history_records) == len(original_history_records) + 1
 
-            for original_record, copied_record in zip(original_history_records, copied_history_records[:-1]):
+            for original_record, copied_record in zip(
+                original_history_records,
+                copied_history_records[:-1],
+                strict=True,
+            ):
                 assert original_record.name == copied_record.name
                 assert original_record.description == copied_record.description
                 assert original_record.type == copied_record.type
@@ -176,20 +171,13 @@ async def test_copy_hwms_empty_hwm_ids_list(
 
     assert response.status_code == HTTPStatus.UNPROCESSABLE_ENTITY
 
-    if pydantic_version >= "2":
-        detail = {
-            "code": "value_error",
-            "context": {},
-            "input": [],
-            "location": ["body", "hwm_ids"],
-            "message": "Value error, List should have at least 1 item after validation, not 0",
-        }
-    else:
-        detail = {
-            "code": "value_error",
-            "location": ["body", "hwm_ids"],
-            "message": "List should have at least 1 item after validation, not 0",
-        }
+    detail = {
+        "code": "value_error",
+        "context": {},
+        "input": [],
+        "location": ["body", "hwm_ids"],
+        "message": "Value error, List should have at least 1 item after validation, not 0",
+    }
 
     expected_body = {
         "error": {

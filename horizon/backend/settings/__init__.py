@@ -3,36 +3,27 @@
 
 import os
 from pathlib import Path
-from typing import Any, Dict, List, Tuple
+from typing import Any
 
 import yaml
 from fastapi import Request
 from pydantic import Field
+from pydantic_settings import BaseSettings
 
 from horizon.backend.settings.auth import AuthSettings
 from horizon.backend.settings.database import DatabaseSettings
 from horizon.backend.settings.server import ServerSettings
 
-BaseSettings: type
-try:
-    from pydantic import BaseSettings  # type: ignore[no-redef]
-except ImportError:
-    from pydantic_settings import BaseSettings  # type: ignore[no-redef]
 
-
-def _read_yaml_config() -> Dict[str, Any]:
+def _read_yaml_config() -> dict[str, Any]:
     config_path = Path(os.getenv("HORIZON_CONFIG_FILE", "config.yml"))
     if not config_path.is_file():
         return {}
 
     with config_path.open(encoding="utf-8") as config_file:
-        config: Dict[str, Any] = yaml.safe_load(config_file) or {}
+        config: dict[str, Any] = yaml.safe_load(config_file) or {}
 
     return config
-
-
-def _read_yaml_config_v1(_: Any) -> Dict[str, Any]:
-    return _read_yaml_config()
 
 
 class Settings(BaseSettings):
@@ -67,7 +58,7 @@ class Settings(BaseSettings):
     ```
     """
 
-    admin_users: List[str] = Field(
+    admin_users: list[str] = Field(
         default_factory=list,
         description="Usernames which should be assigned SUPERADMIN role on application start",
     )
@@ -89,7 +80,7 @@ class Settings(BaseSettings):
         env_settings: Any,
         dotenv_settings: Any,
         file_secret_settings: Any,
-    ) -> Tuple[Any, ...]:
+    ) -> tuple[Any, ...]:
         return (
             init_settings,
             _read_yaml_config,
@@ -97,25 +88,6 @@ class Settings(BaseSettings):
             dotenv_settings,
             file_secret_settings,
         )
-
-    class Config:
-        env_prefix = "HORIZON__"
-        env_nested_delimiter = "__"
-
-        # Pydantic v1 compatibility
-        @classmethod
-        def customise_sources(
-            cls,
-            init_settings: Any,
-            env_settings: Any,
-            file_secret_settings: Any,
-        ) -> Tuple[Any, ...]:
-            return (
-                init_settings,
-                _read_yaml_config_v1,
-                env_settings,
-                file_secret_settings,
-            )
 
 
 async def get_settings(request: Request) -> Settings:

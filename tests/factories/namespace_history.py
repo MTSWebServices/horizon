@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from datetime import datetime, timezone
 from random import randint
-from typing import TYPE_CHECKING, AsyncContextManager, Callable
+from typing import TYPE_CHECKING
 
 import pytest  # noqa: TC002
 import pytest_asyncio
@@ -12,7 +12,8 @@ from horizon.backend.db.models import Namespace, NamespaceHistory, User
 from tests.factories.base import random_string
 
 if TYPE_CHECKING:
-    from typing import AsyncGenerator
+    from collections.abc import AsyncGenerator, Callable
+    from contextlib import AbstractAsyncContextManager
 
     from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -34,7 +35,7 @@ async def namespace_history_items(
     user: User,
     namespace: Namespace,
     request: pytest.FixtureRequest,
-    async_session_factory: Callable[[], AsyncContextManager[AsyncSession]],
+    async_session_factory: Callable[[], AbstractAsyncContextManager[AsyncSession]],
 ) -> AsyncGenerator[list[NamespaceHistory], None]:
     size, params = request.param
     result = [

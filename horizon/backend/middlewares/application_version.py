@@ -47,6 +47,6 @@ def apply_application_version_middleware(app: FastAPI, settings: ApplicationVers
     app.add_middleware(
         ApplicationVersionMiddleware,
         version=app.version,
-        **settings.dict(exclude={"enabled"}),
+        **settings.model_dump(exclude={"enabled"}),
     )
     return app

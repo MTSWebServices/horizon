@@ -2,10 +2,10 @@
 # SPDX-License-Identifier: Apache-2.0
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, List, Optional, TypeVar, Union, cast
+from typing import TYPE_CHECKING, TypeVar, cast
 
 from authlib.integrations.requests_client import OAuth2Session
-from pydantic import BaseModel, Field, root_validator, validator
+from pydantic import BaseModel, Field, field_validator, model_validator
 from requests.adapters import HTTPAdapter
 from urllib3.util import Retry
 
@@ -70,8 +70,8 @@ class RetryConfig(BaseModel):
 
     total: int = 3
     backoff_factor: float = 0.1
-    status_forcelist: List[int] = [502, 503, 504]
-    backoff_jitter: Optional[float] = None
+    status_forcelist: list[int] = [502, 503, 504]
+    backoff_jitter: float | None = None
 
 
 class TimeoutConfig(BaseModel):
@@ -221,7 +221,7 @@ class HorizonClientSync(BaseClient[OAuth2Session]):
             response_class=PingResponse,
         )
 
-    def whoami(self) -> Union[UserResponseV1WithAdmin, UserResponseV1]:
+    def whoami(self) -> UserResponseV1WithAdmin | UserResponseV1:
         """Get current user info.
 
         Examples
@@ -248,7 +248,7 @@ class HorizonClientSync(BaseClient[OAuth2Session]):
         return self._request(  # type: ignore[return-value]
             "GET",
             f"{self.base_url}/v1/users/me",
-            response_class=Union[UserResponseV1WithAdmin, UserResponseV1],  # type: ignore[arg-type]
+            response_class=UserResponseV1WithAdmin | UserResponseV1,  # type: ignore[arg-type]
         )
 
     def paginate_namespaces(
@@ -338,7 +338,7 @@ class HorizonClientSync(BaseClient[OAuth2Session]):
             "GET",
             f"{self.base_url}/v1/namespaces/",
             response_class=PageResponseV1[NamespaceResponseV1],
-            params=query.dict(),
+            params=query.model_dump(),
         )
 
     def get_namespace(self, namespace_id: int) -> NamespaceResponseV1:
@@ -412,7 +412,7 @@ class HorizonClientSync(BaseClient[OAuth2Session]):
         return self._request(  # type: ignore[return-value]
             "POST",
             f"{self.base_url}/v1/namespaces/",
-            json=data.dict(),
+            json=data.model_dump(),
             response_class=NamespaceResponseV1,
         )
 
@@ -458,7 +458,7 @@ class HorizonClientSync(BaseClient[OAuth2Session]):
         return self._request(  # type: ignore[return-value]
             "PATCH",
             f"{self.base_url}/v1/namespaces/{namespace_id}",
-            json=changes.dict(exclude_unset=True),
+            json=changes.model_dump(exclude_unset=True),
             response_class=NamespaceResponseV1,
         )
 
@@ -554,7 +554,7 @@ class HorizonClientSync(BaseClient[OAuth2Session]):
             "GET",
             f"{self.base_url}/v1/namespace-history/",
             response_class=PageResponseV1[NamespaceHistoryResponseV1],
-            params=query.dict(exclude_unset=True),
+            params=query.model_dump(exclude_unset=True),
         )
 
     def paginate_hwm(
@@ -645,7 +645,7 @@ class HorizonClientSync(BaseClient[OAuth2Session]):
             "GET",
             f"{self.base_url}/v1/hwm/",
             response_class=PageResponseV1[HWMResponseV1],
-            params=query.dict(exclude_unset=True),
+            params=query.model_dump(exclude_unset=True),
         )
 
     def get_hwm(self, hwm_id: int) -> HWMResponseV1:
@@ -732,7 +732,7 @@ class HorizonClientSync(BaseClient[OAuth2Session]):
         return self._request(  # type: ignore[return-value]
             "POST",
             f"{self.base_url}/v1/hwm/",
-            json=data.dict(exclude_unset=True),
+            json=data.model_dump(exclude_unset=True),
             response_class=HWMResponseV1,
         )
 
@@ -780,7 +780,7 @@ class HorizonClientSync(BaseClient[OAuth2Session]):
         return self._request(  # type: ignore[return-value]
             "PATCH",
             f"{self.base_url}/v1/hwm/{hwm_id}",
-            json=changes.dict(exclude_unset=True),
+            json=changes.model_dump(exclude_unset=True),
             response_class=HWMResponseV1,
         )
 
@@ -852,11 +852,11 @@ class HorizonClientSync(BaseClient[OAuth2Session]):
         return self._request(  # type: ignore[return-value]
             "POST",
             f"{self.base_url}/v1/hwm/copy",
-            json=data.dict(),
+            json=data.model_dump(),
             response_class=HWMListResponseV1,
         )
 
-    def bulk_delete_hwm(self, namespace_id: int, hwm_ids: List[int]) -> None:
+    def bulk_delete_hwm(self, namespace_id: int, hwm_ids: list[int]) -> None:
         """Bulk delete HWMs.
 
         !!! note
@@ -890,7 +890,7 @@ class HorizonClientSync(BaseClient[OAuth2Session]):
         self._request(
             "DELETE",
             f"{self.base_url}/v1/hwm/",
-            json=data.dict(),
+            json=data.model_dump(),
         )
 
     def get_namespace_permissions(self, namespace_id: int) -> PermissionsResponseV1:
@@ -973,7 +973,7 @@ class HorizonClientSync(BaseClient[OAuth2Session]):
         return self._request(  # type: ignore[return-value]
             "PATCH",
             f"{self.base_url}/v1/namespaces/{namespace_id}/permissions",
-            json=changes.dict(exclude_unset=True),
+            json=changes.model_dump(exclude_unset=True),
             response_class=PermissionsResponseV1,
         )
 
@@ -1042,11 +1042,11 @@ class HorizonClientSync(BaseClient[OAuth2Session]):
             "GET",
             f"{self.base_url}/v1/hwm-history/",
             response_class=PageResponseV1[HWMHistoryResponseV1],
-            params=query.dict(exclude_unset=True),
+            params=query.model_dump(exclude_unset=True),
         )
 
     # retry validator is called after "session" validators, when session already created by default or passed directly
-    @root_validator(pre=False, skip_on_failure=True)
+    @model_validator(mode="before")
     def _configure_retries(cls, values):  # noqa: N805
         session = values.get("session")
         retry_config = values.get("retry")
@@ -1069,7 +1069,7 @@ class HorizonClientSync(BaseClient[OAuth2Session]):
 
         return values
 
-    @validator("session", always=True)
+    @field_validator("session")
     def _set_client_info(cls, session: Session):  # noqa: N805
         session.headers["X-Client-Name"] = "python-horizon[sync]"
         session.headers["X-Client-Version"] = horizon_version

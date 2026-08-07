@@ -2,10 +2,9 @@
 # SPDX-License-Identifier: Apache-2.0
 
 from datetime import datetime
-from typing import Any, Optional
+from typing import Any
 
-from pydantic import BaseModel, Field
-from pydantic import __version__ as pydantic_version
+from pydantic import BaseModel, ConfigDict, Field
 
 from horizon.commons.schemas.v1.pagination import PaginateQueryV1
 
@@ -28,17 +27,13 @@ class HWMHistoryResponseV1(BaseModel):
     description: str = Field(description="HWM description")
     type: str = Field(description="HWM type, any non-empty string")
     value: Any = Field(description="HWM value, any JSON serializable value")
-    entity: Optional[str] = Field(default=None, description="Name of entity associated with the HWM. Can be any string")
-    expression: Optional[str] = Field(
+    entity: str | None = Field(default=None, description="Name of entity associated with the HWM. Can be any string")
+    expression: str | None = Field(
         default=None,
         description="Expression used to calculate HWM value. Can be any string",
     )
     action: str = Field(description="Action performed on the HWM record")
     changed_at: datetime = Field(description="Timestamp of a change of the HWM data")
-    changed_by: Optional[str] = Field(default=None, description="User who changed the HWM data")
+    changed_by: str | None = Field(default=None, description="User who changed the HWM data")
 
-    class Config:
-        if pydantic_version >= "2":
-            from_attributes = True
-        else:
-            orm_mode = True
+    model_config = ConfigDict(from_attributes=True)

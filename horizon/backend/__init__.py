@@ -1,7 +1,7 @@
 # SPDX-FileCopyrightText: 2023-present MTS PJSC
 # SPDX-License-Identifier: Apache-2.0
 
-from typing import TYPE_CHECKING, Type
+from typing import TYPE_CHECKING
 
 from fastapi import FastAPI, HTTPException
 from fastapi.exceptions import RequestValidationError
@@ -51,7 +51,7 @@ def application_factory(settings: Settings) -> FastAPI:
     application.state.session_factory = create_session_factory(settings.database)
 
     # get AuthProvider class from settings, and perform setup
-    auth_class: Type[AuthProvider] = settings.auth.provider  # type: ignore[assignment]
+    auth_class: type[AuthProvider] = settings.auth.provider  # type: ignore[assignment]
     auth_class.setup(application)
 
     apply_middlewares(application, settings)

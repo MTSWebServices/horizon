@@ -5,10 +5,9 @@ from copy import deepcopy
 from datetime import datetime, timezone
 from http import HTTPStatus
 from time import time
-from typing import TYPE_CHECKING, Any
+from typing import TYPE_CHECKING
 
 import pytest
-from pydantic import __version__ as pydantic_version
 from sqlalchemy import select
 from sqlalchemy_utils.functions import naturally_equivalent
 
@@ -420,25 +419,15 @@ async def test_ldap_auth_get_token_with_malformed_input(
         },
     )
 
-    details: list[dict[str, Any]]
-    if pydantic_version < "2":
-        details = [
-            {
-                "location": ["body", "password"],
-                "message": "field required",
-                "code": "value_error.missing",
-            },
-        ]
-    else:
-        details = [
-            {
-                "location": ["body", "password"],
-                "message": "Field required",
-                "code": "missing",
-                "context": {},
-                "input": None,
-            },
-        ]
+    details = [
+        {
+            "location": ["body", "password"],
+            "message": "Field required",
+            "code": "missing",
+            "context": {},
+            "input": None,
+        },
+    ]
 
     expected = {
         "error": {

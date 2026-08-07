@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from datetime import datetime, timezone
 from random import randint
-from typing import TYPE_CHECKING, AsyncContextManager, Callable
+from typing import TYPE_CHECKING
 
 import pytest  # noqa: TC002
 import pytest_asyncio
@@ -12,7 +12,8 @@ from horizon.backend.db.models import HWM, HWMHistory, Namespace, User
 from tests.factories.base import random_string
 
 if TYPE_CHECKING:
-    from typing import AsyncGenerator
+    from collections.abc import AsyncGenerator, Callable
+    from contextlib import AbstractAsyncContextManager
 
     from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -39,7 +40,7 @@ async def hwm_history_items(
     namespace: Namespace,
     hwm: HWM,
     request: pytest.FixtureRequest,
-    async_session_factory: Callable[[], AsyncContextManager[AsyncSession]],
+    async_session_factory: Callable[[], AbstractAsyncContextManager[AsyncSession]],
 ) -> AsyncGenerator[list[HWMHistory], None]:
     size, params = request.param
     result = [
@@ -76,7 +77,7 @@ async def hwm_history_items_for_hwms(
     namespace: Namespace,
     hwms: list[HWM],
     request: pytest.FixtureRequest,
-    async_session_factory: Callable[[], AsyncContextManager[AsyncSession]],
+    async_session_factory: Callable[[], AbstractAsyncContextManager[AsyncSession]],
 ) -> AsyncGenerator[list[HWMHistory], None]:
     size, params = request.param
     hwm_history_records = []

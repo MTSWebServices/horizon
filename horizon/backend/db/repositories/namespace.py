@@ -3,7 +3,7 @@
 
 from __future__ import annotations
 
-from typing import Dict, cast
+from typing import cast
 
 from sqlalchemy import SQLColumnExpression, delete, select, update
 from sqlalchemy.dialects.postgresql import insert as pg_insert
@@ -135,7 +135,7 @@ class NamespaceRepository(Repository[Namespace]):
         if user_role < required_role:
             raise PermissionDeniedError(required_role.name, user_role.name)
 
-    async def get_namespace_users_permissions(self, namespace_id: int) -> Dict[User, NamespaceUserRoleInt]:
+    async def get_namespace_users_permissions(self, namespace_id: int) -> dict[User, NamespaceUserRoleInt]:
         permissions_dict = {}
 
         namespace = await self.get(namespace_id)

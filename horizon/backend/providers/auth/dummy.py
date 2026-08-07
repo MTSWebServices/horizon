@@ -3,7 +3,7 @@
 
 import logging
 from time import time
-from typing import Any, Dict, List, Optional, Tuple
+from typing import Any
 
 from devtools import pformat
 from fastapi import FastAPI
@@ -27,7 +27,7 @@ class DummyAuthProvider(AuthProvider):
 
     @classmethod
     def setup(cls, app: FastAPI) -> FastAPI:
-        settings = DummyAuthProviderSettings.parse_obj(app.state.settings.auth.dict(exclude={"provider"}))
+        settings = DummyAuthProviderSettings.model_validate(app.state.settings.auth.dict(exclude={"provider"}))
         log.info("Using %s provider with settings:\n%s", cls.__name__, pformat(settings))
         app.state.auth_provider = cls(settings=settings)
         return app
@@ -47,13 +47,13 @@ class DummyAuthProvider(AuthProvider):
     async def get_token(  # noqa: PLR0917
         self,
         uow: UnitOfWork,
-        grant_type: Optional[str] = None,
-        login: Optional[str] = None,
-        password: Optional[str] = None,
-        scopes: Optional[List[str]] = None,
-        client_id: Optional[str] = None,
-        client_secret: Optional[str] = None,
-    ) -> Dict[str, Any]:
+        grant_type: str | None = None,
+        login: str | None = None,
+        password: str | None = None,
+        scopes: list[str] | None = None,
+        client_id: str | None = None,
+        client_secret: str | None = None,
+    ) -> dict[str, Any]:
         if not login or not password:
             msg = "Missing auth credentials"
             raise AuthorizationError(msg)
@@ -75,7 +75,7 @@ class DummyAuthProvider(AuthProvider):
             "expires_at": expires_at,
         }
 
-    def _generate_access_token(self, user_id: int) -> Tuple[str, float]:
+    def _generate_access_token(self, user_id: int) -> tuple[str, float]:
         expires_at = time() + self._settings.access_token.expire_seconds
         payload = {
             "user_id": user_id,

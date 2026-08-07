@@ -1,14 +1,13 @@
 # SPDX-FileCopyrightText: 2023-present MTS PJSC
 # SPDX-License-Identifier: Apache-2.0
 
-from typing import Optional
 
 from horizon.backend.db.models import CredentialsCache
 from horizon.backend.db.repositories.base import Repository
 
 
 class CredentialsCacheRepository(Repository[CredentialsCache]):
-    async def get_by_login(self, login: str) -> Optional[CredentialsCache]:
+    async def get_by_login(self, login: str) -> CredentialsCache | None:
         return await self._get(CredentialsCache.login == login)
 
     async def create_or_update(

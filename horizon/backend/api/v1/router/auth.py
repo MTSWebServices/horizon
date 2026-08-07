@@ -1,9 +1,10 @@
 # SPDX-FileCopyrightText: 2023-present MTS PJSC
 # SPDX-License-Identifier: Apache-2.0
 
+from typing import Annotated
+
 from fastapi import APIRouter, Depends
 from fastapi.security import OAuth2PasswordRequestForm
-from typing_extensions import Annotated
 
 from horizon.backend.providers.auth import AuthProvider
 from horizon.backend.services.auth import get_auth_provider
@@ -34,4 +35,4 @@ async def login(
         client_id=form_data.client_id,
         client_secret=form_data.client_secret,
     )
-    return AuthTokenResponseV1.parse_obj(token)
+    return AuthTokenResponseV1.model_validate(token)

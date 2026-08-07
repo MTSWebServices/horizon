@@ -2,7 +2,7 @@
 # SPDX-License-Identifier: Apache-2.0
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Any, NamedTuple, Type
+from typing import TYPE_CHECKING, Any, NamedTuple
 
 from horizon.commons.errors.base import APIErrorSchema, BaseErrorSchema
 
@@ -13,7 +13,7 @@ if TYPE_CHECKING:
 class APIErrorResponse(NamedTuple):
     status: int
     description: str
-    schema: Type[BaseErrorSchema]
+    schema: type[BaseErrorSchema]
 
 
 _responses_by_exception: dict[type[Exception], APIErrorResponse] = {}

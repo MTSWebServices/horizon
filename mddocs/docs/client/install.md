@@ -2,8 +2,8 @@
 
 ## Requirements
 
-- Python 3.7 or above
-- Pydantic 1.x or 2.x
+- Python 3.10 or above
+- Pydantic 2.x
 
 ## Installation process
 

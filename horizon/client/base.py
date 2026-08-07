@@ -6,17 +6,18 @@ import http
 import logging
 import pprint
 import warnings
-from typing import Any, Generic, Optional, Tuple, TypeVar
+from typing import Any, Generic, TypeVar
 from urllib.parse import urlparse
 
-from pydantic import AnyHttpUrl, BaseModel, PrivateAttr, ValidationError, parse_obj_as, validator
-from pydantic import __version__ as pydantic_version
-
-if pydantic_version >= "2":
-    from pydantic import BaseModel as GenericModel
-else:
-    from pydantic.generics import GenericModel  # type: ignore[no-redef]
-
+from pydantic import (
+    AnyHttpUrl,
+    BaseModel,
+    ConfigDict,
+    PrivateAttr,
+    ValidationError,
+    ValidationInfo,
+    field_validator,
+)
 from typing_extensions import Protocol
 
 import horizon
@@ -47,49 +48,45 @@ class BaseResponse(Protocol):
     def headers(self) -> dict[str, str]: ...
 
 
-class BaseClient(GenericModel, Generic[SessionClass]):
+class BaseClient(BaseModel, Generic[SessionClass]):
     """Base Horizon client implementation, designed to be subclassed"""
 
     base_url: AnyHttpUrl
     auth: BaseAuth
-    session: Optional[SessionClass] = None
+    session: SessionClass | None = None
 
-    _backend_version_tuple: Tuple[int, ...] = PrivateAttr(default_factory=tuple)
+    _backend_version_tuple: tuple[int, ...] = PrivateAttr(default_factory=tuple)
 
-    class Config:
-        arbitrary_types_allowed = True
+    model_config = ConfigDict(arbitrary_types_allowed=True)
 
     @classmethod
     def session_class(cls) -> type[SessionClass]:
         # Get `Session` from `SyncClient(BaseClient[Session])`
-        if pydantic_version >= "2":
-            return cls.model_fields["session"].annotation.__args__[0]  # type: ignore[union-attr]
-        return cls.__bases__[0].__annotations__["session"].__args__[0]
+        return cls.model_fields["session"].annotation.__args__[0]  # type: ignore[union-attr]
 
-    @validator("base_url")
+    @field_validator("base_url")
     def _validate_url(cls, value: AnyHttpUrl):  # noqa: N805
         """`http://localhost:8000/` -> `http://localhost:8000`"""
         if value.path:
             return urlparse(str(value))._replace(path=value.path.rstrip("/")).geturl()
         return value
 
-    @validator("session", always=True)
+    @field_validator("session")
     def _default_session(cls, session: SessionClass | None):  # noqa: N805
         """If session is not passed, create it automatically"""
         if session:
             return session
-        RealSessionClass = cls.session_class()  # noqa: N806
-        return RealSessionClass()
+        return cls.session_class()()
 
-    @validator("session", always=True)
-    def _patch_session(cls, session: SessionClass, values: dict):  # noqa: N805
+    @field_validator("session")
+    def _patch_session(cls, session: SessionClass, info: ValidationInfo):  # noqa: N805
         """Patch session for chosen auth method, if required"""
-        auth: BaseAuth = values.get("auth")  # type: ignore[assignment]
+        auth: BaseAuth = info.data["auth"]  # type: ignore[assignment]
         return auth.patch_session(session)
 
     def _parse_body(self, body: dict, response_class: type[ResponseSchema]) -> ResponseSchema:
         try:
-            return parse_obj_as(response_class, body)
+            return response_class.model_validate(body)
         except ValidationError as e:
             # Response does not match expected schema. Probably API was changed.
             # ValidationError does not contain body, so we attaching it to response.
@@ -158,7 +155,7 @@ class BaseClient(GenericModel, Generic[SessionClass]):
             raise http_exception
 
         try:
-            error_value = parse_obj_as(APIErrorSchema[error_response.schema], body)  # type: ignore[name-defined]
+            error_value = APIErrorSchema[error_response.schema].model_validate(body)  # type: ignore[name-defined]
         except ValidationError:
             # Something wrong with API response, probably wrong URL
             raise http_exception  # noqa: B904
