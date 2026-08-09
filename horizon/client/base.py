@@ -67,21 +67,24 @@ class BaseClient(BaseModel, Generic[SessionClass]):
         return cls.model_fields["session"].annotation.__args__[0]  # type: ignore[union-attr]
 
     @field_validator("base_url")
-    def _validate_url(cls, value: AnyHttpUrl):  # noqa: N805
+    @classmethod
+    def _validate_url(cls, value: AnyHttpUrl):
         """`http://localhost:8000/` -> `http://localhost:8000`"""
         if value.path:
             return urlparse(str(value))._replace(path=value.path.rstrip("/")).geturl()
         return value
 
     @field_validator("session")
-    def _default_session(cls, session: SessionClass | None):  # noqa: N805
+    @classmethod
+    def _default_session(cls, session: SessionClass | None):
         """If session is not passed, create it automatically"""
         if session:
             return session
         return cls.session_class()()
 
     @field_validator("session")
-    def _patch_session(cls, session: SessionClass, info: ValidationInfo):  # noqa: N805
+    @classmethod
+    def _patch_session(cls, session: SessionClass, info: ValidationInfo):
         """Patch session for chosen auth method, if required"""
         auth: BaseAuth = info.data["auth"]  # type: ignore[assignment]
         return auth.patch_session(session)

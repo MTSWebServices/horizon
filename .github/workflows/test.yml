@@ -23,7 +23,7 @@ permissions:
 
 jobs:
   tests:
-    name: Run tests (Python ${{ matrix.python-version }}, Pydantic v${{ matrix.pydantic-version }} on ${{ matrix.os }})
+    name: Run tests (Python ${{ matrix.python-version }} on ${{ matrix.os }})
     runs-on: ${{ matrix.os }}
 
     strategy:
@@ -31,11 +31,9 @@ jobs:
       matrix:
         include:
           - python-version: '3.10'
-            pydantic-version: '2'
             os: ubuntu-latest
 
           - python-version: '3.14'
-            pydantic-version: '2'
             os: ubuntu-latest
 
     steps:

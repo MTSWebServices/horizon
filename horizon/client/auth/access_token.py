@@ -77,7 +77,8 @@ class AccessToken(BaseAuth, BaseModel):
         return claims
 
     @field_validator("token")
-    def _validate_access_token(cls, value):  # noqa: N805
+    @classmethod
+    def _validate_access_token(cls, value):
         # AuthlibToken doesn't perform any validation, so we have to
         cls._parse_token(value)
         return value

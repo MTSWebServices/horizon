@@ -40,8 +40,9 @@ class PermissionsUpdateRequestV1(BaseModel):
     )
 
     @field_validator("permissions")
+    @classmethod
     def _ensure_unique_usernames_and_single_owner(
-        cls,  # noqa: N805
+        cls,
         permissions: list[PermissionUpdateRequestItemV1],
     ) -> list[PermissionUpdateRequestItemV1]:
         seen: set[str] = set()

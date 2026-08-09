@@ -90,7 +90,8 @@ class HWMBulkCopyRequestV1(BaseModel):
     with_history: bool = Field(default=False, description="Whether to copy HWM history.")
 
     @field_validator("hwm_ids", mode="before")
-    def _check_hwm_ids_not_empty(cls, v):  # noqa: N805
+    @classmethod
+    def _check_hwm_ids_not_empty(cls, v):
         if not len(v):
             msg = "List should have at least 1 item after validation, not 0"
             raise ValueError(msg)
@@ -112,7 +113,8 @@ class HWMBulkDeleteRequestV1(BaseModel):
     hwm_ids: list[int]
 
     @field_validator("hwm_ids", mode="before")
-    def _check_hwm_ids_not_empty(cls, v):  # noqa: N805
+    @classmethod
+    def _check_hwm_ids_not_empty(cls, v):
         if not len(v):
             msg = "List should have at least 1 item after validation, not 0"
             raise ValueError(msg)

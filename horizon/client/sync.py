@@ -1070,7 +1070,8 @@ class HorizonClientSync(BaseClient[OAuth2Session]):
         return self
 
     @field_validator("session")
-    def _set_client_info(cls, session: Session):  # noqa: N805
+    @classmethod
+    def _set_client_info(cls, session: Session):
         session.headers["X-Client-Name"] = "python-horizon[sync]"
         session.headers["X-Client-Version"] = horizon_version
         return session

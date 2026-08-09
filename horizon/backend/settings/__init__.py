@@ -1,29 +1,16 @@
 # SPDX-FileCopyrightText: 2023-present MTS PJSC
 # SPDX-License-Identifier: Apache-2.0
-
 import os
 from pathlib import Path
 from typing import Any
 
-import yaml
 from fastapi import Request
 from pydantic import Field
-from pydantic_settings import BaseSettings, SettingsConfigDict
+from pydantic_settings import BaseSettings, SettingsConfigDict, YamlConfigSettingsSource
 
 from horizon.backend.settings.auth import AuthSettings
 from horizon.backend.settings.database import DatabaseSettings
 from horizon.backend.settings.server import ServerSettings
-
-
-def _read_yaml_config() -> dict[str, Any]:
-    config_path = Path(os.getenv("HORIZON_CONFIG_FILE", "config.yml"))
-    if not config_path.is_file():
-        return {}
-
-    with config_path.open(encoding="utf-8") as config_file:
-        config: dict[str, Any] = yaml.safe_load(config_file) or {}
-
-    return config
 
 
 class Settings(BaseSettings):
@@ -86,9 +73,10 @@ class Settings(BaseSettings):
         dotenv_settings: Any,
         file_secret_settings: Any,
     ) -> tuple[Any, ...]:
+        yaml_file = Path(os.getenv("HORIZON_CONFIG_FILE", "config.yml"))
         return (
             init_settings,
-            _read_yaml_config,
+            YamlConfigSettingsSource(settings_cls, yaml_file=yaml_file),
             env_settings,
             dotenv_settings,
             file_secret_settings,

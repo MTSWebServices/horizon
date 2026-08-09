@@ -61,7 +61,8 @@ class CORSSettings(BaseModel):
     expose_headers: list[str] = Field(default=["X-Request-ID"], description="HTTP headers exposed from backend")
 
     @field_validator("allow_origins", "allow_methods", "allow_headers", "expose_headers", mode="before")
-    def _validate_bootstrap_servers(cls, raw_value: Any):  # noqa: N805
+    @classmethod
+    def _validate_bootstrap_servers(cls, raw_value: Any):
         if not isinstance(raw_value, str):
             return raw_value
         if "[" in raw_value:

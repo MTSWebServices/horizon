@@ -51,7 +51,9 @@ class LDAPAuthProvider(AuthProvider):
 
     @classmethod
     def setup(cls, app: FastAPI) -> FastAPI:
-        auth_settings = LDAPAuthProviderSettings.model_validate(app.state.settings.auth.dict(exclude={"provider"}))
+        auth_settings = LDAPAuthProviderSettings.model_validate(
+            app.state.settings.auth.model_dump(exclude={"provider"})
+        )
         log.info("Using %s provider with settings:\n%s", cls.__name__, pformat(auth_settings))
         pool = cls._create_lookup_pool(auth_settings)
         app.state.auth_provider = cls(auth_settings=auth_settings, pool=pool)

@@ -140,7 +140,8 @@ class LDAPLookupSettings(BaseModel):
     )
 
     @field_validator("scope", mode="before")
-    def _convert_scope_to_enum(cls, value: str | int | LDAPSearchScope) -> LDAPSearchScope:  # noqa: N805
+    @classmethod
+    def _convert_scope_to_enum(cls, value: str | int | LDAPSearchScope) -> LDAPSearchScope:
         if isinstance(value, str):
             return LDAPSearchScope[value.upper()]
         return LDAPSearchScope(value)
