@@ -12,7 +12,7 @@ from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_asyn
 from sqlalchemy.future import select
 
 from horizon.backend.db.models import User
-from horizon.backend.middlewares import setup_logging
+from horizon.backend.logging import setup_logging
 from horizon.backend.settings import Settings
 
 logger = logging.getLogger(__name__)
@@ -100,10 +100,9 @@ async def main(args: argparse.Namespace, session: AsyncSession) -> None:
 
 if __name__ == "__main__":
     settings = Settings()  # type: ignore[call-arg]
-    if settings.server.logging.setup:
-        setup_logging(settings.server.logging.get_log_config_path())
+    setup_logging(settings.logging)
 
-    engine = create_async_engine(settings.database.url)
+    engine = create_async_engine(str(settings.database.url))
     SessionLocal = async_sessionmaker(autocommit=False, autoflush=False, bind=engine, class_=AsyncSession)
     parser = create_parser()
     args = parser.parse_args()

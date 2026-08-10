@@ -30,7 +30,7 @@ PROJECT_PATH = Path(__file__).parent.parent.parent.joinpath("horizon/backend").r
 def empty_db_url(settings: Settings) -> Generator[str, None, None]:
     """Create new test DB to run migrations"""
     new_db = secrets.token_hex(8)
-    original_url = urlparse(settings.database.url)
+    original_url = urlparse(str(settings.database.url))
 
     # updating original url with temp database name, and use it only for running migrations
     # sqlalchemy-utils does not support asyncio, so using sync action instead

@@ -17,7 +17,7 @@ if TYPE_CHECKING:
 @contextlib.asynccontextmanager
 async def get_async_engine(settings: Settings) -> AsyncGenerator[AsyncEngine, None]:
     """Create test engine"""
-    connection_url = settings.database.url
+    connection_url = str(settings.database.url)
     engine = create_async_engine(connection_url)
     yield engine
     await engine.dispose()

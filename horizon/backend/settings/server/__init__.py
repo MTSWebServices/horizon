@@ -9,7 +9,6 @@ from horizon.backend.settings.server.application_version import (
     ApplicationVersionSettings,
 )
 from horizon.backend.settings.server.cors import CORSSettings
-from horizon.backend.settings.server.log import LoggingSettings
 from horizon.backend.settings.server.monitoring import MonitoringSettings
 from horizon.backend.settings.server.openapi import OpenAPISettings
 from horizon.backend.settings.server.request_id import RequestIDSettings
@@ -25,8 +24,6 @@ class ServerSettings(BaseModel):
     ```yaml title="config.yml"
     server:
       debug: true
-      logging:
-        preset: colored
       monitoring:
         enabled: true
       cors:
@@ -50,10 +47,6 @@ class ServerSettings(BaseModel):
             Do not use this on production!
             """,
         ),
-    )
-    logging: LoggingSettings = Field(
-        default_factory=LoggingSettings,
-        description="[Logging settings][backend-configuration-logging]",
     )
     cors: CORSSettings = Field(
         default_factory=CORSSettings,

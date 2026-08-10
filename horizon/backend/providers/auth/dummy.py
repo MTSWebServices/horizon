@@ -30,7 +30,7 @@ class DummyAuthProvider(AuthProvider):
         settings = DummyAuthProviderSettings.model_validate(
             app.state.settings.auth.model_dump(exclude={"provider"}, warnings=False),
         )
-        log.info("Using %s provider with settings:\n%s", cls.__name__, pformat(settings))
+        log.info("Initializing %s provider with settings:\n%s", cls.__name__, pformat(settings))
         app.state.auth_provider = cls(settings=settings)
         return app
 

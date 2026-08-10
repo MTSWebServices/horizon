@@ -1,8 +1,9 @@
 # SPDX-FileCopyrightText: 2023-present MTS PJSC
 # SPDX-License-Identifier: Apache-2.0
 
-from pydantic import BaseModel, ConfigDict, Field, ImportString
+from pydantic import BaseModel, ConfigDict, Field, ImportString, field_validator
 
+from horizon.backend.providers.auth.base import AuthProvider
 from horizon.backend.providers.auth.dummy import DummyAuthProvider
 
 
@@ -28,3 +29,15 @@ class AuthSettings(BaseModel):
     )
 
     model_config = ConfigDict(extra="allow")
+
+    @field_validator("provider", mode="after")
+    @classmethod
+    def _validate_provider(cls, value: type) -> type[AuthProvider]:
+        if not issubclass(value, AuthProvider):
+            msg = f"Class {value} is not a subclass of {AuthProvider}"
+            raise TypeError(msg)
+        return value
+
+    # prevent leaking provider secrets
+    def __repr_args__(self):
+        return [("provider", self.provider)]
