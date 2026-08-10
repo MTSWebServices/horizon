@@ -47,7 +47,7 @@ async def get_hwm(
     unit_of_work: Annotated[UnitOfWork, Depends()],
 ) -> HWMResponseV1:
     hwm = await unit_of_work.hwm.get(hwm_id)
-    return HWMResponseV1.from_orm(hwm)
+    return HWMResponseV1.model_validate(hwm)
 
 
 @router.post(
@@ -67,14 +67,14 @@ async def create_hwm(
             namespace_id=data.namespace_id,
         )
         hwm = await unit_of_work.hwm.create(
-            data=data.model_dump(exclude_unset=True),
+            data=data.model_dump(exclude_unset=True, warnings=False),
             user=user,
         )
         await unit_of_work.hwm_history.create(
             hwm_id=hwm.id,
             data=hwm.to_dict(exclude={"id"}),
         )
-    return HWMResponseV1.from_orm(hwm)
+    return HWMResponseV1.model_validate(hwm)
 
 
 @router.patch(
@@ -96,7 +96,7 @@ async def update_hwm(
         )
         hwm = await unit_of_work.hwm.update(
             hwm_id=hwm_id,
-            changes=changes.model_dump(exclude_unset=True),
+            changes=changes.model_dump(exclude_unset=True, warnings=False),
             user=user,
         )
         await unit_of_work.hwm_history.create(
@@ -106,7 +106,7 @@ async def update_hwm(
                 "action": "Updated",
             },
         )
-    return HWMResponseV1.from_orm(hwm)
+    return HWMResponseV1.model_validate(hwm)
 
 
 @router.delete(
@@ -196,4 +196,4 @@ async def copy_hwms(
             hwm_history_data.append(history_record)
 
         await unit_of_work.hwm_history.bulk_create(hwm_history_data)
-        return HWMListResponseV1(hwms=[HWMResponseV1.from_orm(hwm) for hwm in copied_hwms])
+        return HWMListResponseV1(hwms=[HWMResponseV1.model_validate(hwm) for hwm in copied_hwms])

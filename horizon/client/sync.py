@@ -338,7 +338,7 @@ class HorizonClientSync(BaseClient[OAuth2Session]):
             "GET",
             f"{self.base_url}/v1/namespaces/",
             response_class=PageResponseV1[NamespaceResponseV1],
-            params=query.model_dump(),
+            params=query.model_dump(warnings=False),
         )
 
     def get_namespace(self, namespace_id: int) -> NamespaceResponseV1:
@@ -412,7 +412,7 @@ class HorizonClientSync(BaseClient[OAuth2Session]):
         return self._request(  # type: ignore[return-value]
             "POST",
             f"{self.base_url}/v1/namespaces/",
-            json=data.model_dump(),
+            json=data.model_dump(warnings=False),
             response_class=NamespaceResponseV1,
         )
 
@@ -554,7 +554,7 @@ class HorizonClientSync(BaseClient[OAuth2Session]):
             "GET",
             f"{self.base_url}/v1/namespace-history/",
             response_class=PageResponseV1[NamespaceHistoryResponseV1],
-            params=query.model_dump(exclude_unset=True),
+            params=query.model_dump(exclude_unset=True, warnings=False),
         )
 
     def paginate_hwm(
@@ -645,7 +645,7 @@ class HorizonClientSync(BaseClient[OAuth2Session]):
             "GET",
             f"{self.base_url}/v1/hwm/",
             response_class=PageResponseV1[HWMResponseV1],
-            params=query.model_dump(exclude_unset=True),
+            params=query.model_dump(exclude_unset=True, warnings=False),
         )
 
     def get_hwm(self, hwm_id: int) -> HWMResponseV1:
@@ -732,7 +732,7 @@ class HorizonClientSync(BaseClient[OAuth2Session]):
         return self._request(  # type: ignore[return-value]
             "POST",
             f"{self.base_url}/v1/hwm/",
-            json=data.model_dump(exclude_unset=True),
+            json=data.model_dump(exclude_unset=True, warnings=False),
             response_class=HWMResponseV1,
         )
 
@@ -780,7 +780,7 @@ class HorizonClientSync(BaseClient[OAuth2Session]):
         return self._request(  # type: ignore[return-value]
             "PATCH",
             f"{self.base_url}/v1/hwm/{hwm_id}",
-            json=changes.model_dump(exclude_unset=True),
+            json=changes.model_dump(exclude_unset=True, warnings=False),
             response_class=HWMResponseV1,
         )
 
@@ -852,7 +852,7 @@ class HorizonClientSync(BaseClient[OAuth2Session]):
         return self._request(  # type: ignore[return-value]
             "POST",
             f"{self.base_url}/v1/hwm/copy",
-            json=data.model_dump(),
+            json=data.model_dump(warnings=False),
             response_class=HWMListResponseV1,
         )
 
@@ -890,7 +890,7 @@ class HorizonClientSync(BaseClient[OAuth2Session]):
         self._request(
             "DELETE",
             f"{self.base_url}/v1/hwm/",
-            json=data.model_dump(),
+            json=data.model_dump(warnings=False),
         )
 
     def get_namespace_permissions(self, namespace_id: int) -> PermissionsResponseV1:
@@ -973,7 +973,7 @@ class HorizonClientSync(BaseClient[OAuth2Session]):
         return self._request(  # type: ignore[return-value]
             "PATCH",
             f"{self.base_url}/v1/namespaces/{namespace_id}/permissions",
-            json=changes.model_dump(exclude_unset=True),
+            json=changes.model_dump(exclude_unset=True, warnings=False),
             response_class=PermissionsResponseV1,
         )
 
@@ -1042,7 +1042,7 @@ class HorizonClientSync(BaseClient[OAuth2Session]):
             "GET",
             f"{self.base_url}/v1/hwm-history/",
             response_class=PageResponseV1[HWMHistoryResponseV1],
-            params=query.model_dump(exclude_unset=True),
+            params=query.model_dump(exclude_unset=True, warnings=False),
         )
 
     # retry validator is called after "session" validators, when session already created by default or passed directly

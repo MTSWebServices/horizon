@@ -75,7 +75,7 @@ class HWMUpdateRequestV1(BaseModel):
     @model_validator(mode="after")
     def _any_field_set(self):
         """Validate that at least one field is set."""
-        if not any(not isinstance(v, Unset) for v in self.model_dump().values()):
+        if not any(not isinstance(v, Unset) for v in self.model_dump(warnings=False).values()):
             msg = "At least one field must be set."
             raise ValueError(msg)
         return self

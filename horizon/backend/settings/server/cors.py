@@ -1,10 +1,7 @@
 # SPDX-FileCopyrightText: 2023-present MTS PJSC
 # SPDX-License-Identifier: Apache-2.0
 
-import json
-from typing import Any
-
-from pydantic import BaseModel, ConfigDict, Field, field_validator
+from pydantic import BaseModel, ConfigDict, Field
 
 
 class CORSSettings(BaseModel):
@@ -59,14 +56,5 @@ class CORSSettings(BaseModel):
         description="HTTP headers allowed for CORS",
     )
     expose_headers: list[str] = Field(default=["X-Request-ID"], description="HTTP headers exposed from backend")
-
-    @field_validator("allow_origins", "allow_methods", "allow_headers", "expose_headers", mode="before")
-    @classmethod
-    def _validate_bootstrap_servers(cls, raw_value: Any):
-        if not isinstance(raw_value, str):
-            return raw_value
-        if "[" in raw_value:
-            return json.loads(raw_value)
-        return [item.strip() for item in raw_value.split(",")]
 
     model_config = ConfigDict(extra="allow")

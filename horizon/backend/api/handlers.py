@@ -128,7 +128,7 @@ def exception_json_response(
     error_schema = APIErrorSchema[content_type]  # type: ignore[valid-type]
     return Response(
         status_code=status,
-        content=error_schema(error=content).model_dump_json(by_alias=True),
+        content=error_schema(error=content).model_dump_json(by_alias=True, warnings=False),
         media_type="application/json",
         headers=headers,
     )

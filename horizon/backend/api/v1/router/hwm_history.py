@@ -26,5 +26,5 @@ async def paginate_hwm_history(
     pagination_args: Annotated[HWMHistoryPaginateQueryV1, Depends()],
     unit_of_work: Annotated[UnitOfWork, Depends()],
 ) -> PageResponseV1[HWMHistoryResponseV1]:
-    pagination = await unit_of_work.hwm_history.paginate(**pagination_args.model_dump())
+    pagination = await unit_of_work.hwm_history.paginate(**pagination_args.model_dump(warnings=False))
     return PageResponseV1[HWMHistoryResponseV1].from_pagination(pagination)

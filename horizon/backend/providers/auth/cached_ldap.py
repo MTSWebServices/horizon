@@ -35,7 +35,7 @@ class CachedLDAPAuthProvider(LDAPAuthProvider):
     @classmethod
     def setup(cls, app: FastAPI) -> FastAPI:
         auth_settings = CachedLDAPAuthProviderSettings.model_validate(
-            app.state.settings.auth.model_dump(exclude={"provider"})
+            app.state.settings.auth.model_dump(exclude={"provider"}, warnings=False)
         )
         log.info("Using %s provider with settings:\n%s", cls.__name__, pformat(auth_settings))
         pool = cls._create_lookup_pool(auth_settings)

@@ -36,7 +36,7 @@ class AuthProvider(ABC):
 
         class MyAwesomeAuthProvider(AuthProvider):
             def setup(app):
-                settings_dict = app.state.settings.auth.model_dump(exclude={"provider})
+                settings_dict = app.state.settings.auth.model_dump(exclude={"provider}, warnings=False)
                 settings = MyAwesomeAuthProviderSettings.model_validate(settings_dict)
                 app.state.auth_provider = MyAwesomeAuthProviderSettings(settings)
                 return app

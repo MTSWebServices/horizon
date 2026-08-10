@@ -19,5 +19,5 @@ async def whoami(
     user: Annotated[User, Depends(current_user)],
 ) -> UserResponseV1WithAdmin | UserResponseV1:
     if user.is_admin:
-        return UserResponseV1WithAdmin.from_orm(user)
-    return UserResponseV1.from_orm(user)
+        return UserResponseV1WithAdmin.model_validate(user)
+    return UserResponseV1.model_validate(user)
