@@ -5,7 +5,7 @@ from time import time
 from typing import TYPE_CHECKING
 
 import pytest
-from pytest_lazyfixture import lazy_fixture
+from pytest_lazy_fixtures import lf as lazy_fixture
 
 from horizon.backend.settings.auth.jwt import JWTSettings
 from horizon.backend.utils.jwt import sign_jwt
