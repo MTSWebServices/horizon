@@ -8,6 +8,7 @@ from fastapi import Request
 from pydantic import Field
 from pydantic_settings import BaseSettings, SettingsConfigDict, YamlConfigSettingsSource
 
+from horizon.backend.logging import DEFAULT_LOGGING_SETTINGS, LoggingSettings
 from horizon.backend.settings.auth import AuthSettings
 from horizon.backend.settings.database import DatabaseSettings
 from horizon.backend.settings.server import ServerSettings
@@ -54,10 +55,17 @@ class Settings(BaseSettings):
         default_factory=list,
         description="Usernames which should be assigned SUPERADMIN role on application start",
     )
-    database: DatabaseSettings = Field(description="[Database settings][backend-configuration-database]")
+    database: DatabaseSettings = Field(
+        default_factory=DatabaseSettings,  # type: ignore[arg-type]
+        description="[Database settings][backend-configuration-database]",
+    )
+    logging: LoggingSettings = Field(
+        default=DEFAULT_LOGGING_SETTINGS,
+        description="[Logging settings][backend-configuration-logging]",
+    )
     server: ServerSettings = Field(
         default_factory=ServerSettings,
-        description="[Server settings][backend-configuration]",
+        description="[Server settings][backend-configuration-server]",
     )
     auth: AuthSettings = Field(
         default_factory=AuthSettings,

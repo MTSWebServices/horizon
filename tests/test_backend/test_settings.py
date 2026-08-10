@@ -26,7 +26,7 @@ def test_settings_are_loaded_from_default_yaml_file(
             admin_users:
               - yaml-admin
             database:
-              url: "postgresql+asyncpg://user:password'#[value]@localhost:5432/horizon"
+              url: "postgresql+asyncpg://user:password@localhost:5432/horizon"
             server:
               debug: true
               cors:
@@ -44,7 +44,7 @@ def test_settings_are_loaded_from_default_yaml_file(
     settings = Settings()
 
     assert settings.admin_users == ["yaml-admin"]
-    assert settings.database.url == "postgresql+asyncpg://user:password'#[value]@localhost:5432/horizon"
+    assert str(settings.database.url) == "postgresql+asyncpg://user:password@localhost:5432/horizon"
     assert settings.server.debug is True
     assert settings.server.cors.model_dump() == {
         "enabled": True,
@@ -68,7 +68,7 @@ def test_yaml_file_overrides_environment(
             admin_users:
               - yaml-admin
             database:
-              url: postgresql+asyncpg://yaml@localhost:5432/horizon
+              url: postgresql+asyncpg://yaml:yaml@localhost:5432/horizon
             server:
               debug: false
               cors:
@@ -92,7 +92,7 @@ def test_yaml_file_overrides_environment(
     settings = Settings()
 
     assert settings.admin_users == ["yaml-admin"]
-    assert settings.database.url == "postgresql+asyncpg://yaml@localhost:5432/horizon"
+    assert str(settings.database.url) == "postgresql+asyncpg://yaml:yaml@localhost:5432/horizon"
     assert settings.server.debug is False
     assert settings.server.cors.allow_origins == ["https://yaml.example.com"]
 
@@ -105,11 +105,11 @@ def test_settings_can_be_loaded_from_environment_without_yaml_file(
     monkeypatch.setenv("HORIZON_CONFIG_FILE", str(tmp_path / "missing.yml"))
     monkeypatch.setenv(
         "HORIZON__DATABASE__URL",
-        "postgresql+asyncpg://env@localhost:5432/horizon",
+        "postgresql+asyncpg://env:env@localhost:5432/horizon",
     )
     monkeypatch.setenv("HORIZON__ADMIN_USERS", '["env-admin"]')
 
     settings = Settings()
 
     assert settings.admin_users == ["env-admin"]
-    assert settings.database.url == "postgresql+asyncpg://env@localhost:5432/horizon"
+    assert str(settings.database.url) == "postgresql+asyncpg://env:env@localhost:5432/horizon"

@@ -18,8 +18,6 @@ auth:
 
 server:
   debug: true
-  logging:
-    preset: colored
   cors:
     enabled: true
     allow_origins: [http://localhost:3000]

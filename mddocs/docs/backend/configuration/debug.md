@@ -59,12 +59,13 @@ This is done by `request_id` middleware, which is enabled by default and can con
 
 This is done by adding a specific filter to logging handler:
 
-### `logging.yml`
-
-```yaml
---8<--
-horizon/backend/settings/server/log/plain.yml:6:12,17:18,25
---8<--
+```yaml title="config.yml"
+logging:
+    filters:
+        correlation_id:
+            (): asgi_correlation_id.CorrelationIdFilter
+            uuid_length: 32
+            default_value: '-'
 ```
 
 Resulting logs look like:

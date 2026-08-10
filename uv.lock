@@ -776,6 +776,7 @@ backend = [
     { name = "greenlet" },
     { name = "passlib" },
     { name = "pydantic-settings" },
+    { name = "pydantic-settings-logging" },
     { name = "python-json-logger" },
     { name = "python-multipart" },
     { name = "pyyaml" },
@@ -852,6 +853,7 @@ requires-dist = [
     { name = "passlib", marker = "extra == 'backend'" },
     { name = "pydantic", specifier = ">=2,<3" },
     { name = "pydantic-settings", marker = "extra == 'backend'" },
+    { name = "pydantic-settings-logging", marker = "extra == 'backend'" },
     { name = "python-json-logger", marker = "extra == 'backend'" },
     { name = "python-multipart", marker = "extra == 'backend'" },
     { name = "pyyaml", marker = "extra == 'backend'" },
@@ -2051,6 +2053,20 @@ dependencies = [
 sdist = { url = "https://files.pythonhosted.org/packages/68/ca/31c57507b13119d7d3cfa1576dad2911a4861e3be07b579395f4e9d393f9/pydantic_settings-2.15.0.tar.gz", hash = "sha256:694b793e84f766ba76a90ebdefc01d0a9a045dab0382bee70393da93712ad117", size = 261253, upload-time = "2026-08-07T09:24:57.419Z" }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/30/a4/2bffa9f8e804325a09867f0e9d30795c80ea9f8d62560bd1b6ad6220eb2f/pydantic_settings-2.15.0-py3-none-any.whl", hash = "sha256:0ba092c291c94baceb5eff768aa0d56400a457585bc0175925a5a5510303da42", size = 69413, upload-time = "2026-08-07T09:24:55.839Z" },
+]
+
+[[package]]
+name = "pydantic-settings-logging"
+version = "0.1.1"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "pydantic" },
+    { name = "pydantic-settings" },
+    { name = "tomli", marker = "python_full_version < '3.11'" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/66/0f/cbffb256faf4994def7bdaf97ce7e51bde95e816b1cd3099fdf85068baf6/pydantic_settings_logging-0.1.1.tar.gz", hash = "sha256:745879f91fe742b359765aa58bb42ea998985a04574391fc202fbd6c783e1715", size = 25684, upload-time = "2025-07-03T20:23:46.294Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/a0/cb/17907f09ac34e13c761ba3563db68d1d43333d001e6f0d3076bf62c16dab/pydantic_settings_logging-0.1.1-py3-none-any.whl", hash = "sha256:08a961882a6ef6bde4fc4f7ec121aa29ee46cbd2f013974702c9a57f84e6204b", size = 15309, upload-time = "2025-07-03T20:23:45.12Z" },
 ]
 
 [[package]]
