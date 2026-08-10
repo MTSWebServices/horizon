@@ -61,7 +61,7 @@ ldap-start: ##@LDAP Start LDAP container
 	docker compose -f docker-compose.test.yml up -d --wait ldap $(DOCKER_COMPOSE_ARGS)
 
 
-test: db-start ldap-start ##@Test Run tests
+test: db ldap-start ##@Test Run tests
 	${PYTEST} $(PYTEST_ARGS)
 
 test-check-fixtures: ##@Test Check declared fixtures

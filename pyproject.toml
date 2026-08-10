@@ -90,10 +90,9 @@ ldap = [
 [dependency-groups]
 # pytest-lazy-fixture doesn't support pytest 8.x+
 test = [
-  "pytest~=8.4.2",
+  "pytest~=9.1.1",
   "httpx~=0.28.1",
-  # TODO: upgrading pytest-asyncio requires updating all fixtures https://github.com/pytest-dev/pytest-asyncio/issues/706
-  "pytest-asyncio>=0.26.0,<1.0",
+  "pytest-asyncio~=1.4.0",
   "pytest-randomly~=4.1.0",
   "pytest-rerunfailures~=16.1",
   "pytest-deadfixtures~=3.1.0",
@@ -142,6 +141,11 @@ markers = [
     "auth: tests using AuthProvider",
     "dummy_auth: tests for DummyAuthProvider",
     "ldap_auth: tests for LDAPAuthProvider",
+]
+asyncio_default_fixture_loop_scope = "session"
+asyncio_default_test_loop_scope = "session"
+filterwarnings = [
+    "ignore:Module already imported so cannot be rewritten:pytest.PytestAssertRewriteWarning",
 ]
 
 [tool.coverage.paths]
