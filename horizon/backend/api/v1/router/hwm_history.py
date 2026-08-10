@@ -1,8 +1,9 @@
 # SPDX-FileCopyrightText: 2023-present MTS PJSC
 # SPDX-License-Identifier: Apache-2.0
 
+from typing import Annotated
+
 from fastapi import APIRouter, Depends
-from typing_extensions import Annotated
 
 from horizon.backend.services.current_user import current_user
 from horizon.backend.services.uow import UnitOfWork
@@ -25,5 +26,5 @@ async def paginate_hwm_history(
     pagination_args: Annotated[HWMHistoryPaginateQueryV1, Depends()],
     unit_of_work: Annotated[UnitOfWork, Depends()],
 ) -> PageResponseV1[HWMHistoryResponseV1]:
-    pagination = await unit_of_work.hwm_history.paginate(**pagination_args.dict())
+    pagination = await unit_of_work.hwm_history.paginate(**pagination_args.model_dump())
     return PageResponseV1[HWMHistoryResponseV1].from_pagination(pagination)

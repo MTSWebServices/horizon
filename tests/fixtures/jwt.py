@@ -19,7 +19,7 @@ pytestmark = [pytest.mark.auth]
 
 @pytest.fixture
 def access_token_settings(settings: Settings) -> JWTSettings:
-    return JWTSettings.parse_obj(settings.auth.access_token)
+    return JWTSettings.model_validate(settings.auth.access_token)
 
 
 @pytest.fixture

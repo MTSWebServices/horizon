@@ -2,8 +2,9 @@
 # SPDX-License-Identifier: Apache-2.0
 
 
+from typing import Annotated
+
 from fastapi import APIRouter, Depends, HTTPException, status
-from typing_extensions import Annotated
 
 from horizon.backend.db.models import NamespaceUserRoleInt, User
 from horizon.backend.services.current_user import current_user
@@ -34,7 +35,7 @@ async def paginate_namespaces(
     pagination_args: Annotated[NamespacePaginateQueryV1, Depends()],
     unit_of_work: Annotated[UnitOfWork, Depends()],
 ) -> PageResponseV1[NamespaceResponseV1]:
-    pagination = await unit_of_work.namespace.paginate(**pagination_args.dict())
+    pagination = await unit_of_work.namespace.paginate(**pagination_args.model_dump())
     return PageResponseV1[NamespaceResponseV1].from_pagination(pagination)
 
 
@@ -62,7 +63,7 @@ async def create_namespace(
     user: Annotated[User, Depends(current_user)],
 ) -> NamespaceResponseV1:
     async with unit_of_work:
-        namespace = await unit_of_work.namespace.create(**data.dict(), user=user)
+        namespace = await unit_of_work.namespace.create(**data.model_dump(), user=user)
         await unit_of_work.namespace_history.create(
             namespace_id=namespace.id,
             data=namespace.to_dict(exclude={"id"}),
@@ -88,7 +89,7 @@ async def update_namespace(
         )
         namespace = await unit_of_work.namespace.update(
             namespace_id=namespace_id,
-            changes=changes.dict(exclude_defaults=True),
+            changes=changes.model_dump(exclude_defaults=True),
             user=user,
         )
         await unit_of_work.namespace_history.create(

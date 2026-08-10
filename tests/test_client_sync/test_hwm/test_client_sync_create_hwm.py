@@ -35,7 +35,7 @@ def test_sync_client_create_hwm_create_new_full(
     response = sync_client.create_hwm(to_create)
 
     assert isinstance(response, HWMResponseV1)
-    assert response.dict(exclude={"id", "changed_at"}) == {
+    assert response.model_dump(exclude={"id", "changed_at"}) == {
         "namespace_id": namespace.id,
         "name": new_hwm.name,
         "type": new_hwm.type,
@@ -62,7 +62,7 @@ def test_sync_client_create_hwm_create_new_minimal(
     response = sync_client.create_hwm(to_create)
 
     assert isinstance(response, HWMResponseV1)
-    assert response.dict(exclude={"id", "changed_at"}) == {
+    assert response.model_dump(exclude={"id", "changed_at"}) == {
         "namespace_id": namespace.id,
         "name": new_hwm.name,
         "type": new_hwm.type,

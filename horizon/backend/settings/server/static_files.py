@@ -3,7 +3,7 @@
 
 from pathlib import Path
 
-from pydantic import BaseModel, Field, validator
+from pydantic import BaseModel, Field, field_validator
 
 
 class StaticFilesSettings(BaseModel):
@@ -28,8 +28,9 @@ class StaticFilesSettings(BaseModel):
         description="Directory containing static files",
     )
 
-    @validator("directory")
-    def _validate_directory(cls, value: Path) -> Path:  # noqa: N805
+    @field_validator("directory")
+    @classmethod
+    def _validate_directory(cls, value: Path) -> Path:
         if not value.exists():
             msg = f"Directory '{value}' does not exist"
             raise ValueError(msg)

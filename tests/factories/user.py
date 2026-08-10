@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import secrets
 from random import randint
-from typing import TYPE_CHECKING, AsyncContextManager, Callable
+from typing import TYPE_CHECKING
 
 import pytest  # noqa: TC002
 import pytest_asyncio
@@ -18,7 +18,8 @@ from horizon.backend.db.models import (
 from tests.factories.base import random_string
 
 if TYPE_CHECKING:
-    from typing import AsyncGenerator
+    from collections.abc import AsyncGenerator, Callable
+    from contextlib import AbstractAsyncContextManager
 
     from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -36,7 +37,7 @@ def user_factory(**kwargs):
 @pytest_asyncio.fixture(params=[{}])
 async def new_user(
     request: pytest.FixtureRequest,
-    async_session_factory: Callable[[], AsyncContextManager[AsyncSession]],
+    async_session_factory: Callable[[], AbstractAsyncContextManager[AsyncSession]],
 ) -> AsyncGenerator[User, None]:
     params = request.param
     user = user_factory(**params)
@@ -54,7 +55,7 @@ async def new_user(
 @pytest_asyncio.fixture(params=[{}])
 async def user(
     request: pytest.FixtureRequest,
-    async_session_factory: Callable[[], AsyncContextManager[AsyncSession]],
+    async_session_factory: Callable[[], AbstractAsyncContextManager[AsyncSession]],
 ) -> AsyncGenerator[User, None]:
     params = request.param
     user = user_factory(**params)
@@ -82,7 +83,7 @@ async def user(
 @pytest_asyncio.fixture(params=[(5, {})])
 async def users(
     request: pytest.FixtureRequest,
-    async_session_factory: Callable[[], AsyncContextManager[AsyncSession]],
+    async_session_factory: Callable[[], AbstractAsyncContextManager[AsyncSession]],
 ) -> AsyncGenerator[list[User], None]:
     size, params = request.param
     result = [user_factory(**params) for _ in range(size)]
@@ -112,7 +113,7 @@ async def user_with_role(
     request: pytest.FixtureRequest,
     user: User,
     namespace: Namespace,
-    async_session_factory: Callable[[], AsyncContextManager[AsyncSession]],
+    async_session_factory: Callable[[], AbstractAsyncContextManager[AsyncSession]],
 ) -> AsyncGenerator[None, None]:
     role = request.param
     fake_owner = None

@@ -37,7 +37,7 @@ Users listed in the `admin_users` configuration field are automatically promoted
 
 ### Requirements without docker
 
-- Python 3.7 or above
+- Python 3.10 or above
 - Pydantic 2.x
 - `libldap2-dev`, `libsasl2-dev`, `libkrb5-dev` (for [LDAP Auth provider][backend-auth-ldap])
 - Some relation database instance, like [Postgres](https://www.postgresql.org/)

@@ -1,6 +1,5 @@
 # SPDX-FileCopyrightText: 2023-present MTS PJSC
 # SPDX-License-Identifier: Apache-2.0
-from typing import Optional
 
 from sqlalchemy import JSON, BigInteger, ForeignKey, String, Text
 from sqlalchemy.orm import Mapped, mapped_column
@@ -26,6 +25,6 @@ class HWMHistory(Base, ChangedByMixin):
     description: Mapped[str] = mapped_column(Text(), nullable=False)
     type: Mapped[str] = mapped_column(String(64), nullable=False)
     value: Mapped[str] = mapped_column(JSON(), nullable=False)
-    entity: Mapped[Optional[str]] = mapped_column(Text(), nullable=True)
-    expression: Mapped[Optional[str]] = mapped_column(Text(), nullable=True)
+    entity: Mapped[str | None] = mapped_column(Text(), nullable=True)
+    expression: Mapped[str | None] = mapped_column(Text(), nullable=True)
     action: Mapped[str] = mapped_column(String(255), nullable=False)

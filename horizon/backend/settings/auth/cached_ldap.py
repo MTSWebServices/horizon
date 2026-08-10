@@ -8,7 +8,7 @@ Basic LDAP terminology is explained here: `LDAP Overview <https://www.zytrax.com
 """
 
 import textwrap
-from typing import Any, Dict
+from typing import Any
 
 from pydantic import BaseModel, Field
 
@@ -44,7 +44,7 @@ class LDAPCachePasswordHashSettings(BaseModel):
             """,
         ),
     )
-    options: Dict[str, Any] = Field(
+    options: dict[str, Any] = Field(
         default={},
         description="Options passed to hashing algorithm",
     )

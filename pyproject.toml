@@ -17,16 +17,10 @@ authors = [{name= "MWS Data Bridge", email = "onetools@mts.ru"}]
 readme = "README.rst"
 classifiers = [
     "Development Status :: 5 - Production/Stable",
-    "Framework :: Pydantic",
-    "Framework :: Pydantic :: 1",
     "Framework :: Pydantic :: 2",
     "Framework :: FastAPI",
     "Intended Audience :: Developers",
     "Operating System :: OS Independent",
-    "Programming Language :: Python :: 3 :: Only",
-    "Programming Language :: Python :: 3.7",
-    "Programming Language :: Python :: 3.8",
-    "Programming Language :: Python :: 3.9",
     "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
@@ -37,9 +31,9 @@ classifiers = [
     "Typing :: Typed",
 ]
 keywords = ["Horizon", "REST", "API", "HWM"]
-requires-python = ">=3.7"
+requires-python = ">=3.10"
 dependencies = [
-    "pydantic<3",
+    "pydantic>=2,<3",
     "typing-extensions>=4.0.0",
     "authlib>=1.0,<2.0",
 ]
@@ -181,16 +175,13 @@ partial_also = [
   "if __name__ == .__main__.:",
 ]
 [tool.ruff]
-target-version = "py37"
+target-version = "py310"
 line-length = 120
 extend-exclude = ["mddocs/", "Makefile"]
 
 [tool.ruff.lint]
 select = ["ALL"]
-# UP035, UP006 - Set -> set, Dict -> dict... ignore for support python version before 3.9
-# FA100, UP045 - Optional[str] -> str | None, doesn't work before 3.10
-# B905 - zip(strict=True) was added in Python 3.9
-ignore = ["ARG", "ANN", "D", "COM812", "TD", "FIX002", "FA100", "UP035", "UP006", "UP007", "UP045", "CPY001"]
+ignore = ["ARG", "ANN", "D", "COM812", "TD", "FIX002", "CPY001"]
 
 [tool.ruff.lint.per-file-ignores]
 "horizon/commons/schemas/*" = ["TC"]
@@ -222,6 +213,9 @@ max-string-length=20
 [tool.codespell]
 exclude-file = "uv.lock"
 ignore-words-list = "selectin"
+
+[tool.mypy]
+python_version="3.10"
 
 [tool.towncrier]
 name = "Horizon"

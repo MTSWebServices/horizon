@@ -3,11 +3,12 @@
 
 from __future__ import annotations
 
+from typing import Literal
+
 from authlib.jose import JWTClaims, jwt
 from authlib.jose.errors import BadSignatureError, ExpiredTokenError
 from authlib.oauth2.auth import OAuth2Token as AuthlibToken  # type: ignore[attr-defined]
-from pydantic import AnyHttpUrl, BaseModel, validator
-from typing_extensions import Literal
+from pydantic import AnyHttpUrl, BaseModel, field_validator
 
 from horizon.client.auth.base import BaseAuth, Session
 
@@ -75,8 +76,9 @@ class AccessToken(BaseAuth, BaseModel):
         claims.validate()
         return claims
 
-    @validator("token")
-    def _validate_access_token(cls, value):  # noqa: N805
+    @field_validator("token")
+    @classmethod
+    def _validate_access_token(cls, value):
         # AuthlibToken doesn't perform any validation, so we have to
         cls._parse_token(value)
         return value

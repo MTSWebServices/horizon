@@ -2,8 +2,7 @@
 # SPDX-License-Identifier: Apache-2.0
 from __future__ import annotations
 
-from pydantic import BaseModel, Field
-from pydantic import __version__ as pydantic_version
+from pydantic import BaseModel, ConfigDict, Field
 
 
 class UserResponseV1(BaseModel):
@@ -12,11 +11,7 @@ class UserResponseV1(BaseModel):
     id: int = Field(description="Internal user id, not for external usage")
     username: str = Field(description="User name, unique in the entire database")
 
-    class Config:
-        if pydantic_version >= "2":
-            from_attributes = True
-        else:
-            orm_mode = True
+    model_config = ConfigDict(from_attributes=True)
 
 
 class UserResponseV1WithAdmin(UserResponseV1):

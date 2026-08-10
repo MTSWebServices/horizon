@@ -1,11 +1,11 @@
 # SPDX-FileCopyrightText: 2023-present MTS PJSC
 # SPDX-License-Identifier: Apache-2.0
 
-from typing import AsyncGenerator
+from collections.abc import AsyncGenerator
+from typing import Annotated
 
 from fastapi import Depends, Request
 from sqlalchemy.ext.asyncio import AsyncSession
-from typing_extensions import Annotated
 
 from horizon.backend.db.repositories import (
     CredentialsCacheRepository,

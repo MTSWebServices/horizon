@@ -3,7 +3,7 @@
 
 import textwrap
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, ConfigDict, Field
 
 
 class DatabaseSettings(BaseModel):
@@ -40,5 +40,4 @@ class DatabaseSettings(BaseModel):
         ),
     )
 
-    class Config:
-        extra = "allow"
+    model_config = ConfigDict(extra="allow")

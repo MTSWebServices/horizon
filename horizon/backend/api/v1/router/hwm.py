@@ -2,8 +2,9 @@
 # SPDX-License-Identifier: Apache-2.0
 
 
+from typing import Annotated
+
 from fastapi import APIRouter, Depends, status
-from typing_extensions import Annotated
 
 from horizon.backend.db.models import NamespaceUserRoleInt, User
 from horizon.backend.services.current_user import current_user
@@ -32,7 +33,7 @@ async def paginate_hwm(
     pagination_args: Annotated[HWMPaginateQueryV1, Depends()],
     unit_of_work: Annotated[UnitOfWork, Depends()],
 ) -> PageResponseV1[HWMResponseV1]:
-    pagination = await unit_of_work.hwm.paginate(**pagination_args.dict())
+    pagination = await unit_of_work.hwm.paginate(**pagination_args.model_dump())
     return PageResponseV1[HWMResponseV1].from_pagination(pagination)
 
 
@@ -66,7 +67,7 @@ async def create_hwm(
             namespace_id=data.namespace_id,
         )
         hwm = await unit_of_work.hwm.create(
-            data=data.dict(exclude_unset=True),
+            data=data.model_dump(exclude_unset=True),
             user=user,
         )
         await unit_of_work.hwm_history.create(
@@ -95,7 +96,7 @@ async def update_hwm(
         )
         hwm = await unit_of_work.hwm.update(
             hwm_id=hwm_id,
-            changes=changes.dict(exclude_unset=True),
+            changes=changes.model_dump(exclude_unset=True),
             user=user,
         )
         await unit_of_work.hwm_history.create(

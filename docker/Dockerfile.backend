@@ -53,7 +53,6 @@ RUN apt-get update && apt-get install -y \
         libffi-dev \
     && rm -rf /var/lib/apt/lists/* /var/cache/*
 
-# uv package in PyPI requires Python>=3.8, but we need 3.7
 COPY --from=ghcr.io/astral-sh/uv:latest /uv /usr/bin/uv
 
 COPY ./pyproject.toml ./uv.lock ./

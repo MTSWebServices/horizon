@@ -1,12 +1,7 @@
 # SPDX-FileCopyrightText: 2023-present MTS PJSC
 # SPDX-License-Identifier: Apache-2.0
 
-from pydantic import BaseModel, Field
-
-try:
-    from pydantic import ImportString
-except ImportError:
-    from pydantic import PyObject as ImportString  # type: ignore[no-redef]
+from pydantic import BaseModel, ConfigDict, Field, ImportString
 
 from horizon.backend.providers.auth.dummy import DummyAuthProvider
 
@@ -32,5 +27,4 @@ class AuthSettings(BaseModel):
         description="Full name of auth provider class",
     )
 
-    class Config:
-        extra = "allow"
+    model_config = ConfigDict(extra="allow")

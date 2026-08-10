@@ -13,9 +13,10 @@ used in Apache Airflow
 """
 
 import logging
-from contextlib import asynccontextmanager
+from collections.abc import AsyncGenerator
+from contextlib import AbstractAsyncContextManager, asynccontextmanager
 from time import time
-from typing import Any, AsyncContextManager, AsyncGenerator, Dict, List, Optional, Tuple
+from typing import Any
 
 from bonsai import InvalidDN, LDAPClient
 from bonsai.asyncio import AIOConnectionPool, AIOLDAPConnection
@@ -43,14 +44,16 @@ class LDAPAuthProvider(AuthProvider):
     def __init__(
         self,
         auth_settings: LDAPAuthProviderSettings,
-        pool: Optional[AIOConnectionPool],
+        pool: AIOConnectionPool | None,
     ) -> None:
-        self._pool: Optional[AIOConnectionPool] = pool
+        self._pool: AIOConnectionPool | None = pool
         self._auth_settings: LDAPAuthProviderSettings = auth_settings
 
     @classmethod
     def setup(cls, app: FastAPI) -> FastAPI:
-        auth_settings = LDAPAuthProviderSettings.parse_obj(app.state.settings.auth.dict(exclude={"provider"}))
+        auth_settings = LDAPAuthProviderSettings.model_validate(
+            app.state.settings.auth.model_dump(exclude={"provider"})
+        )
         log.info("Using %s provider with settings:\n%s", cls.__name__, pformat(auth_settings))
         pool = cls._create_lookup_pool(auth_settings)
         app.state.auth_provider = cls(auth_settings=auth_settings, pool=pool)
@@ -71,13 +74,13 @@ class LDAPAuthProvider(AuthProvider):
     async def get_token(  # noqa: PLR0917
         self,
         uow: UnitOfWork,
-        grant_type: Optional[str] = None,
-        login: Optional[str] = None,
-        password: Optional[str] = None,
-        scopes: Optional[List[str]] = None,
-        client_id: Optional[str] = None,
-        client_secret: Optional[str] = None,
-    ) -> Dict[str, Any]:
+        grant_type: str | None = None,
+        login: str | None = None,
+        password: str | None = None,
+        scopes: list[str] | None = None,
+        client_id: str | None = None,
+        client_secret: str | None = None,
+    ) -> dict[str, Any]:
         if not login or not password:
             msg = "Missing auth credentials"
             raise AuthorizationError(msg)
@@ -118,7 +121,7 @@ class LDAPAuthProvider(AuthProvider):
         return client
 
     @classmethod
-    def _create_lookup_pool(cls, settings: LDAPAuthProviderSettings) -> Optional[AIOConnectionPool]:
+    def _create_lookup_pool(cls, settings: LDAPAuthProviderSettings) -> AIOConnectionPool | None:
         """Create and check connection pool for lookup queries"""
         if not settings.ldap.lookup.enabled:
             return None
@@ -146,7 +149,7 @@ class LDAPAuthProvider(AuthProvider):
     async def _get_lookup_connection(self) -> AsyncGenerator[AIOLDAPConnection, None]:
         """Create connection used for lookup queries"""
         try:
-            connect: AsyncContextManager[AIOLDAPConnection]
+            connect: AbstractAsyncContextManager[AIOLDAPConnection]
             if self._pool:
                 log.debug("Using lookup pool")
                 connect = self._pool.spawn()
@@ -188,7 +191,7 @@ class LDAPAuthProvider(AuthProvider):
 
         return username
 
-    async def _lookup_user(self, login: str) -> Tuple[str, str]:
+    async def _lookup_user(self, login: str) -> tuple[str, str]:
         # Reference implementations:
         # https://github.com/dpgaspar/Flask-AppBuilder/blob/2c5763371b81cd679d88b9971ba5d1fc4d71d54b/flask_appbuilder/security/manager.py#L902
         # https://github.com/jupyterhub/ldapauthenticator/blob/main/ldapauthenticator/ldapauthenticator.py
@@ -235,7 +238,7 @@ class LDAPAuthProvider(AuthProvider):
             msg = "Failed to connect to LDAP"
             raise ServiceError(msg) from e
 
-    def _generate_access_token(self, user: User) -> Tuple[str, float]:
+    def _generate_access_token(self, user: User) -> tuple[str, float]:
         expires_at = time() + self._auth_settings.access_token.expire_seconds
         payload = {
             "user_id": user.id,

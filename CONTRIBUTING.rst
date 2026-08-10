@@ -21,7 +21,7 @@ Repository as a Pull Request. This requires creating a **repo fork** using
 Important notes
 ---------------
 
-* Some companies still use Python 3.7. So it is required to keep compatibility if possible, at least for *client* part of package.
+* Some companies still use Python 3.10. So it is required to keep compatibility if possible, at least for *client* part of package.
 * Different users uses Horizon in different ways - someone store data in Postgres, someone in MySQL, some users need LDAP. Such dependencies should be optional.
 
 Initial setup for local development

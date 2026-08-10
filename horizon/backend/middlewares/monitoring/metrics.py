@@ -39,7 +39,7 @@ def apply_monitoring_metrics_middleware(app: FastAPI, settings: MonitoringSettin
         PrometheusMiddleware,
         app_name=slugify(app.title),
         skip_paths=sorted(skip_paths),
-        **settings.dict(exclude={"enabled", "skip_paths"}),
+        **settings.model_dump(exclude={"enabled", "skip_paths"}),
     )
     app.include_router(router)
     return app

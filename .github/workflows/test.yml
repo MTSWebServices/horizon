@@ -23,19 +23,17 @@ permissions:
 
 jobs:
   tests:
-    name: Run tests (Python ${{ matrix.python-version }}, Pydantic v${{ matrix.pydantic-version }} on ${{ matrix.os }})
+    name: Run tests (Python ${{ matrix.python-version }} on ${{ matrix.os }})
     runs-on: ${{ matrix.os }}
 
     strategy:
       fail-fast: false
       matrix:
         include:
-          - python-version: '3.7'
-            pydantic-version: '1'
-            os: ubuntu-22.04
+          - python-version: '3.10'
+            os: ubuntu-latest
 
           - python-version: '3.14'
-            pydantic-version: '2'
             os: ubuntu-latest
 
     steps:
@@ -100,23 +98,20 @@ jobs:
         uses: actions/cache@v6
         with:
           path: ~/.cache/uv
-          key: ${{ runner.os }}-python${{ env.DEFAULT_PYTHON }}-pydantic${{ matrix.pydantic-version }}-${{ hashFiles('uv.lock') }}
+          key: ${{ runner.os }}-python${{ env.DEFAULT_PYTHON }}-${{ hashFiles('uv.lock') }}
           restore-keys: |
-            ${{ runner.os }}-python${{ env.DEFAULT_PYTHON }}-pydantic${{ matrix.pydantic-version }}-${{ hashFiles('uv.lock') }}
-            ${{ runner.os }}-python${{ env.DEFAULT_PYTHON }}-pydantic${{ matrix.pydantic-version }}-
+            ${{ runner.os }}-python${{ env.DEFAULT_PYTHON }}-${{ hashFiles('uv.lock') }}
+            ${{ runner.os }}-python${{ env.DEFAULT_PYTHON }}-
             ${{ runner.os }}-python${{ env.DEFAULT_PYTHON }}-
 
       - name: Install dependencies
         run: |
           uv sync --frozen --all-extras --group test
-          if [ "${{ matrix.pydantic-version }}" == "1" ]; then
-            uv pip install "pydantic<2.0.0"
-          fi
 
       - name: Run Tests
         run: |
           source .env.local.test
-          uv run --no-sync coverage run -m pytest --junitxml=reports/junit/test-${{ matrix.os }}-${{ matrix.python-version }}-${{ matrix.pydantic-version }}.xml
+          uv run --no-sync coverage run -m pytest --junitxml=reports/junit/test-${{ matrix.os }}-${{ matrix.python-version }}.xml
 
       - name: Dump backend logs on failure
         if: failure()
@@ -134,14 +129,14 @@ jobs:
         uses: actions/upload-artifact@v7
         if: failure()
         with:
-          name: backend-logs-${{ matrix.os }}-${{ matrix.python-version }}-${{ matrix.pydantic-version }}
+          name: backend-logs-${{ matrix.os }}-${{ matrix.python-version }}
           path: logs/*
 
       - name: Upload Coverage Results
         uses: actions/upload-artifact@v7
         if: success() || failure()
         with:
-          name: coverage-${{ matrix.os }}-${{ matrix.python-version }}-${{ matrix.pydantic-version }}
+          name: coverage-${{ matrix.os }}-${{ matrix.python-version }}
           path: reports/
           # https://github.com/actions/upload-artifact/issues/602
           include-hidden-files: true

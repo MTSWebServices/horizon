@@ -46,7 +46,7 @@ def test_settings_are_loaded_from_default_yaml_file(
     assert settings.admin_users == ["yaml-admin"]
     assert settings.database.url == "postgresql+asyncpg://user:password'#[value]@localhost:5432/horizon"
     assert settings.server.debug is True
-    assert settings.server.cors.dict() == {
+    assert settings.server.cors.model_dump() == {
         "enabled": True,
         "allow_origins": ["*"],
         "allow_credentials": True,

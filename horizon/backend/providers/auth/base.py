@@ -2,7 +2,7 @@
 # SPDX-License-Identifier: Apache-2.0
 
 from abc import ABC, abstractmethod
-from typing import Any, Dict, List, Optional
+from typing import Any
 
 from fastapi import FastAPI
 
@@ -71,13 +71,13 @@ class AuthProvider(ABC):
     async def get_token(  # noqa: PLR0917
         self,
         uow: UnitOfWork,
-        grant_type: Optional[str] = None,
-        login: Optional[str] = None,
-        password: Optional[str] = None,
-        scopes: Optional[List[str]] = None,
-        client_id: Optional[str] = None,
-        client_secret: Optional[str] = None,
-    ) -> Dict[str, Any]:
+        grant_type: str | None = None,
+        login: str | None = None,
+        password: str | None = None,
+        scopes: list[str] | None = None,
+        client_id: str | None = None,
+        client_secret: str | None = None,
+    ) -> dict[str, Any]:
         """
         This method should perform authentication and return JWT token.
 

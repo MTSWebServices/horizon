@@ -3,10 +3,9 @@ from __future__ import annotations
 import secrets
 from datetime import datetime, timezone
 from http import HTTPStatus
-from typing import TYPE_CHECKING, Any
+from typing import TYPE_CHECKING
 
 import pytest
-from pydantic import __version__ as pydantic_version
 from sqlalchemy import select
 from sqlalchemy_utils.functions import naturally_equivalent
 
@@ -207,25 +206,15 @@ async def test_update_namespace_no_data(
     )
     assert response.status_code == HTTPStatus.UNPROCESSABLE_ENTITY
 
-    details: list[dict[str, Any]]
-    if pydantic_version < "2":
-        details = [
-            {
-                "location": ["body", "__root__"],
-                "code": "value_error",
-                "message": "At least one field must be set.",
-            },
-        ]
-    else:
-        details = [
-            {
-                "location": ["body"],
-                "code": "value_error",
-                "message": "Value error, At least one field must be set.",
-                "context": {},
-                "input": {"unexpected": "value"},
-            },
-        ]
+    details = [
+        {
+            "location": ["body"],
+            "code": "value_error",
+            "message": "Value error, At least one field must be set.",
+            "context": {},
+            "input": {"unexpected": "value"},
+        },
+    ]
 
     assert response.json() == {
         "error": {
@@ -293,25 +282,7 @@ async def test_update_namespace_invalid_name_length(
         json={"name": new_namespace.name},
     )
 
-    details: list[dict[str, Any]]
-    if pydantic_version < "2":
-        if len(new_namespace.name) > 256:
-            details = [
-                {
-                    "location": ["body", "name"],
-                    "message": "ensure this value has at most 256 characters",
-                    "code": "value_error.any_str.max_length",
-                },
-            ]
-        else:
-            details = [
-                {
-                    "location": ["body", "name"],
-                    "message": "ensure this value has at least 1 characters",
-                    "code": "value_error.any_str.min_length",
-                },
-            ]
-    elif len(new_namespace.name) > 256:
+    if len(new_namespace.name) > 256:
         details = [
             {
                 "location": ["body", "name"],

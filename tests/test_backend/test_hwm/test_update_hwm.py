@@ -5,7 +5,6 @@ from http import HTTPStatus
 from typing import TYPE_CHECKING, Any
 
 import pytest
-from pydantic import __version__ as pydantic_version
 from sqlalchemy import select
 from sqlalchemy_utils.functions import naturally_equivalent
 
@@ -298,26 +297,15 @@ async def test_update_hwm_no_data(
         json={"unexpected": "value"},
     )
     assert response.status_code == HTTPStatus.UNPROCESSABLE_ENTITY
-
-    details: list[dict[str, Any]]
-    if pydantic_version < "2":
-        details = [
-            {
-                "location": ["body", "__root__"],
-                "code": "value_error",
-                "message": "At least one field must be set.",
-            },
-        ]
-    else:
-        details = [
-            {
-                "code": "value_error",
-                "location": ["body"],
-                "message": "Value error, At least one field must be set.",
-                "context": {},
-                "input": {"unexpected": "value"},
-            },
-        ]
+    details = [
+        {
+            "code": "value_error",
+            "location": ["body"],
+            "message": "Value error, At least one field must be set.",
+            "context": {},
+            "input": {"unexpected": "value"},
+        },
+    ]
 
     assert response.json() == {
         "error": {
@@ -404,32 +392,7 @@ async def test_update_hwm_invalid_field_length(
     )
 
     details: list[dict[str, Any]]
-    if pydantic_version < "2":
-        if len(new_hwm.name) > 2048:
-            details = [
-                {
-                    "location": ["body", "name"],
-                    "message": "ensure this value has at most 2048 characters",
-                    "code": "value_error.any_str.max_length",
-                },
-            ]
-        elif len(new_hwm.type) > 64:
-            details = [
-                {
-                    "location": ["body", "type"],
-                    "message": "ensure this value has at most 64 characters",
-                    "code": "value_error.any_str.max_length",
-                },
-            ]
-        else:
-            details = [
-                {
-                    "location": ["body", "type" if not new_hwm.type else "name"],
-                    "message": "ensure this value has at least 1 characters",
-                    "code": "value_error.any_str.min_length",
-                },
-            ]
-    elif len(new_hwm.name) > 2048:
+    if len(new_hwm.name) > 2048:
         details = [
             {
                 "location": ["body", "name"],

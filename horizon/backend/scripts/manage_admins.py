@@ -99,7 +99,7 @@ async def main(args: argparse.Namespace, session: AsyncSession) -> None:
 
 
 if __name__ == "__main__":
-    settings = Settings()
+    settings = Settings()  # type: ignore[call-arg]
     if settings.server.logging.setup:
         setup_logging(settings.server.logging.get_log_config_path())
 

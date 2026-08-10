@@ -26,7 +26,7 @@ def test_sync_client_create_namespace(new_namespace: Namespace, user: User, sync
     response = sync_client.create_namespace(to_create)
 
     assert isinstance(response, NamespaceResponseV1)
-    assert response.dict(exclude={"id", "changed_at"}) == {
+    assert response.model_dump(exclude={"id", "changed_at"}) == {
         "name": to_create.name,
         "description": to_create.description,
         "changed_by": user.username,

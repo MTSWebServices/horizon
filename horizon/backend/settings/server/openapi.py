@@ -2,7 +2,7 @@
 # SPDX-License-Identifier: Apache-2.0
 
 import textwrap
-from typing import Any, Dict, Optional
+from typing import Any
 
 from pydantic import AnyHttpUrl, BaseModel, Field
 
@@ -34,7 +34,7 @@ class SwaggerSettings(BaseModel):
         default="https://cdn.jsdelivr.net/npm/swagger-ui-dist@5/swagger-ui.css",
         description="URL for Swagger UI CSS",
     )
-    extra_parameters: Dict[str, Any] = Field(
+    extra_parameters: dict[str, Any] = Field(
         default_factory=dict,
         description=textwrap.dedent(
             """
@@ -97,11 +97,11 @@ class LogoSettings(BaseModel):
         default="ffffff",
         description="Background color in HEX RGB format, without ``#`` prefix",
     )
-    alt_text: Optional[str] = Field(
+    alt_text: str | None = Field(
         default="Horizon logo",
         description="Alternative text for ``<img>`` tag",
     )
-    href: Optional[AnyHttpUrl] = Field(  # type: ignore[assignment]
+    href: AnyHttpUrl | None = Field(  # type: ignore[assignment]
         default="https://github.com/MTSWebServices/horizon",
         description="Clicking on logo will redirect to this URL",
     )

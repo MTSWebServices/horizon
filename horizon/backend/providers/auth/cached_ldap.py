@@ -7,7 +7,7 @@ AuthProvider using LDAP, but
 
 import logging
 from datetime import datetime, timedelta, timezone
-from typing import Any, Dict, List, Optional
+from typing import Any
 
 from bonsai.asyncio import AIOConnectionPool
 from devtools import pformat
@@ -27,14 +27,16 @@ class CachedLDAPAuthProvider(LDAPAuthProvider):
     def __init__(
         self,
         auth_settings: CachedLDAPAuthProviderSettings,
-        pool: Optional[AIOConnectionPool],
+        pool: AIOConnectionPool | None,
     ) -> None:
-        self._pool: Optional[AIOConnectionPool] = pool
+        self._pool: AIOConnectionPool | None = pool
         self._auth_settings: CachedLDAPAuthProviderSettings = auth_settings
 
     @classmethod
     def setup(cls, app: FastAPI) -> FastAPI:
-        auth_settings = CachedLDAPAuthProviderSettings.parse_obj(app.state.settings.auth.dict(exclude={"provider"}))
+        auth_settings = CachedLDAPAuthProviderSettings.model_validate(
+            app.state.settings.auth.model_dump(exclude={"provider"})
+        )
         log.info("Using %s provider with settings:\n%s", cls.__name__, pformat(auth_settings))
         pool = cls._create_lookup_pool(auth_settings)
         app.state.auth_provider = cls(auth_settings=auth_settings, pool=pool)
@@ -43,13 +45,13 @@ class CachedLDAPAuthProvider(LDAPAuthProvider):
     async def get_token(  # noqa: PLR0917
         self,
         uow: UnitOfWork,
-        grant_type: Optional[str] = None,
-        login: Optional[str] = None,
-        password: Optional[str] = None,
-        scopes: Optional[List[str]] = None,
-        client_id: Optional[str] = None,
-        client_secret: Optional[str] = None,
-    ) -> Dict[str, Any]:
+        grant_type: str | None = None,
+        login: str | None = None,
+        password: str | None = None,
+        scopes: list[str] | None = None,
+        client_id: str | None = None,
+        client_secret: str | None = None,
+    ) -> dict[str, Any]:
         if not login or not password:
             msg = "Missing auth credentials"
             raise AuthorizationError(msg)
@@ -92,9 +94,7 @@ class CachedLDAPAuthProvider(LDAPAuthProvider):
         handler = get_crypt_handler(hash_settings.algorithm)
         return handler.using(**hash_settings.options)
 
-    async def _resolve_username_from_credentials_cache(
-        self, login: str, password: str, uow: UnitOfWork
-    ) -> Optional[str]:
+    async def _resolve_username_from_credentials_cache(self, login: str, password: str, uow: UnitOfWork) -> str | None:
         log.info("Perform lookup in credentials cache")
         user_cache = await uow.credentials_cache.get_by_login(login)
         if not user_cache:
@@ -121,7 +121,7 @@ class CachedLDAPAuthProvider(LDAPAuthProvider):
         hasher = self._get_hasher()
         user_cache = await uow.credentials_cache.get_by_login(login=login)
 
-        data: Dict[str, Any] = {}
+        data: dict[str, Any] = {}
         if not user_cache or user_cache.user_id != user_id:
             data["user_id"] = user_id
         if not user_cache or not hasher.verify(password, user_cache.password_hash):
