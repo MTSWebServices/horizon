@@ -82,7 +82,7 @@ class BaseClient(BaseModel, Generic[SessionClass]):
             return session
         return cls.session_class()()
 
-    @field_validator("session")
+    @field_validator("session", mode="after")
     @classmethod
     def _patch_session(cls, session: SessionClass, info: ValidationInfo):
         """Patch session for chosen auth method, if required"""

@@ -1069,7 +1069,7 @@ class HorizonClientSync(BaseClient[OAuth2Session]):
 
         return self
 
-    @field_validator("session")
+    @field_validator("session", mode="after")
     @classmethod
     def _set_client_info(cls, session: Session):
         session.headers["X-Client-Name"] = "python-horizon[sync]"
