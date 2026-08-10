@@ -11,7 +11,7 @@ from horizon.backend.db.models import HWM, Namespace, NamespaceUserRoleInt, User
 from horizon.backend.db.models.hwm_history import HWMHistory
 
 if TYPE_CHECKING:
-    from httpx import AsyncClient
+    from httpx2 import AsyncClient
     from sqlalchemy.ext.asyncio import AsyncSession
 
 pytestmark = [pytest.mark.backend, pytest.mark.asyncio]

@@ -12,7 +12,7 @@ from sqlalchemy_utils.functions import naturally_equivalent
 from horizon.backend.db.models import Namespace, NamespaceHistory, User
 
 if TYPE_CHECKING:
-    from httpx import AsyncClient
+    from httpx2 import AsyncClient
     from sqlalchemy.ext.asyncio import AsyncSession
 
 pytestmark = [pytest.mark.backend, pytest.mark.asyncio]

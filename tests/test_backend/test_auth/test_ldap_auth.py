@@ -17,7 +17,7 @@ from horizon.backend.utils.jwt import decode_jwt
 
 if TYPE_CHECKING:
     from fastapi import FastAPI
-    from httpx import AsyncClient
+    from httpx2 import AsyncClient
     from sqlalchemy.ext.asyncio import AsyncSession
 
     from horizon.backend.settings import Settings

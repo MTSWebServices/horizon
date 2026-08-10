@@ -14,7 +14,7 @@ from horizon.backend.db.models import User
 from horizon.backend.utils.jwt import decode_jwt
 
 if TYPE_CHECKING:
-    from httpx import AsyncClient
+    from httpx2 import AsyncClient
     from sqlalchemy.ext.asyncio import AsyncSession
 
     from horizon.backend.settings.auth.jwt import JWTSettings
