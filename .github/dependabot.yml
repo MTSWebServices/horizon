@@ -19,6 +19,7 @@ updates:
       interval: weekly
     labels:
       - type:dependency
+    versioning-strategy: increase-if-necessary
     # https://til.simonwillison.net/github/dependabot-python-setup
     groups:
       python-packages:
