@@ -112,6 +112,7 @@ jobs:
         run: |
           source .env.local.test
           uv run --no-sync coverage run -m pytest --junitxml=reports/junit/test-${{ matrix.os }}-${{ matrix.python-version }}.xml
+          uv cache prune --ci
 
       - name: Dump backend logs on failure
         if: failure()
