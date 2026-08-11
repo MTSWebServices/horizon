@@ -7,10 +7,7 @@ from horizon.backend.middlewares.application_version import (
     apply_application_version_middleware,
 )
 from horizon.backend.middlewares.cors import apply_cors_middleware
-from horizon.backend.middlewares.monitoring import (
-    apply_monitoring_metrics_middleware,
-    apply_monitoring_stats_middleware,
-)
+from horizon.backend.middlewares.monitoring import apply_monitoring_middleware
 from horizon.backend.middlewares.openapi import apply_openapi_middleware
 from horizon.backend.middlewares.request_id import apply_request_id_middleware
 from horizon.backend.middlewares.static_files import apply_static_files
@@ -24,8 +21,7 @@ def apply_middlewares(
     """Add middlewares to the application."""
 
     apply_cors_middleware(application, settings.server.cors)
-    apply_monitoring_metrics_middleware(application, settings.server.monitoring)
-    apply_monitoring_stats_middleware(application, settings.server.monitoring)
+    apply_monitoring_middleware(application, settings.server.monitoring)
     apply_request_id_middleware(application, settings.server.request_id)
     apply_application_version_middleware(application, settings.server.application_version)
     apply_openapi_middleware(application, settings.server.openapi)
