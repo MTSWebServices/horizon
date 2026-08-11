@@ -40,9 +40,6 @@ class NamespaceRepository(Repository[Namespace]):
             page_size=page_size,
         )
 
-    async def count(self) -> int:
-        return await self._count()
-
     async def get(
         self,
         namespace_id: int,

@@ -39,9 +39,6 @@ class HWMRepository(Repository[HWM]):
             page_size=page_size,
         )
 
-    async def count(self) -> int:
-        return await self._count()
-
     async def get(
         self,
         hwm_id: int,
