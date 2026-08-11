@@ -69,7 +69,6 @@ async def test_cached_ldap_auth_get_token_creates_user(
     assert created_user.username == new_user.username
     assert created_user.created_at >= current_dt
     assert created_user.updated_at >= current_dt
-    assert created_user.is_active
 
     # credentials cache is updated
     query = select(CredentialsCache).where(CredentialsCache.user_id == user_id)
@@ -218,7 +217,6 @@ async def test_cached_ldap_auth_get_token_with_lookup_by_custom_attribute(
     assert created_user.username == new_user.username
     assert created_user.created_at >= current_dt
     assert created_user.updated_at >= current_dt
-    assert created_user.is_active
 
     # credentials cache is updated, containing login == user email
     query = select(CredentialsCache).where(CredentialsCache.user_id == user_id)
@@ -457,37 +455,6 @@ async def test_cached_ldap_auth_get_token_for_missing_user_from_ldap(
     assert not cache_item
 
 
-@pytest.mark.parametrize("user", [{"username": "developer1", "is_active": False}], indirect=True)
-@pytest.mark.parametrize("settings", [{"auth": {"provider": CACHED_LDAP}}], indirect=True)
-async def test_cached_ldap_auth_get_token_for_inactive_user(
-    test_client: AsyncClient,
-    async_session: AsyncSession,
-    user: User,
-):
-    response = await test_client.post(
-        "v1/auth/token",
-        data={
-            "username": user.username,
-            "password": "password",
-        },
-    )
-    assert response.status_code == HTTPStatus.UNAUTHORIZED
-    assert response.json() == {
-        "error": {
-            "code": "unauthorized",
-            "message": f"User {user.username!r} is disabled",
-            "details": None,
-        },
-    }
-
-    # credentials are not cached
-    query = select(CredentialsCache).where(CredentialsCache.user_id == user.id)
-    cache = await async_session.scalars(query)
-    cache_item = cache.one_or_none()
-
-    assert not cache_item
-
-
 @pytest.mark.parametrize("settings", [{"auth": {"provider": CACHED_LDAP}}], indirect=True)
 async def test_cached_ldap_auth_get_token_with_malformed_input(
     test_client: AsyncClient,
@@ -539,28 +506,6 @@ async def test_cached_ldap_auth_get_token_with_malformed_input(
     cache_item = cache.one_or_none()
 
     assert not cache_item
-
-
-@pytest.mark.parametrize("user", [{"username": "developer1", "is_active": False}], indirect=True)
-@pytest.mark.parametrize("settings", [{"auth": {"provider": CACHED_LDAP}}], indirect=True)
-async def test_cached_ldap_auth_check_inactive_user(
-    test_client: AsyncClient,
-    async_session: AsyncSession,
-    access_token: str,
-    user: User,
-):
-    response = await test_client.get(
-        "v1/users/me",
-        headers={"Authorization": f"Bearer {access_token}"},
-    )
-    assert response.status_code == HTTPStatus.UNAUTHORIZED
-    assert response.json() == {
-        "error": {
-            "code": "unauthorized",
-            "message": f"User {user.username!r} is disabled",
-            "details": None,
-        },
-    }
 
 
 @pytest.mark.parametrize("user", [{"username": "developer1"}], indirect=True)

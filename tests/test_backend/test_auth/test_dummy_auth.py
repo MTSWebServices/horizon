@@ -62,7 +62,6 @@ async def test_dummy_auth_get_token_creates_user(
     assert created_user.username == new_user.username
     assert created_user.created_at >= current_dt
     assert created_user.updated_at >= current_dt
-    assert created_user.is_active
 
 
 @pytest.mark.parametrize("settings", [{"auth": {"provider": DUMMY}}], indirect=True)
@@ -101,29 +100,6 @@ async def test_dummy_auth_get_token_for_existing_user(
 
     # user is not changed
     assert naturally_equivalent(user_after, user)
-
-
-@pytest.mark.parametrize("user", [{"is_active": False}], indirect=True)
-@pytest.mark.parametrize("settings", [{"auth": {"provider": DUMMY}}], indirect=True)
-async def test_dummy_auth_get_token_for_inactive_user(
-    test_client: AsyncClient,
-    user: User,
-):
-    response = await test_client.post(
-        "v1/auth/token",
-        data={
-            "username": user.username,
-            "password": secrets.token_hex(16),
-        },
-    )
-    assert response.status_code == HTTPStatus.UNAUTHORIZED
-    assert response.json() == {
-        "error": {
-            "code": "unauthorized",
-            "message": f"User {user.username!r} is disabled",
-            "details": None,
-        },
-    }
 
 
 @pytest.mark.parametrize("settings", [{"auth": {"provider": DUMMY}}], indirect=True)
@@ -182,27 +158,6 @@ async def test_dummy_auth_check(
         headers={"Authorization": f"Bearer {access_token}"},
     )
     assert response.status_code == HTTPStatus.OK
-
-
-@pytest.mark.parametrize("user", [{"is_active": False}], indirect=True)
-@pytest.mark.parametrize("settings", [{"auth": {"provider": DUMMY}}], indirect=True)
-async def test_dummy_auth_check_inactive_user(
-    test_client: AsyncClient,
-    access_token: str,
-    user: User,
-):
-    response = await test_client.get(
-        "v1/users/me",
-        headers={"Authorization": f"Bearer {access_token}"},
-    )
-    assert response.status_code == HTTPStatus.UNAUTHORIZED
-    assert response.json() == {
-        "error": {
-            "code": "unauthorized",
-            "message": f"User {user.username!r} is disabled",
-            "details": None,
-        },
-    }
 
 
 @pytest.mark.parametrize("settings", [{"auth": {"provider": DUMMY}}], indirect=True)

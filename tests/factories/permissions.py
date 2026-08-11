@@ -38,7 +38,7 @@ async def namespace_with_users(
         created_users = []
         original_owner_id = namespace.owner_id
         for username, role in users_roles:
-            user = User(username=username, is_active=True)
+            user = User(username=username)
             async_session.add(user)
             await async_session.commit()
             created_users.append(user)

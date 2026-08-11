@@ -76,7 +76,6 @@ User record has following fields:
 
 - `id: integer` - internal user identifier, generated using sequence, read only
 - `username: string` - unique per Horizon instance
-- `is_active: boolean` - flag if user is allowed to log in.
 - `is_admin: boolean` - flag for SUPERUSER role.
 
 ### Limitations user
@@ -156,7 +155,6 @@ erDiagram
     User {
         number id
         string username
-        bool is_active
         bool is_admin
     }
 

@@ -65,11 +65,7 @@ class LDAPAuthProvider(AuthProvider):
             raise AuthorizationError(msg)
 
         user_id = self._get_user_id_from_token(access_token)
-        user = await uow.user.get_by_id(user_id)
-        if not user.is_active:
-            msg = f"User {user.username!r} is disabled"
-            raise AuthorizationError(msg)
-        return user
+        return await uow.user.get_by_id(user_id)
 
     async def get_token(  # noqa: PLR0917
         self,
@@ -95,12 +91,7 @@ class LDAPAuthProvider(AuthProvider):
             user = await uow.user.get_or_create(username=username)
 
         log.info("User id %r found", user.id)
-        if not user.is_active:
-            # TODO: check if user is locked in LDAP
-            msg = f"User {username!r} is disabled"
-            raise AuthorizationError(msg)
-
-        log.info("Generate access token for user id %r", user.id)
+        log.info("Generating access token for user id %r", user.id)
         access_token, expires_at = self._generate_access_token(user)
         return {
             "access_token": access_token,

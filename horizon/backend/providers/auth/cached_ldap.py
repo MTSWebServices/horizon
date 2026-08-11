@@ -70,11 +70,6 @@ class CachedLDAPAuthProvider(LDAPAuthProvider):
             user = await uow.user.get_or_create(username=username)
 
             log.info("User id %r found", user.id)
-            if not user.is_active:
-                # TODO: check if user is locked in LDAP
-                msg = f"User {username!r} is disabled"
-                raise AuthorizationError(msg)
-
             if not from_cache:
                 # updating cache without checking user in LDAP means cache item will never expire,
                 # and we will never check if used is valid

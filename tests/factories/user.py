@@ -28,7 +28,6 @@ def user_factory(**kwargs):
     data = {
         "id": randint(0, 10000000),
         "username": random_string(),
-        "is_active": True,
     }
     data.update(kwargs)
     return User(**data)
@@ -123,7 +122,7 @@ async def user_with_role(
             user.is_admin = True
             async_session.add(user)
         elif role != NamespaceUserRoleInt.OWNER:
-            fake_owner = User(username=secrets.token_hex(5), is_active=True)
+            fake_owner = User(username=secrets.token_hex(5))
             async_session.add(fake_owner)
             await async_session.commit()
 
