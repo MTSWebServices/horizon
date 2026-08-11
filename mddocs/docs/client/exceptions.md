@@ -6,7 +6,6 @@ These exception classes are used in client implementations.
 
 ::: horizon.commons.exceptions.base.ApplicationError
     options:
-        show_root_heading: true
         members:
             - message
             - details
@@ -15,7 +14,6 @@ These exception classes are used in client implementations.
 
 ::: horizon.commons.exceptions.auth.AuthorizationError
     options:
-        show_root_heading: true
         members:
             - message
             - details
@@ -24,7 +22,6 @@ These exception classes are used in client implementations.
 
 ::: horizon.commons.exceptions.permission.PermissionDeniedError
     options:
-        show_root_heading: true
         members:
             - message
             - details
@@ -33,7 +30,6 @@ These exception classes are used in client implementations.
 
 ::: horizon.commons.exceptions.bad_request.BadRequestError
     options:
-        show_root_heading: true
         members:
             - reason
 
@@ -41,7 +37,6 @@ These exception classes are used in client implementations.
 
 ::: horizon.commons.exceptions.entity.EntityNotFoundError
     options:
-        show_root_heading: true
         members:
             - message
             - details
@@ -51,7 +46,6 @@ These exception classes are used in client implementations.
 
 ::: horizon.commons.exceptions.entity.EntityAlreadyExistsError
     options:
-        show_root_heading: true
         members:
             - message
             - details
@@ -63,6 +57,5 @@ These exception classes are used in client implementations.
 
 ::: horizon.commons.exceptions.service.ServiceError
     options:
-        show_root_heading: true
         members:
             - message

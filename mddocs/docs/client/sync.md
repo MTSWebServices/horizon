@@ -104,9 +104,5 @@ HWMResponseV1(
             - bulk_copy_hwm
 
 ::: horizon.client.sync.RetryConfig
-    options:
-        show_root_heading: true
 
 ::: horizon.client.sync.TimeoutConfig
-    options:
-        show_root_heading: true
