@@ -72,10 +72,10 @@ jobs:
         id: release-name
         run: |
           cat mddocs/docs/changelog/${GITHUB_REF_NAME}.md > changelog.md
-          # Remove anchors like "{ #horizon-changelog-1-0-0 }"
+          # Remove anchors like "{ #2.0.0 }"
           sed -i -E 's/\{.*\}//g' changelog.md
-          # Header looks like "## [1.0.0](...) - 2025-01-01"
-          # Release name looks like "1.0.0 - 2025-01-01"
+          # Header looks like "# 2.0.0 (2026-08-10)"
+          # Release name looks like "2.0.0 (2026-08-10)"
           echo -n name= > "$GITHUB_OUTPUT"
           cat changelog.md | head -1 | sed -E "s/#+\s*//g" >> "$GITHUB_OUTPUT"
           # Remove header with release name

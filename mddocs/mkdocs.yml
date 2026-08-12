@@ -83,7 +83,7 @@ plugins:
                   remove_fields_from_members: true
   - towncrier
   - privacy:
-      enabled: !ENV [CI, false]
+      enabled: !ENV [READTHEDOCS, false]
 
 markdown_extensions:
   - footnotes
