@@ -1,13 +1,13 @@
-# SPDX-FileCopyrightText: 2023-2025 MTS PJSC
+# SPDX-FileCopyrightText: 2023-present MTS PJSC
 # SPDX-License-Identifier: Apache-2.0
 
 from __future__ import annotations
 
-from typing import ClassVar, Optional
+from typing import ClassVar
 
 
 class Unset:
-    _instance: ClassVar[Optional[Unset]] = None
+    _instance: ClassVar[Unset | None] = None
 
     def __new__(cls, *args, **kwargs):
         if not cls._instance:

@@ -1,4 +1,4 @@
-# SPDX-FileCopyrightText: 2023-2025 MTS PJSC
+# SPDX-FileCopyrightText: 2023-present MTS PJSC
 # SPDX-License-Identifier: Apache-2.0
 
 from __future__ import annotations
@@ -47,6 +47,6 @@ def apply_application_version_middleware(app: FastAPI, settings: ApplicationVers
     app.add_middleware(
         ApplicationVersionMiddleware,
         version=app.version,
-        **settings.dict(exclude={"enabled"}),
+        **settings.model_dump(exclude={"enabled"}, warnings=False),
     )
     return app

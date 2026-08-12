@@ -1,5 +1,4 @@
 pytest_plugins = [
-    "tests.fixtures.event_loop",
     "tests.fixtures.settings",
     "tests.fixtures.test_app",
     "tests.fixtures.test_client",

@@ -1,9 +1,9 @@
-# SPDX-FileCopyrightText: 2023-2025 MTS PJSC
+# SPDX-FileCopyrightText: 2023-present MTS PJSC
 # SPDX-License-Identifier: Apache-2.0
 
 from __future__ import annotations
 
-from typing import Dict, cast
+from typing import cast
 
 from sqlalchemy import SQLColumnExpression, delete, select, update
 from sqlalchemy.dialects.postgresql import insert as pg_insert
@@ -39,9 +39,6 @@ class NamespaceRepository(Repository[Namespace]):
             page=page,
             page_size=page_size,
         )
-
-    async def count(self) -> int:
-        return await self._count()
 
     async def get(
         self,
@@ -135,7 +132,7 @@ class NamespaceRepository(Repository[Namespace]):
         if user_role < required_role:
             raise PermissionDeniedError(required_role.name, user_role.name)
 
-    async def get_namespace_users_permissions(self, namespace_id: int) -> Dict[User, NamespaceUserRoleInt]:
+    async def get_namespace_users_permissions(self, namespace_id: int) -> dict[User, NamespaceUserRoleInt]:
         permissions_dict = {}
 
         namespace = await self.get(namespace_id)

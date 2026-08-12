@@ -1,12 +1,14 @@
-# SPDX-FileCopyrightText: 2023-2025 MTS PJSC
+# SPDX-FileCopyrightText: 2023-present MTS PJSC
 # SPDX-License-Identifier: Apache-2.0
 
 
+from typing import Annotated
+
 from fastapi import APIRouter, Depends, HTTPException, status
-from typing_extensions import Annotated
 
 from horizon.backend.db.models import NamespaceUserRoleInt, User
-from horizon.backend.services import UnitOfWork, current_user
+from horizon.backend.services.current_user import current_user
+from horizon.backend.services.uow import UnitOfWork
 from horizon.commons.errors import get_error_responses
 from horizon.commons.exceptions import BadRequestError
 from horizon.commons.schemas.v1 import (
@@ -33,7 +35,7 @@ async def paginate_namespaces(
     pagination_args: Annotated[NamespacePaginateQueryV1, Depends()],
     unit_of_work: Annotated[UnitOfWork, Depends()],
 ) -> PageResponseV1[NamespaceResponseV1]:
-    pagination = await unit_of_work.namespace.paginate(**pagination_args.dict())
+    pagination = await unit_of_work.namespace.paginate(**pagination_args.model_dump(warnings=False))
     return PageResponseV1[NamespaceResponseV1].from_pagination(pagination)
 
 
@@ -47,7 +49,7 @@ async def get_namespace(
     unit_of_work: Annotated[UnitOfWork, Depends()],
 ) -> NamespaceResponseV1:
     namespace = await unit_of_work.namespace.get(namespace_id)
-    return NamespaceResponseV1.from_orm(namespace)
+    return NamespaceResponseV1.model_validate(namespace)
 
 
 @router.post(
@@ -61,12 +63,12 @@ async def create_namespace(
     user: Annotated[User, Depends(current_user)],
 ) -> NamespaceResponseV1:
     async with unit_of_work:
-        namespace = await unit_of_work.namespace.create(**data.dict(), user=user)
+        namespace = await unit_of_work.namespace.create(**data.model_dump(warnings=False), user=user)
         await unit_of_work.namespace_history.create(
             namespace_id=namespace.id,
             data=namespace.to_dict(exclude={"id"}),
         )
-    return NamespaceResponseV1.from_orm(namespace)
+    return NamespaceResponseV1.model_validate(namespace)
 
 
 @router.patch(
@@ -87,7 +89,7 @@ async def update_namespace(
         )
         namespace = await unit_of_work.namespace.update(
             namespace_id=namespace_id,
-            changes=changes.dict(exclude_defaults=True),
+            changes=changes.model_dump(exclude_defaults=True, warnings=False),
             user=user,
         )
         await unit_of_work.namespace_history.create(
@@ -97,7 +99,7 @@ async def update_namespace(
                 "action": "Updated",
             },
         )
-    return NamespaceResponseV1.from_orm(namespace)
+    return NamespaceResponseV1.model_validate(namespace)
 
 
 @router.delete(

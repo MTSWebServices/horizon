@@ -1,43 +1,76 @@
-# SPDX-FileCopyrightText: 2023-2025 MTS PJSC
+# SPDX-FileCopyrightText: 2023-present MTS PJSC
 # SPDX-License-Identifier: Apache-2.0
 
 import textwrap
+from typing import Annotated
+from urllib.parse import urlsplit
 
-from pydantic import BaseModel, Field
+from pydantic import AfterValidator, BaseModel, ConfigDict, Field, PostgresDsn, UrlConstraints
+from sqlalchemy import make_url
+
+
+def validate_url(value: PostgresDsn):
+    if not value.path or len(value.path) <= 1:
+        msg = "Database URL must contain database name"
+        raise ValueError(msg)
+
+    split = urlsplit(str(value))
+    if not split.username or not split.password:
+        msg = "Database URL must contain username and password"
+        raise ValueError(msg)
+
+    return value
+
+
+PostgresURL = Annotated[
+    PostgresDsn,
+    UrlConstraints(allowed_schemes=["postgresql+asyncpg"], host_required=True),
+    AfterValidator(validate_url),
+]
 
 
 class DatabaseSettings(BaseModel):
     """Database connection settings.
 
-    .. note::
+    !!! note
 
         You can pass here any extra option supported by
-        `SQLAlchemy Engine class <https://docs.sqlalchemy.org/en/20/core/engines.html#sqlalchemy.create_engine>`_,
+        [SQLAlchemy Engine class](https://docs.sqlalchemy.org/en/20/core/engines.html#sqlalchemy.create_engine),
         even if it is not mentioned in documentation.
 
     Examples
     --------
 
-    .. code-block:: bash
-
-        HORIZON__DATABASE__URL=postgresql+asyncpg://postgres:postgres@localhost:5432/horizon
-        # custom option passed directly to engine factory
-        HORIZON__DATABASE__POOL_PRE_PING=True
+    ```yaml title="config.yml"
+    database:
+      url: postgresql+asyncpg://postgres:postgres@localhost:5432/horizon
+      # custom option passed directly to engine factory
+      pool_pre_ping: true
+    ```
     """
 
-    url: str = Field(
+    url: PostgresURL = Field(
         description=textwrap.dedent(
             """
             Database connection URL.
 
-            See `SQLAlchemy documentation <https://docs.sqlalchemy.org/en/20/core/engines.html#backend-specific-urls>`_
+            See [SQLAlchemy documentation](https://docs.sqlalchemy.org/en/20/core/engines.html#backend-specific-urls)
 
-            .. warning:
+            !!! warning
 
-                Only async drivers are supported, e.g. ``asyncpg``
+                Only async drivers are supported, e.g. `asyncpg`
             """,
         ),
     )
 
-    class Config:
-        extra = "allow"
+    model_config = ConfigDict(extra="allow")
+
+    def __repr_args__(self):
+        safe_url = make_url(str(self.url)).render_as_string(
+            hide_password=True,
+        )
+        extra = super().__repr_args__()
+        return [
+            ("url", safe_url),
+            *[item for item in extra if item[0] != "url"],
+        ]

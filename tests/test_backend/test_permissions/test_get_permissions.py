@@ -8,7 +8,7 @@ import pytest
 from horizon.backend.db.models import Namespace, NamespaceUserRoleInt, User
 
 if TYPE_CHECKING:
-    from httpx import AsyncClient
+    from httpx2 import AsyncClient
 
 pytestmark = [pytest.mark.backend, pytest.mark.asyncio]
 

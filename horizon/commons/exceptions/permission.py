@@ -1,4 +1,4 @@
-# SPDX-FileCopyrightText: 2023-2025 MTS PJSC
+# SPDX-FileCopyrightText: 2023-present MTS PJSC
 # SPDX-License-Identifier: Apache-2.0
 from __future__ import annotations
 
@@ -14,10 +14,12 @@ class PermissionDeniedError(ApplicationError):
     Examples
     --------
 
+    ```python
     >>> from horizon.commons.exceptions import PermissionDeniedError
     >>> raise PermissionDeniedError(required_role="DEVELOPER", actual_role="GUEST")
     Traceback (most recent call last):
     horizon.commons.exceptions.PermissionDeniedError: Permission denied. User has role GUEST but action requires at least DEVELOPER.
+    ```
     """  # noqa: E501
 
     required_role: str

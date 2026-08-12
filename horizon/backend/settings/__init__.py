@@ -1,57 +1,95 @@
-# SPDX-FileCopyrightText: 2023-2025 MTS PJSC
+# SPDX-FileCopyrightText: 2023-present MTS PJSC
 # SPDX-License-Identifier: Apache-2.0
+import os
+from pathlib import Path
+from typing import Any
 
+from fastapi import Request
 from pydantic import Field
+from pydantic_settings import BaseSettings, SettingsConfigDict, YamlConfigSettingsSource
 
+from horizon.backend.logging import DEFAULT_LOGGING_SETTINGS, LoggingSettings
 from horizon.backend.settings.auth import AuthSettings
 from horizon.backend.settings.database import DatabaseSettings
 from horizon.backend.settings.server import ServerSettings
-
-BaseSettings: type
-try:
-    from pydantic import BaseSettings  # type: ignore[no-redef]
-except ImportError:
-    from pydantic_settings import BaseSettings  # type: ignore[no-redef]
 
 
 class Settings(BaseSettings):
     """Horizon backend settings.
 
-    Backend can be configured in 2 ways:
+    Backend can be configured in 3 ways, in descending order of priority:
 
-    * By explicitly passing ``settings`` object as an argument to :obj:`application_factory <horizon.backend.main.application_factory>`
-    * By setting up environment variables matching a specific key.
+    * By explicitly passing `settings` object as an argument to `application_factory`
+    * By storing settings in a `config.yml` configuration file
+    * By setting environment variables matching a specific key
 
-        All environment variable names are written in uppercase and should be prefixed with ``HORIZON__``.
-        Nested items are delimited with ``__``.
+    Environment variable names are written in uppercase, prefixed with `HORIZON__`,
+    and use `__` to delimit nested items.
 
-    More details can be found in `Pydantic documentation <https://docs.pydantic.dev/latest/concepts/pydantic_settings/>`_.
+    More details can be found in [Pydantic documentation](https://docs.pydantic.dev/latest/concepts/pydantic_settings/).
 
     Examples
     --------
 
-    .. code-block:: bash
+    ```yaml title="config.yml"
+    database:
+      url: postgresql+asyncpg://postgres:postgres@localhost:5432/horizon
 
-        # same as settings.database.url = "postgresql+asyncpg://postgres:postgres@localhost:5432/horizon"
-        HORIZON__DATABASE__URL=postgresql+asyncpg://postgres:postgres@localhost:5432/horizon
+    server:
+      debug: true
 
-        # same as settings.server.debug = True
-        HORIZON__SERVER__DEBUG=True
+    auth:
+      provider: horizon.backend.providers.auth.dummy.DummyAuthProvider
 
-        # same as settings.auth.provider = horizon.backend.providers.auth.dummy.DummyAuthProvider
-        HORIZON__AUTH__PROVIDER=horizon.backend.providers.auth.dummy.DummyAuthProvider
-    """  # noqa: E501
+    admin_users:
+      - admin
+    ```
+    """
 
-    database: DatabaseSettings = Field(description=":ref:`Database settings <backend-configuration-database>`")
+    model_config = SettingsConfigDict(
+        env_prefix="HORIZON__",
+        env_nested_delimiter="__",
+    )
+
+    database: DatabaseSettings = Field(
+        default_factory=DatabaseSettings,  # type: ignore[arg-type]
+        description="Database settings",
+    )
+    logging: LoggingSettings = Field(
+        default=DEFAULT_LOGGING_SETTINGS,
+        description="Logging settings",
+    )
     server: ServerSettings = Field(
         default_factory=ServerSettings,
-        description=":ref:`Server settings <backend-configuration>`",
+        description="Server settings",
     )
     auth: AuthSettings = Field(
         default_factory=AuthSettings,
-        description=":ref:`Auth setting <backend-auth-providers>`",
+        description="Auth provider setting",
+    )
+    admin_users: list[str] = Field(
+        default_factory=list,
+        description="[Usernames which should be assigned SUPERADMIN role on application start][manage-admins-script]",
     )
 
-    class Config:
-        env_prefix = "HORIZON__"
-        env_nested_delimiter = "__"
+    @classmethod
+    def settings_customise_sources(
+        cls,
+        settings_cls: Any,
+        init_settings: Any,
+        env_settings: Any,
+        dotenv_settings: Any,
+        file_secret_settings: Any,
+    ) -> tuple[Any, ...]:
+        yaml_file = Path(os.getenv("HORIZON_CONFIG_FILE", "config.yml"))
+        return (
+            init_settings,
+            YamlConfigSettingsSource(settings_cls, yaml_file=yaml_file),
+            env_settings,
+            dotenv_settings,
+            file_secret_settings,
+        )
+
+
+async def get_settings(request: Request) -> Settings:
+    return request.app.state.settings

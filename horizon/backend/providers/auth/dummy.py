@@ -1,18 +1,16 @@
-# SPDX-FileCopyrightText: 2023-2025 MTS PJSC
+# SPDX-FileCopyrightText: 2023-present MTS PJSC
 # SPDX-License-Identifier: Apache-2.0
 
 import logging
 from time import time
-from typing import Any, Dict, List, Optional, Tuple
+from typing import Any
 
 from devtools import pformat
-from fastapi import Depends, FastAPI
-from typing_extensions import Annotated
+from fastapi import FastAPI
 
 from horizon.backend.db.models import User
-from horizon.backend.dependencies import Stub
 from horizon.backend.providers.auth.base import AuthProvider
-from horizon.backend.services import UnitOfWork
+from horizon.backend.services.uow import UnitOfWork
 from horizon.backend.settings.auth.dummy import DummyAuthProviderSettings
 from horizon.backend.utils.jwt import decode_jwt, sign_jwt
 from horizon.commons.exceptions.auth import AuthorizationError
@@ -23,55 +21,48 @@ log = logging.getLogger(__name__)
 class DummyAuthProvider(AuthProvider):
     def __init__(
         self,
-        settings: Annotated[DummyAuthProviderSettings, Depends(Stub(DummyAuthProviderSettings))],
-        unit_of_work: Annotated[UnitOfWork, Depends()],
+        settings: DummyAuthProviderSettings,
     ) -> None:
         self._settings = settings
-        self._uow = unit_of_work
 
     @classmethod
     def setup(cls, app: FastAPI) -> FastAPI:
-        settings = DummyAuthProviderSettings.parse_obj(app.state.settings.auth.dict(exclude={"provider"}))
-        log.info("Using %s provider with settings:\n%s", cls.__name__, pformat(settings))
-        app.dependency_overrides[AuthProvider] = cls
-        app.dependency_overrides[DummyAuthProviderSettings] = lambda: settings
+        settings = DummyAuthProviderSettings.model_validate(
+            app.state.settings.auth.model_dump(exclude={"provider"}, warnings=False),
+        )
+        log.info("Initializing %s provider with settings:\n%s", cls.__name__, pformat(settings))
+        app.state.auth_provider = cls(settings=settings)
         return app
 
-    async def get_current_user(self, access_token: str) -> User:
+    async def get_current_user(self, access_token: str, uow: UnitOfWork) -> User:
         if not access_token:
             msg = "Missing auth credentials"
             raise AuthorizationError(msg)
 
         user_id = self._get_user_id_from_token(access_token)
-        user = await self._uow.user.get_by_id(user_id)
-        if not user.is_active:
-            msg = f"User {user.username!r} is disabled"
-            raise AuthorizationError(msg)
-        return user
+        return await uow.user.get_by_id(user_id)
 
-    async def get_token(
+    async def get_token(  # noqa: PLR0917
         self,
-        grant_type: Optional[str] = None,
-        login: Optional[str] = None,
-        password: Optional[str] = None,
-        scopes: Optional[List[str]] = None,
-        client_id: Optional[str] = None,
-        client_secret: Optional[str] = None,
-    ) -> Dict[str, Any]:
+        uow: UnitOfWork,
+        grant_type: str | None = None,
+        login: str | None = None,
+        password: str | None = None,
+        scopes: list[str] | None = None,
+        client_id: str | None = None,
+        client_secret: str | None = None,
+    ) -> dict[str, Any]:
         if not login or not password:
             msg = "Missing auth credentials"
             raise AuthorizationError(msg)
 
         log.info("Get/create user %r in database", login)
-        async with self._uow:
-            user = await self._uow.user.get_or_create(username=login)
+        async with uow:
+            user = await uow.user.get_or_create(username=login)
 
         log.info("Used with id %r found", user.id)
-        if not user.is_active:
-            msg = f"User {user.username!r} is disabled"
-            raise AuthorizationError(msg)
 
-        log.info("Generate access token for user id %r", user.id)
+        log.info("Generating access token for user id %r", user.id)
         access_token, expires_at = self._generate_access_token(user_id=user.id)
         return {
             "access_token": access_token,
@@ -79,7 +70,7 @@ class DummyAuthProvider(AuthProvider):
             "expires_at": expires_at,
         }
 
-    def _generate_access_token(self, user_id: int) -> Tuple[str, float]:
+    def _generate_access_token(self, user_id: int) -> tuple[str, float]:
         expires_at = time() + self._settings.access_token.expire_seconds
         payload = {
             "user_id": user_id,

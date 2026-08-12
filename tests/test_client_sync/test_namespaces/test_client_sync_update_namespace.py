@@ -27,7 +27,7 @@ def test_sync_client_update_namespace_name(
     response = sync_client.update_namespace(namespace.id, to_update)
 
     assert isinstance(response, NamespaceResponseV1)
-    assert response.dict(exclude={"changed_at"}) == {
+    assert response.model_dump(exclude={"changed_at"}) == {
         "id": namespace.id,
         "name": new_namespace.name,
         "description": namespace.description,
@@ -46,7 +46,7 @@ def test_sync_client_update_namespace_description(
     response = sync_client.update_namespace(namespace.id, to_update)
 
     assert isinstance(response, NamespaceResponseV1)
-    assert response.dict(exclude={"changed_at"}) == {
+    assert response.model_dump(exclude={"changed_at"}) == {
         "id": namespace.id,
         "name": namespace.name,
         "description": new_namespace.description,

@@ -1,13 +1,9 @@
-# SPDX-FileCopyrightText: 2023-2025 MTS PJSC
+# SPDX-FileCopyrightText: 2023-present MTS PJSC
 # SPDX-License-Identifier: Apache-2.0
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, ConfigDict, Field, ImportString, field_validator
 
-try:
-    from pydantic import ImportString
-except ImportError:
-    from pydantic import PyObject as ImportString  # type: ignore[no-redef]
-
+from horizon.backend.providers.auth.base import AuthProvider
 from horizon.backend.providers.auth.dummy import DummyAuthProvider
 
 
@@ -19,13 +15,12 @@ class AuthSettings(BaseModel):
     Examples
     --------
 
-    .. code-block:: bash
-
-        # set settings.auth.provider = horizon.backend.providers.auth.dummy.DummyAuthProvider
-        HORIZON__AUTH__PROVIDER=horizon.backend.providers.auth.dummy.DummyAuthProvider
-
-        # pass access_key.secret_key = "secret" to DummyAuthProviderSettings
-        HORIZON__AUTH__ACCESS_KEY__SECRET_KEY=secret
+    ```yaml title="config.yml"
+    auth:
+      provider: horizon.backend.providers.auth.dummy.DummyAuthProvider
+      access_token:
+        secret_key: secret
+    ```
     """
 
     provider: ImportString = Field(  # type: ignore[assignment]
@@ -33,5 +28,16 @@ class AuthSettings(BaseModel):
         description="Full name of auth provider class",
     )
 
-    class Config:
-        extra = "allow"
+    model_config = ConfigDict(extra="allow")
+
+    @field_validator("provider", mode="after")
+    @classmethod
+    def _validate_provider(cls, value: type) -> type[AuthProvider]:
+        if not issubclass(value, AuthProvider):
+            msg = f"Class {value} is not a subclass of {AuthProvider}"
+            raise TypeError(msg)
+        return value
+
+    # prevent leaking provider secrets
+    def __repr_args__(self):
+        return [("provider", self.provider)]

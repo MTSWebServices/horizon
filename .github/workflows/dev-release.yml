@@ -1,0 +1,56 @@
+name: Dev release
+
+on:
+  workflow_dispatch:
+
+env:
+  DEFAULT_PYTHON: '3.14'
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.head_ref || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  wait-code-analysis:
+    name: Dev release package
+    runs-on: ubuntu-latest
+    if: github.repository == 'MTSWebServices/horizon'  # prevent running on forks
+
+    environment:
+      name: test-pypi
+      url: https://test.pypi.org/p/data-horizon
+
+    permissions:
+      id-token: write # to auth in Test PyPI
+      contents: read
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v7
+
+      - name: Set up Python ${{ env.DEFAULT_PYTHON }}
+        id: python
+        uses: actions/setup-python@v7
+        with:
+          python-version: ${{ env.DEFAULT_PYTHON }}
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v7
+        with:
+          enable-cache: 'false'
+
+      - name: Fix logo in Readme
+        run: |
+          sed -i "s#image:: mddocs/docs/#image:: https://raw.githubusercontent.com/MTSWebServices/horizon/$GITHUB_SHA/mddocs/docs/#g" README.rst
+
+      - name: Patch version template
+        # Due to change above, git stage area is dirty, so we need to patch the template
+        run: sed -i 's#dirty_template = ".*"#dirty_template = "{tag}.dev{env:GITHUB_RUN_ID:{ccount}}"#' pyproject.toml
+
+      - name: Build package
+        run: uv build
+
+      - name: Publish package
+        uses: pypa/gh-action-pypi-publish@release/v1
+        with:
+          repository-url: https://test.pypi.org/legacy/

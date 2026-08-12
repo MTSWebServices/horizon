@@ -1,4 +1,4 @@
-# SPDX-FileCopyrightText: 2023-2025 MTS PJSC
+# SPDX-FileCopyrightText: 2023-present MTS PJSC
 # SPDX-License-Identifier: Apache-2.0
 from __future__ import annotations
 
@@ -101,15 +101,3 @@ class Repository(ABC, Generic[Model]):
             page=page,
             page_size=page_size,
         )
-
-    async def _count(
-        self,
-        where: list[SQLColumnExpression] | None = None,
-    ) -> int:
-        model_type = self.model_type()
-        query: Select = select(func.count()).select_from(model_type)
-        if where:
-            query = query.where(*where)
-
-        result = await self._session.scalars(query)
-        return result.one()

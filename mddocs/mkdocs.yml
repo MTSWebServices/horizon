@@ -1,0 +1,113 @@
+site_name: Data.Horizon Docs
+site_url: !ENV READTHEDOCS_CANONICAL_URL
+docs_dir: docs
+site_dir: generated
+
+exclude_docs: |
+  changelog/RELEASE_TEMPLATE.md
+  changelog/next_release/
+
+theme:
+  name: material
+  logo: _static/logo_wide.svg
+  favicon: _static/icon.svg
+  language: en
+  features:
+    - navigation.indexes
+    - content.tabs.link
+    - content.code.copy
+    - content.code.select
+    - content.footnote.tooltips
+  palette:
+    - media: (prefers-color-scheme)
+      toggle:
+        icon: material/brightness-auto
+        name: Switch to light mode
+
+    - media: '(prefers-color-scheme: light)'
+      scheme: default
+      toggle:
+        icon: material/brightness-7
+        name: Switch to dark mode
+
+    - media: '(prefers-color-scheme: dark)'
+      scheme: slate
+      toggle:
+        icon: material/brightness-4
+        name: Switch to system preference
+
+extra_css:
+  - _static/stylesheets/custom.css
+  - _static/stylesheets/mermaid_zoom.css
+
+extra_javascript:
+  - _static/javascripts/mermaid_zoom.js
+
+plugins:
+  - search
+  - autorefs:
+      resolve_closest: true
+  - literate-nav:
+      nav_file: nav.md
+  - mkdocstrings:
+      default_handler: python
+      handlers:
+        python:
+          paths: [..]
+          options:
+            show_bases: false
+            show_source: false
+            show_root_heading: true
+            show_root_toc_entry: false
+            show_root_full_path: false
+            heading_level: 3
+            docstring_style: numpy
+            docstring_section_style: list
+            inherited_members: false
+            show_if_no_docstring: false
+            show_docstring_attributes: false
+            show_symbol_type_heading: true
+            show_symbol_type_toc: true
+            unwrap_annotated: true
+            parameter_headings: true
+            show_labels: false
+            scoped_crossrefs: true
+            docstring_options:
+              warn_unknown_params: false
+              warn_missing_types: false
+            extensions:
+              - griffe_fieldz:
+                  include_inherited: true
+                  include_private: false
+                  add_fields_to: docstring-parameters
+                  remove_fields_from_members: true
+  - towncrier
+  - git-revision-date-localized
+  - privacy:
+      enabled: !ENV [READTHEDOCS, false]
+
+markdown_extensions:
+  - footnotes
+  - attr_list
+  - md_in_html
+  - admonition
+  - pymdownx.details
+  - pymdownx.magiclink
+  - pymdownx.snippets:
+      base_path: .
+      check_paths: true
+  - toc:
+      permalink: true
+  - pymdownx.tabbed:
+      alternate_style: true
+      slugify: !!python/object/apply:pymdownx.slugs.slugify
+        kwds:
+          case: lower
+  - pymdownx.emoji:
+      emoji_index: !!python/name:material.extensions.emoji.twemoji
+      emoji_generator: !!python/name:material.extensions.emoji.to_svg
+  - pymdownx.superfences:
+      custom_fences:
+        - name: mermaid
+          class: mermaid
+          format: !!python/name:pymdownx.superfences.fence_code_format

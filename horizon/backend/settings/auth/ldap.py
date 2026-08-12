@@ -1,4 +1,4 @@
-# SPDX-FileCopyrightText: 2023-2025 MTS PJSC
+# SPDX-FileCopyrightText: 2023-present MTS PJSC
 # SPDX-License-Identifier: Apache-2.0
 
 """
@@ -8,32 +8,16 @@ Basic LDAP terminology is explained here: `LDAP Overview <https://www.zytrax.com
 """
 
 import textwrap
-from typing import TYPE_CHECKING, Optional, Type, Union
+from typing import Annotated, Literal
 
-from bonsai import LDAPSearchScope
-from pydantic import AnyUrl, BaseModel, Field, SecretStr, validator
-from pydantic import __version__ as pydantic_version
-from typing_extensions import Annotated, Literal
+from pydantic import AnyUrl, BaseModel, Field, SecretStr, UrlConstraints
 
 from horizon.backend.settings.auth.jwt import JWTSettings
 
-if TYPE_CHECKING:
-    LDAPUrl = AnyUrl
-elif pydantic_version < "2":
-
-    class LDAPUrl(AnyUrl):
-        """LDAP connection url, like ``ldap://127.0.0.1:389`` or ``ldaps://127.0.0.1:636``"""
-
-        allowed_schemes = ["ldap", "ldaps"]  # noqa: RUF012
-        host_required = True
-
-else:
-    from pydantic import UrlConstraints
-
-    LDAPUrl: Type[AnyUrl] = Annotated[
-        AnyUrl,
-        UrlConstraints(allowed_schemes=["ldap", "ldaps"], host_required=True),
-    ]
+LDAPUrl = Annotated[
+    AnyUrl,
+    UrlConstraints(allowed_schemes=["ldap", "ldaps"], host_required=True),
+]
 
 
 class LDAPCredentials(BaseModel):
@@ -43,10 +27,14 @@ class LDAPCredentials(BaseModel):
     Examples
     --------
 
-    .. code-block:: bash
-
-        HORIZON__AUTH__LDAP__LOOKUP__CREDENTIALS__USER=uid=techuser,ou=users,dc=example,dc=com
-        HORIZON__AUTH__LDAP__LOOKUP__CREDENTIALS__PASSWORD=somepassword
+    ```yaml title="config.yml"
+    auth:
+      ldap:
+        lookup:
+          credentials:
+            user: uid=techuser,ou=users,dc=example,dc=com
+            password: somepassword
+    ```
     """
 
     user: str = Field(
@@ -63,11 +51,14 @@ class LDAPConnectionPoolSettings(BaseModel):
     Examples
     --------
 
-    .. code-block:: bash
-
-        HORIZON__AUTH__LDAP__LOOKUP__POOL__ENABLED=True
-        HORIZON__AUTH__LDAP__LOOKUP__POOL__MAX=10
-        HORIZON__AUTH__LDAP__LOOKUP__POOL__CHECK_ON_STARTUP=True
+    ```yaml title="config.yml"
+    auth:
+      ldap:
+        lookup:
+          pool:
+            enabled: true
+            max: 10
+    ```
     """
 
     enabled: bool = Field(
@@ -90,28 +81,33 @@ class LDAPLookupSettings(BaseModel):
     Examples
     --------
 
-    .. code-block:: bash
-
-        HORIZON__AUTH__LDAP__LOOKUP__ENABLED=True
-        HORIZON__AUTH__LDAP__LOOKUP__POOL__ENABLED=True
-        HORIZON__AUTH__LDAP__LOOKUP__CREDENTIALS__USER=uid=techuser,ou=users,dc=example,dc=com
-        HORIZON__AUTH__LDAP__LOOKUP__CREDENTIALS__PASSWORD=somepassword
-        HORIZON__AUTH__LDAP__LOOKUP__QUERY=(uid={login})
+    ```yaml title="config.yml"
+    auth:
+      ldap:
+        lookup:
+          enabled: true
+          pool:
+            enabled: true
+          credentials:
+            user: uid=techuser,ou=users,dc=example,dc=com
+            password: somepassword
+          query_template: (uid={login})
+    ```
     """
 
     enabled: bool = Field(
         default=True,
-        description="Set to ``True`` to enable lookup",
+        description="Set to `True` to enable lookup",
     )
     check_on_startup: bool = Field(
         default=True,
-        description="If ``True``, and LDAP is not available during application start, abort application startup",
+        description="If `True`, and LDAP is not available during application start, abort application startup",
     )
     pool: LDAPConnectionPoolSettings = Field(
         default_factory=LDAPConnectionPoolSettings,
         description="LDAP connection pool settings",
     )
-    credentials: Optional[LDAPCredentials] = Field(
+    credentials: LDAPCredentials | None = Field(
         default=None,
         description="Credentials used for connecting to LDAP while performing user lookup",
     )
@@ -121,32 +117,27 @@ class LDAPLookupSettings(BaseModel):
             """
             LDAP query send in lookup request.
 
-            Usually lookup is performed against attributes ``uid`` (LDAP) or ``sAMAccountName`` (ActiveDirectory).
+            Usually lookup is performed against attributes `uid` (LDAP) or `sAMAccountName` (ActiveDirectory).
             You can also pass any query string supported by LDAP.
-            See `Bonsai documentation <https://bonsai.readthedocs.io/en/latest/tutorial.html#searching>`_.
+            See [Bonsai documentation](https://bonsai.readthedocs.io/en/latest/tutorial.html#searching).
 
-            Supported substitution values (see :obj:`horizon.backend.settings.auth.ldap.LDAPSettings`.):
-              * ``{uid_attribute}``
-              * ``{login}``
+            Supported substitution values:
+
+            * `{login}`
+            * [`{uid_attribute}`][horizon.backend.settings.auth.ldap.LDAPSettings(uid_attribute)]
             """,
         ),
     )
-    scope: LDAPSearchScope = Field(
-        default=LDAPSearchScope.ONELEVEL,
+    scope: Literal["BASE", "ONELEVEL", "SUBTREE"] = Field(
+        default="ONELEVEL",
         description=textwrap.dedent(
             """
-            Lookup scope. Use ``SUBTREE`` for ActiveDirectory.
+            Lookup scope. Use `SUBTREE` for ActiveDirectory.
 
-            See `Bonsai documentation <https://bonsai.readthedocs.io/en/latest/api.html#bonsai.LDAPSearchScope.ONE>`_.
+            See [Bonsai documentation](https://bonsai.readthedocs.io/en/latest/api.html#bonsai.LDAPSearchScope.ONE).
             """,
         ),
     )
-
-    @validator("scope", pre=True)
-    def _convert_scope_to_enum(cls, value: Union[str, int, LDAPSearchScope]) -> LDAPSearchScope:  # noqa: N805
-        if isinstance(value, str):
-            return LDAPSearchScope[value.upper()]
-        return LDAPSearchScope(value)
 
 
 class LDAPSettings(BaseModel):
@@ -155,25 +146,28 @@ class LDAPSettings(BaseModel):
     Examples
     --------
 
-    .. code-block:: bash
-
-        HORIZON__AUTH__LDAP__URL=ldap://ldap.domain.com:389
-        HORIZON__AUTH__LDAP__UID_ATTRIBUTE=sAMAccountName
+    ```yaml title="config.yml"
+    auth:
+      ldap:
+        url: ldap://ldap.domain.com:389
+        base_dn: ou=users,dc=example,dc=com
+        uid_attribute: sAMAccountName
+    ```
     """
 
     url: LDAPUrl = Field(
         description="LDAP URL to connect to",
     )
-    timeout_seconds: Optional[int] = Field(
+    timeout_seconds: int | None = Field(
         default=10,
-        description="LDAP request timeout, in seconds. ``None`` means no timeout",
+        description="LDAP request timeout, in seconds. `None` means no timeout",
     )
     auth_mechanism: Literal["SIMPLE", "DIGEST-MD5"] = Field(
         default="SIMPLE",
-        description="LDAP auth mechanism, used for ``bind`` request",
+        description="LDAP auth mechanism, used for `bind` request",
     )
     base_dn: str = Field(
-        description="Organization DN, e.g. ``ou=users,dc=example,dc=com``",
+        description="Organization DN, e.g. `ou=users,dc=example,dc=com`",
     )
     uid_attribute: str = Field(
         default="uid",
@@ -181,7 +175,7 @@ class LDAPSettings(BaseModel):
             """
             Attribute containing username.
 
-            Usually ``uid`` (LDAP) or ``sAMAccountName`` (ActiveDirectory).
+            Usually `uid` (LDAP) or `sAMAccountName` (ActiveDirectory).
             """,
         ),
     )
@@ -193,9 +187,10 @@ class LDAPSettings(BaseModel):
             You can pass any DN value supported by LDAP.
 
             Supported substitution values:
-              * ``{login}``
-              * ``{uid_attribute}`` (see :obj:`~uid_attribute`)
-              * ``{base_dn}`` (see :obj:`~base_dn`)
+
+            * `{login}`
+            * [`{uid_attribute}`][horizon.backend.settings.auth.ldap.LDAPSettings(uid_attribute)]
+            * [`{base_dn}`][horizon.backend.settings.auth.ldap.LDAPSettings(base_dn)]
             """,
         ),
     )
@@ -212,15 +207,22 @@ class LDAPAuthProviderSettings(BaseModel):
     Examples
     --------
 
-    .. code-block:: bash
-
-        HORIZON__AUTH__PROVIDER=horizon.backend.providers.auth.ldap.LDAPAuthProvider
-        HORIZON__AUTH__ACCESS_KEY__SECRET_KEY=secret
-        HORIZON__AUTH__LDAP__URL=ldap://ldap.domain.com:389
-        HORIZON__AUTH__LDAP__LOOKUP__ENABLED=True
-        HORIZON__AUTH__LDAP__LOOKUP__POOL__ENABLED=True
-        HORIZON__AUTH__LDAP__LOOKUP__CREDENTIALS__USER=uid=techuser,ou=users,dc=example,dc=com
-        HORIZON__AUTH__LDAP__LOOKUP__CREDENTIALS__PASSWORD=somepassword
+    ```yaml title="config.yml"
+    auth:
+      provider: horizon.backend.providers.auth.ldap.LDAPAuthProvider
+      access_token:
+        secret_key: secret
+      ldap:
+        url: ldap://ldap.domain.com:389
+        base_dn: ou=users,dc=example,dc=com
+        lookup:
+          enabled: true
+          pool:
+            enabled: true
+          credentials:
+            user: uid=techuser,ou=users,dc=example,dc=com
+            password: somepassword
+    ```
     """
 
     access_token: JWTSettings = Field(description="Access-token related settings")

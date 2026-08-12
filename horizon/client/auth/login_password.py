@@ -1,35 +1,37 @@
-# SPDX-FileCopyrightText: 2023-2025 MTS PJSC
+# SPDX-FileCopyrightText: 2023-present MTS PJSC
 # SPDX-License-Identifier: Apache-2.0
 
 from __future__ import annotations
 
+from typing import Literal
 from urllib.parse import urlparse
 
 from pydantic import AnyHttpUrl, BaseModel, SecretStr
-from typing_extensions import Literal
 
 from horizon.client.auth.base import BaseAuth
 
 
 class LoginPassword(BaseAuth, BaseModel):
-    """Authorization using OAuth2 + ``grant_type=password``.
+    """Authorization using OAuth2 + `grant_type=password`.
 
-    Resulting access is passed in ``Authorization: Bearer ${token}`` header.
+    Resulting access is passed in `Authorization: Bearer ${token}` header.
     Tokens can be refreshed.
 
     Parameters
     ----------
-    username : str
+    login
         User name
 
-    password : str
+    password
         User password
 
     Examples
     --------
 
+    ```python
     >>> from horizon.client.auth import LoginPassword
     >>> auth = LoginPassword(login="me", password="12345")
+    ```
     """
 
     login: str

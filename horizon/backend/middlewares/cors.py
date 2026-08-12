@@ -1,4 +1,4 @@
-# SPDX-FileCopyrightText: 2023-2025 MTS PJSC
+# SPDX-FileCopyrightText: 2023-present MTS PJSC
 # SPDX-License-Identifier: Apache-2.0
 from fastapi import FastAPI
 from starlette.middleware.cors import CORSMiddleware
@@ -13,6 +13,6 @@ def apply_cors_middleware(app: FastAPI, settings: CORSSettings) -> FastAPI:
 
     app.add_middleware(
         CORSMiddleware,
-        **settings.dict(exclude={"enabled"}),
+        **settings.model_dump(exclude={"enabled"}),
     )
     return app

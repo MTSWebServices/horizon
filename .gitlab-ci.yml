@@ -1,18 +1,48 @@
 stages:
-  - security-scan
+  - security
 
 ## -------------- Security Pipeline ---------------- ##
 
-security-scan:
+sbom-creation:
+  stage: security
+  image:
+    name: ${UV_IMAGE}
+    entrypoint: ['']
+  script:
+    - uv export --all-extras --no-dev --no-group test --no-group mddocs --link-mode=copy --format cyclonedx1.5 > sbom.cyclonedx.json
+  artifacts:
+    paths:
+      - sbom.cyclonedx.json
+    expire_in: 1 days
   rules:
-    - if: $CI_COMMIT_REF_NAME =~ /(develop)/
-      when: always
-  stage: security-scan
+    - if: $CI_PIPELINE_SOURCE == "web"
+      when: on_success
+    - if: $CI_COMMIT_REF_NAME == $CI_DEFAULT_BRANCH
+      when: on_success
+    - when: never
+
+security-scan:
+  stage: security
+  needs:
+    - job: sbom-creation
+      artifacts: true
   trigger:
     include:
-      - project: devsecops3000Pro/public/pipelines/security-pipeline
+      - project: $SECURITY_PIPELINE_PROJECT
         file: security_pipeline.yaml
-        ref: master
+        ref: $SECURITY_PIPELINE_REF
     forward:
       pipeline_variables: true
       yaml_variables: true
+  variables:
+    APPSECHUB_PARENT_PIPELINE_ID: $CI_PIPELINE_ID
+    APPSECHUB_SCA_SBOM_GENERATOR: custom
+    APPSECHUB_SBOM_PATH: sbom.cyclonedx.json
+    APPSECHUB_SBOM_MASK: '*bom*.json'
+    CUSTOM_SBOM_GENERATOR_JOB_NAME: sbom-creation
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "web"
+      when: on_success
+    - if: $CI_COMMIT_REF_NAME == $CI_DEFAULT_BRANCH
+      when: on_success
+    - when: never

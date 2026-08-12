@@ -1,4 +1,4 @@
-# SPDX-FileCopyrightText: 2023-2025 MTS PJSC
+# SPDX-FileCopyrightText: 2023-present MTS PJSC
 # SPDX-License-Identifier: Apache-2.0
 
 from sqlalchemy.exc import IntegrityError
@@ -12,9 +12,6 @@ from horizon.commons.exceptions.entity import (
 
 
 class UserRepository(Repository[User]):
-    async def count(self) -> int:
-        return await self._count(where=[User.is_active.is_(True)])
-
     async def get_by_id(self, user_id: int) -> User:
         result = await self._get_by_id(user_id)
         if result is None:

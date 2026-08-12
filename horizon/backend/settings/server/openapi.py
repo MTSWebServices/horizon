@@ -1,8 +1,8 @@
-# SPDX-FileCopyrightText: 2023-2025 MTS PJSC
+# SPDX-FileCopyrightText: 2023-present MTS PJSC
 # SPDX-License-Identifier: Apache-2.0
 
 import textwrap
-from typing import Any, Dict, Optional
+from typing import Any
 
 from pydantic import AnyHttpUrl, BaseModel, Field
 
@@ -10,16 +10,19 @@ from pydantic import AnyHttpUrl, BaseModel, Field
 class SwaggerSettings(BaseModel):
     """Swagger UI settings.
 
-    SwaggerUI is served at ``/docs`` endpoint.
+    SwaggerUI is served at `/docs` endpoint.
 
     Examples
     --------
 
-    .. code-block:: bash
-
-        HORIZON__SERVER__OPENAPI__SWAGGER__ENABLED=True
-        HORIZON__SERVER__OPENAPI__SWAGGER__JS_URL=/static/swagger/swagger-ui-bundle.js
-        HORIZON__SERVER__OPENAPI__SWAGGER__CSS_URL=/static/swagger/swagger-ui.css
+    ```yaml title="config.yml"
+    server:
+      openapi:
+        swagger:
+          enabled: true
+          js_url: /static/swagger/swagger-ui-bundle.js
+          css_url: /static/swagger/swagger-ui.css
+    ```
     """
 
     enabled: bool = Field(default=True, description="Set to ``True`` to enable Swagger UI endpoint")
@@ -31,12 +34,12 @@ class SwaggerSettings(BaseModel):
         default="https://cdn.jsdelivr.net/npm/swagger-ui-dist@5/swagger-ui.css",
         description="URL for Swagger UI CSS",
     )
-    extra_parameters: Dict[str, Any] = Field(
+    extra_parameters: dict[str, Any] = Field(
         default_factory=dict,
         description=textwrap.dedent(
             """
             Additional parameters to pass to Swagger UI.
-            See `FastAPI documentation <https://fastapi.tiangolo.com/how-to/configure-swagger-ui/>`_.
+            See [FastAPI documentation](https://fastapi.tiangolo.com/how-to/configure-swagger-ui/).
             """,
         ),
     )
@@ -45,15 +48,18 @@ class SwaggerSettings(BaseModel):
 class RedocSettings(BaseModel):
     """ReDoc settings.
 
-    ReDOc is served at ``/redoc`` endpoint.
+    ReDOc is served at `/redoc` endpoint.
 
     Examples
     --------
 
-    .. code-block:: bash
-
-        HORIZON__SERVER__OPENAPI__REDOC__ENABLED=True
-        HORIZON__SERVER__OPENAPI__REDOC__JS_URL=/static/redoc/redoc.standalone.js
+    ```yaml title="config.yml"
+    server:
+      openapi:
+        redoc:
+          enabled: true
+          js_url: /static/redoc/redoc.standalone.js
+    ```
     """
 
     enabled: bool = Field(default=True, description="Set to ``True`` to enable Redoc UI endpoint")
@@ -64,20 +70,23 @@ class RedocSettings(BaseModel):
 
 
 class LogoSettings(BaseModel):
-    """OpenAPI's ``x-logo`` documentation settings.
+    """OpenAPI's `x-logo` documentation settings.
 
-    See `OpenAPI spec <https://redocly.com/docs/api-reference-docs/specification-extensions/x-logo/>`_
+    See [OpenAPI spec](https://redocly.com/docs/api-reference-docs/specification-extensions/x-logo/)
     for more details.
 
     Examples
     --------
 
-    .. code-block:: bash
-
-        HORIZON__SERVER__OPENAPI__LOGO__URL=/static/logo.svg
-        HORIZON__SERVER__OPENAPI__LOGO__BACKGROUND_COLOR=ffffff
-        HORIZON__SERVER__OPENAPI__LOGO__ALT_TEXT=Horizon logo
-        HORIZON__SERVER__OPENAPI__LOGO__HREF=http://mycompany.domain.com
+    ```yaml title="config.yml"
+    server:
+      openapi:
+        logo:
+          url: /static/logo.svg
+          background_color: ffffff
+          alt_text: Horizon logo
+          href: http://mycompany.domain.com
+    ```
     """
 
     url: str = Field(
@@ -88,12 +97,12 @@ class LogoSettings(BaseModel):
         default="ffffff",
         description="Background color in HEX RGB format, without ``#`` prefix",
     )
-    alt_text: Optional[str] = Field(
+    alt_text: str | None = Field(
         default="Horizon logo",
         description="Alternative text for ``<img>`` tag",
     )
-    href: Optional[AnyHttpUrl] = Field(  # type: ignore[assignment]
-        default="https://github.com/MobileTeleSystems/horizon",
+    href: AnyHttpUrl | None = Field(  # type: ignore[assignment]
+        default="https://github.com/MTSWebServices/horizon",
         description="Clicking on logo will redirect to this URL",
     )
 
@@ -104,9 +113,12 @@ class FaviconSettings(BaseModel):
     Examples
     --------
 
-    .. code-block:: bash
-
-        HORIZON__SERVER__OPENAPI__FAVICON__URL=/static/icon.svg
+    ```yaml title="config.yml"
+    server:
+      openapi:
+        favicon:
+          url: /static/icon.svg
+    ```
     """
 
     url: str = Field(
@@ -118,16 +130,20 @@ class FaviconSettings(BaseModel):
 class OpenAPISettings(BaseModel):
     """OpenAPI Settings.
 
-    OpenAPI.json is served at ``/openapi.json`` endpoint.
+    OpenAPI.json is served at `/openapi.json` endpoint.
 
     Examples
     --------
 
-    .. code-block:: bash
-
-        HORIZON__SERVER__OPENAPI__ENABLED=True
-        HORIZON__SERVER__OPENAPI__SWAGGER__ENABLED=True
-        HORIZON__SERVER__OPENAPI__REDOC__ENABLED=True
+    ```yaml title="config.yml"
+    server:
+      openapi:
+        enabled: true
+        swagger:
+          enabled: true
+        redoc:
+          enabled: true
+    ```
     """
 
     enabled: bool = Field(default=True, description="Set to ``True`` to enable OpenAPI.json endpoint")

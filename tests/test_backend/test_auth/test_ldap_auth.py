@@ -5,10 +5,9 @@ from copy import deepcopy
 from datetime import datetime, timezone
 from http import HTTPStatus
 from time import time
-from typing import TYPE_CHECKING, Any
+from typing import TYPE_CHECKING
 
 import pytest
-from pydantic import __version__ as pydantic_version
 from sqlalchemy import select
 from sqlalchemy_utils.functions import naturally_equivalent
 
@@ -18,7 +17,7 @@ from horizon.backend.utils.jwt import decode_jwt
 
 if TYPE_CHECKING:
     from fastapi import FastAPI
-    from httpx import AsyncClient
+    from httpx2 import AsyncClient
     from sqlalchemy.ext.asyncio import AsyncSession
 
     from horizon.backend.settings import Settings
@@ -68,7 +67,6 @@ async def test_ldap_auth_get_token_creates_user(
     assert created_user.username == new_user.username
     assert created_user.created_at >= current_dt
     assert created_user.updated_at >= current_dt
-    assert created_user.is_active
 
 
 @pytest.mark.parametrize("user", [{"username": "developer1"}], indirect=True)
@@ -189,7 +187,6 @@ async def test_ldap_auth_get_token_with_lookup_by_custom_attribute(
     assert created_user.username == new_user.username
     assert created_user.created_at >= current_dt
     assert created_user.updated_at >= current_dt
-    assert created_user.is_active
 
 
 @pytest.mark.parametrize("new_user", [{"username": "developer1"}], indirect=True)
@@ -380,29 +377,6 @@ async def test_ldap_auth_get_token_for_missing_user_from_ldap(
     }
 
 
-@pytest.mark.parametrize("user", [{"username": "developer1", "is_active": False}], indirect=True)
-@pytest.mark.parametrize("settings", [{"auth": {"provider": LDAP}}], indirect=True)
-async def test_ldap_auth_get_token_for_inactive_user(
-    test_client: AsyncClient,
-    user: User,
-):
-    response = await test_client.post(
-        "v1/auth/token",
-        data={
-            "username": user.username,
-            "password": "password",
-        },
-    )
-    assert response.status_code == HTTPStatus.UNAUTHORIZED
-    assert response.json() == {
-        "error": {
-            "code": "unauthorized",
-            "message": f"User {user.username!r} is disabled",
-            "details": None,
-        },
-    }
-
-
 @pytest.mark.parametrize("settings", [{"auth": {"provider": LDAP}}], indirect=True)
 async def test_ldap_auth_get_token_with_malformed_input(
     test_client: AsyncClient,
@@ -420,25 +394,15 @@ async def test_ldap_auth_get_token_with_malformed_input(
         },
     )
 
-    details: list[dict[str, Any]]
-    if pydantic_version < "2":
-        details = [
-            {
-                "location": ["body", "password"],
-                "message": "field required",
-                "code": "value_error.missing",
-            },
-        ]
-    else:
-        details = [
-            {
-                "location": ["body", "password"],
-                "message": "Field required",
-                "code": "missing",
-                "context": {},
-                "input": None,
-            },
-        ]
+    details = [
+        {
+            "location": ["body", "password"],
+            "message": "Field required",
+            "code": "missing",
+            "context": {},
+            "input": None,
+        },
+    ]
 
     expected = {
         "error": {
@@ -457,27 +421,6 @@ async def test_ldap_auth_get_token_with_malformed_input(
     created_user = users.one_or_none()
 
     assert not created_user
-
-
-@pytest.mark.parametrize("user", [{"username": "developer1", "is_active": False}], indirect=True)
-@pytest.mark.parametrize("settings", [{"auth": {"provider": LDAP}}], indirect=True)
-async def test_ldap_auth_check_inactive_user(
-    test_client: AsyncClient,
-    access_token: str,
-    user: User,
-):
-    response = await test_client.get(
-        "v1/users/me",
-        headers={"Authorization": f"Bearer {access_token}"},
-    )
-    assert response.status_code == HTTPStatus.UNAUTHORIZED
-    assert response.json() == {
-        "error": {
-            "code": "unauthorized",
-            "message": f"User {user.username!r} is disabled",
-            "details": None,
-        },
-    }
 
 
 @pytest.mark.parametrize("user", [{"username": "developer1"}], indirect=True)

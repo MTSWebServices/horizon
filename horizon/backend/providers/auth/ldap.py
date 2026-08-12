@@ -1,4 +1,4 @@
-# SPDX-FileCopyrightText: 2023-2025 MTS PJSC
+# SPDX-FileCopyrightText: 2023-present MTS PJSC
 # SPDX-License-Identifier: Apache-2.0
 
 """
@@ -13,21 +13,20 @@ used in Apache Airflow
 """
 
 import logging
-from contextlib import asynccontextmanager
+from collections.abc import AsyncGenerator
+from contextlib import AbstractAsyncContextManager, asynccontextmanager
 from time import time
-from typing import Any, AsyncContextManager, AsyncGenerator, Dict, List, Optional, Tuple
+from typing import Any
 
-from bonsai import InvalidDN, LDAPClient
+from bonsai import InvalidDN, LDAPClient, LDAPSearchScope
 from bonsai.asyncio import AIOConnectionPool, AIOLDAPConnection
 from bonsai.errors import AuthenticationError, LDAPError
 from devtools import pformat
-from fastapi import Depends, FastAPI
-from typing_extensions import Annotated
+from fastapi import FastAPI
 
 from horizon.backend.db.models import User
-from horizon.backend.dependencies import Stub
 from horizon.backend.providers.auth.base import AuthProvider
-from horizon.backend.services import UnitOfWork
+from horizon.backend.services.uow import UnitOfWork
 from horizon.backend.settings.auth.ldap import LDAPAuthProviderSettings
 from horizon.backend.utils.jwt import decode_jwt, sign_jwt
 from horizon.commons.exceptions import (
@@ -44,45 +43,40 @@ LDAPUnrecoverableError = (LDAPError, TimeoutError)
 class LDAPAuthProvider(AuthProvider):
     def __init__(
         self,
-        auth_settings: Annotated[LDAPAuthProviderSettings, Depends(Stub(LDAPAuthProviderSettings))],
-        pool: Annotated[Optional[AIOConnectionPool], Depends(Stub(AIOConnectionPool))],
-        unit_of_work: Annotated[UnitOfWork, Depends()],
+        auth_settings: LDAPAuthProviderSettings,
+        pool: AIOConnectionPool | None,
     ) -> None:
-        self._pool: Optional[AIOConnectionPool] = pool
+        self._pool: AIOConnectionPool | None = pool
         self._auth_settings: LDAPAuthProviderSettings = auth_settings
-        self._uow: UnitOfWork = unit_of_work
 
     @classmethod
     def setup(cls, app: FastAPI) -> FastAPI:
-        auth_settings = LDAPAuthProviderSettings.parse_obj(app.state.settings.auth.dict(exclude={"provider"}))
-        log.info("Using %s provider with settings:\n%s", cls.__name__, pformat(auth_settings))
-        app.dependency_overrides[AuthProvider] = cls
-        app.dependency_overrides[LDAPAuthProviderSettings] = lambda: auth_settings
+        auth_settings = LDAPAuthProviderSettings.model_validate(
+            app.state.settings.auth.model_dump(exclude={"provider"}, warnings=False)
+        )
+        log.info("Initializing %s provider with settings:\n%s", cls.__name__, pformat(auth_settings))
         pool = cls._create_lookup_pool(auth_settings)
-        app.dependency_overrides[AIOConnectionPool] = lambda: pool
+        app.state.auth_provider = cls(auth_settings=auth_settings, pool=pool)
         return app
 
-    async def get_current_user(self, access_token: str) -> User:
+    async def get_current_user(self, access_token: str, uow: UnitOfWork) -> User:
         if not access_token:
             msg = "Missing auth credentials"
             raise AuthorizationError(msg)
 
         user_id = self._get_user_id_from_token(access_token)
-        user = await self._uow.user.get_by_id(user_id)
-        if not user.is_active:
-            msg = f"User {user.username!r} is disabled"
-            raise AuthorizationError(msg)
-        return user
+        return await uow.user.get_by_id(user_id)
 
-    async def get_token(
+    async def get_token(  # noqa: PLR0917
         self,
-        grant_type: Optional[str] = None,
-        login: Optional[str] = None,
-        password: Optional[str] = None,
-        scopes: Optional[List[str]] = None,
-        client_id: Optional[str] = None,
-        client_secret: Optional[str] = None,
-    ) -> Dict[str, Any]:
+        uow: UnitOfWork,
+        grant_type: str | None = None,
+        login: str | None = None,
+        password: str | None = None,
+        scopes: list[str] | None = None,
+        client_id: str | None = None,
+        client_secret: str | None = None,
+    ) -> dict[str, Any]:
         if not login or not password:
             msg = "Missing auth credentials"
             raise AuthorizationError(msg)
@@ -91,18 +85,13 @@ class LDAPAuthProvider(AuthProvider):
         username = await self._resolve_username_from_ldap(login, password)
 
         log.info("Get/create user %r in database", username)
-        async with self._uow:
+        async with uow:
             # and only then create user in database.
             # avoid creating fake users by spamming auth endpoint
-            user = await self._uow.user.get_or_create(username=username)
+            user = await uow.user.get_or_create(username=username)
 
         log.info("User id %r found", user.id)
-        if not user.is_active:
-            # TODO: check if user is locked in LDAP
-            msg = f"User {username!r} is disabled"
-            raise AuthorizationError(msg)
-
-        log.info("Generate access token for user id %r", user.id)
+        log.info("Generating access token for user id %r", user.id)
         access_token, expires_at = self._generate_access_token(user)
         return {
             "access_token": access_token,
@@ -123,7 +112,7 @@ class LDAPAuthProvider(AuthProvider):
         return client
 
     @classmethod
-    def _create_lookup_pool(cls, settings: LDAPAuthProviderSettings) -> Optional[AIOConnectionPool]:
+    def _create_lookup_pool(cls, settings: LDAPAuthProviderSettings) -> AIOConnectionPool | None:
         """Create and check connection pool for lookup queries"""
         if not settings.ldap.lookup.enabled:
             return None
@@ -151,7 +140,7 @@ class LDAPAuthProvider(AuthProvider):
     async def _get_lookup_connection(self) -> AsyncGenerator[AIOLDAPConnection, None]:
         """Create connection used for lookup queries"""
         try:
-            connect: AsyncContextManager[AIOLDAPConnection]
+            connect: AbstractAsyncContextManager[AIOLDAPConnection]
             if self._pool:
                 log.debug("Using lookup pool")
                 connect = self._pool.spawn()
@@ -193,7 +182,7 @@ class LDAPAuthProvider(AuthProvider):
 
         return username
 
-    async def _lookup_user(self, login: str) -> Tuple[str, str]:
+    async def _lookup_user(self, login: str) -> tuple[str, str]:
         # Reference implementations:
         # https://github.com/dpgaspar/Flask-AppBuilder/blob/2c5763371b81cd679d88b9971ba5d1fc4d71d54b/flask_appbuilder/security/manager.py#L902
         # https://github.com/jupyterhub/ldapauthenticator/blob/main/ldapauthenticator/ldapauthenticator.py
@@ -210,7 +199,7 @@ class LDAPAuthProvider(AuthProvider):
         async with self._get_lookup_connection() as connection:
             results = await connection.search(
                 base=base_dn,
-                scope=scope,
+                scope=LDAPSearchScope[scope],
                 filter_exp=query,
                 attrlist=["*"],
                 sizelimit=1,
@@ -240,7 +229,7 @@ class LDAPAuthProvider(AuthProvider):
             msg = "Failed to connect to LDAP"
             raise ServiceError(msg) from e
 
-    def _generate_access_token(self, user: User) -> Tuple[str, float]:
+    def _generate_access_token(self, user: User) -> tuple[str, float]:
         expires_at = time() + self._auth_settings.access_token.expire_seconds
         payload = {
             "user_id": user.id,

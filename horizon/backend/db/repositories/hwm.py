@@ -1,11 +1,10 @@
-# SPDX-FileCopyrightText: 2023-2025 MTS PJSC
+# SPDX-FileCopyrightText: 2023-present MTS PJSC
 # SPDX-License-Identifier: Apache-2.0
 
 from __future__ import annotations
 
 import re
 from collections.abc import Sequence
-from typing import List
 
 from sqlalchemy import SQLColumnExpression, delete, select
 from sqlalchemy.exc import IntegrityError
@@ -39,9 +38,6 @@ class HWMRepository(Repository[HWM]):
             page=page,
             page_size=page_size,
         )
-
-    async def count(self) -> int:
-        return await self._count()
 
     async def get(
         self,
@@ -105,7 +101,7 @@ class HWMRepository(Repository[HWM]):
         await self._session.flush()
         return hwm
 
-    async def bulk_delete(self, namespace_id: int, hwm_ids: List[int]) -> Sequence[HWM]:
+    async def bulk_delete(self, namespace_id: int, hwm_ids: list[int]) -> Sequence[HWM]:
         result = await self._session.execute(select(HWM).where(HWM.id.in_(hwm_ids), HWM.namespace_id == namespace_id))
         hwms_to_delete = result.scalars().all()
 
@@ -147,7 +143,7 @@ class HWMRepository(Repository[HWM]):
                 raise EntityAlreadyExistsError("HWM", "name", hwm_name) from e
 
         if with_history:
-            for original_hwm, copied_hwm in zip(hwms, copied_hwms):
+            for original_hwm, copied_hwm in zip(hwms, copied_hwms, strict=True):
                 history = await self._session.execute(
                     select(HWMHistory).where(HWMHistory.hwm_id == original_hwm.id),
                 )

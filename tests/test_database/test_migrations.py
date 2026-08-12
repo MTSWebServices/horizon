@@ -18,7 +18,7 @@ def get_diff_db_metadata(connection: Connection, metadata: MetaData):
 def test_migrations_up_to_date(empty_db_url: str, run_migrations, request: pytest.FixtureRequest):
     engine = create_engine(empty_db_url)
 
-    def finalizer():  # noqa: engine
+    def finalizer():
         engine.dispose()
 
     request.addfinalizer(finalizer)

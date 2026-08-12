@@ -1,278 +1,141 @@
 [build-system]
-requires = ["poetry-core>=1.0.0"]
-build-backend = "poetry.core.masonry.api"
+requires = [ "setuptools>=41", "wheel", "setuptools-git-versioning<4,>=3.0", ]
+build-backend = "setuptools.build_meta"
 
-[tool.poetry]
+[tool.setuptools-git-versioning]
+enabled = true
+version_file = "horizon/VERSION"
+count_commits_from_version_file = true
+dev_template = "{tag}.dev{env:GITHUB_RUN_ID:{ccount}}+git.{sha}"
+dirty_template = "{tag}.dev{env:GITHUB_RUN_ID:{ccount}}+git.{sha}.dirty"
+
+[project]
 name = "data-horizon"
-version = "1.1.3"
-license = "Apache-2.0"
+license = { file = "LICENSE.txt" }
 description = "Horizon REST API + client"
-authors = ["DataOps.ETL <onetools@mts.ru>"]
+authors = [{name= "MWS Data Bridge", email = "onetools@mts.ru"}]
 readme = "README.rst"
 classifiers = [
     "Development Status :: 5 - Production/Stable",
-    "Framework :: Pydantic",
-    "Framework :: Pydantic :: 1",
     "Framework :: Pydantic :: 2",
     "Framework :: FastAPI",
     "Intended Audience :: Developers",
-    "License :: OSI Approved :: Apache Software License",
     "Operating System :: OS Independent",
-    "Programming Language :: Python :: 3 :: Only",
-    "Programming Language :: Python :: 3.7",
-    "Programming Language :: Python :: 3.8",
-    "Programming Language :: Python :: 3.9",
     "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
     "Programming Language :: Python :: 3.13",
+    "Programming Language :: Python :: 3.14",
     "Topic :: Software Development :: Libraries",
     "Topic :: Software Development :: Libraries :: Python Modules",
     "Typing :: Typed",
 ]
 keywords = ["Horizon", "REST", "API", "HWM"]
-packages = [
-    { include = "horizon" },
+requires-python = ">=3.10"
+dependencies = [
+    "pydantic>=2,<3",
+    "typing-extensions>=4.0.0",
+    "authlib>=1.0,<2.0",
 ]
-include = [
-    {path = "horizon/py.typed"},
-    {path = "horizon/**/*.yml"},
-    {path = "horizon/**/*.ini"},
-]
+dynamic = ["version"]
 
-[tool.poetry.urls]  # Optional
-"Homepage" = "https://github.com/MobileTeleSystems/horizon"
+[tool.setuptools.packages.find]
+include = ["horizon*"]
+exclude = ["mddocs", "tests"]
+
+[tool.setuptools.package-data]
+"*" = ["py.typed", "*.ini", "VERSION"]
+
+[project.urls]  # Optional
+"Homepage" = "https://github.com/MTSWebServices/horizon"
 "Documentation" = "https://data-horizon.readthedocs.io/"
-"Source" = "https://github.com/MobileTeleSystems/horizon"
-"CI/CD" = "https://github.com/MobileTeleSystems/horizon/actions"
-"Tracker" = "https://github.com/MobileTeleSystems/horizon/issues"
+"Source" = "https://github.com/MTSWebServices/horizon"
+"CI/CD" = "https://github.com/MTSWebServices/horizon/actions"
+"Tracker" = "https://github.com/MTSWebServices/horizon/issues"
 
-[tool.poetry.dependencies]
-python = "^3.7"
-pydantic = [
-  {version = "<2.6.0", python = "3.7"},
-  {version = "<3", python = ">=3.8"},
-]
-typing-extensions = [
-  {version = ">=4.0.0,<4.8.0", python = "3.7"},
-  {version = ">=4.0.0", python = ">=3.8"},
-]
-packaging = [
-  {version = "<=24.0", optional = true, python = "3.7"},
-  {version = "*", optional = true, python = ">=3.8"},
-]
-fastapi = [
-  {version = "^0.103.2", optional = true, python = "3.7"},
-  {version = ">=0.103.0", optional = true, python = ">=3.8"},
-]
-starlette = [
-  {version = "<=0.29.0", optional = true, python = "3.7"},
-  {version = "*", optional = true, python = ">=3.8"},
-]
-anyio = [
-  {version = "<=3.7.1", optional = true, python = "3.7"},
-  {version = "<=4.5.2", optional = true, python = "3.8"},
-  {version = "*", optional = true, python = ">=3.9"},
-]
-starlette-exporter = [
-  {version = "<=0.17.1", optional = true, python = "3.7"},
-  {version = "*", optional = true, python = ">=3.8"},
-]
-uvicorn = [
-  {version = "<=0.22.0", optional = true, python = "3.7"},
-  {version = "*", optional = true, python = ">=3.8"},
-]
-pydantic-settings = [
-  {version = "<=2.0.3", optional = true, python = "3.7"},
-  {version = "*", optional = true, python = ">=3.8"},
-]
-alembic = [
-  {version = "<=1.12.1", optional = true, python = "3.7"},
-  {version = "*", optional = true, python = ">=3.8"},
-]
-mako = [
-  {version = "<=1.2.4", optional = true, python = "3.7"},
-  {version = "*", optional = true, python = ">=3.8"},
-]
-markupsafe = [
-  {version = "<=2.1.5", optional = true, python = "<=3.7,<3.9"},
-  {version = "*", optional = true, python = ">=3.9"},
-]
-importlib-resources = [
-  {version = "<=5.12.0", optional = true, python = "3.7"},
-  {version = "*", optional = true, python = ">=3.8"},
-]
-sqlalchemy = {version = ">=2.0", optional = true}
-greenlet = {version = ">=3.1.1", optional = true}
-asyncpg = [
-  {version = "<=0.28.0", optional = true, python = "3.7"},
-  {version = "*", optional = true, python = ">=3.8"},
-]
-python-multipart = [
-    {version = "<=0.0.8", optional = true, python = "3.7"},
-    {version = "*", optional = true, python = ">=3.8"},
-]
-sqlalchemy-utils = {version = "*", optional = true}
-authlib = [
-  {version = "<=1.2.1", optional = true, python = "3.7"},
-  {version = "*", optional = true, python = ">=3.8"},
-]
-requests = [
-  {version = "<=2.31.0", optional = true, python = "3.7"},
-  {version = "*", optional = true, python = ">=3.8"},
-]
-urllib3 = {version = ">=1.26.0", optional = true}
-bonsai = {version = ">=1.5.3", optional = true}
-python-json-logger = {version = "*", optional = true}
-coloredlogs = {version = "*", optional = true}
-pyyaml = {version = "*", optional = true}
-asgi-correlation-id = [
-  {version = "<=4.2.0", optional = true, python = "3.7"},
-  {version = "*", optional = true, python = ">=3.8"},
-]
-uuid6 = [
-  {version = "<=2022.10.25", optional = true, python = "3.7"},
-  {version = "*", optional = true, python = ">=3.8"},
-]
-cffi = [
-  {version = "^1.15", optional = true, python = "3.7"},
-  {version = ">=1.17", optional = true, python = ">=3.8"},
-]
-devtools = {version = "*", optional = true}
-argon2-cffi = {version = "*", optional = true}
-passlib = {version = "*", optional = true}
 
-[tool.poetry.extras]
+[project.optional-dependencies]
 backend = [
-  "packaging",
-  "fastapi",
-  "starlette",
-  "anyio",
-  "uvicorn",
-  "alembic",
-  "mako",
-  "markupsafe",
-  "importlib-resources",
-  "sqlalchemy",
-  "greenlet",
-  "python-multipart",
-  "sqlalchemy-utils",
-  "pyyaml",
-  "python-json-logger",
-  "coloredlogs",
-  "starlette-exporter",
-  "asgi-correlation-id",
-  "uuid6",
-  "pydantic-settings",
-  "devtools",
-  "passlib",
-  "authlib",
-  "cffi",
+    "pydantic-settings",
+    "pydantic-settings-logging",
+    "fastapi>=0.103.2",
+    "starlette",
+    "python-multipart",
+    "anyio",
+    "starlette-exporter",
+    "uvicorn",
+    "alembic",
+    "sqlalchemy>=2.0",
+    "sqlalchemy-utils",
+    "greenlet>=3.1.1",
+    "asgi-correlation-id",
+    "python-json-logger",
+    "coloredlogs",
+    "pyyaml",
+    "uuid6",
+    "devtools",
+    "passlib",
 ]
 postgres = [
-  "asyncpg",
-]
-ldap = [
-  "bonsai",
-  "cffi",
-  "argon2-cffi",
+    "asyncpg",
 ]
 client-sync = [
-  "authlib",
-  "cffi",
-  "requests",
-  "urllib3",
+    "requests",
+    "urllib3>=1.26.0",
+]
+ldap = [
+    "bonsai>=1.5.3",
+    "argon2-cffi",
 ]
 
-[tool.poetry.group.test.dependencies]
-pytest = "^7.4.4"
-httpx = [
-  {version = "^0.24.1", python = "3.7"},
-  {version = "^0.28.1", python = ">=3.8"},
+[dependency-groups]
+# pytest-lazy-fixture doesn't support pytest 8.x+
+test = [
+  "pytest~=9.1.1",
+  "httpx2~=2.10.0",
+  "pytest-asyncio~=1.4.0",
+  "pytest-randomly~=4.1.0",
+  "pytest-rerunfailures~=16.4",
+  "pytest-deadfixtures~=3.1.0",
+  "pytest-lazy-fixtures~=1.4.0",
+  "pytest-clarity~=1.0.1",
+  "pytest-pretty~=1.3.0",
+  "coverage~=7.15.2",
+  "psycopg2-binary~=2.9.12",
+  "gevent~=26.7",
+  "responses~=0.26.2",
 ]
-pytest-asyncio = [
-  {version = "^0.21.1", python = "3.7"},
-  # TODO: remove version limit after fixing https://github.com/pytest-dev/pytest-asyncio/issues/706
-  {version = "^0.21.1", python = ">=3.8"},
+dev = [
+  "mypy~=2.3.0",
+  "prek~=0.4.12",
+  "ruff~=0.16.2",
+  "sqlalchemy[mypy]~=2.0.51",
+  "types-pyyaml~=6.0.12",
+  "types-authlib~=1.7.2",
+  "types-passlib~=1.7.7",
+  "types-requests~=2.33.0",
 ]
-pytest-randomly = [
-  {version = "^3.12.0", python = "3.7"},
-  {version = "^3.15.0", python = "3.8"},
-  {version = "^3.16.0", python = ">=3.9"},
-]
-pytest-deadfixtures = "^2.2.1"
-pytest-rerunfailures = [
-  {version = "^13.0", python = "3.7"},
-  {version = "^14.0", python = "3.8"},
-  {version = "^15.0", python = ">=3.9"},
-]
-pytest-lazy-fixture = "^0.6.3"
-coverage = [
-  {version = "^7.2.7", python = "3.7"},
-  {version = "^7.6.1", python = "3.8"},
-  {version = "^7.6.9", python = ">=3.9"},
-]
-psycopg2-binary = [
-  {version = "^2.9.9", python = "3.7"},
-  {version = "^2.9.10", python = ">=3.8"},
-]
-gevent = [
-  {version = "^22.10.2", python = "3.7"},
-  {version = "^24.2.1", python = "3.8"},
-  {version = "^24.11.1", python = ">=3.9"},
-]
-responses = [
-  {version = "^0.23.2", python = "3.7"},
-  {version = "^0.25.6", python = ">=3.8"},
-]
-types-pyyaml = [
-  {version = "6.0.12.12", python = "3.7"},
-  {version = "^6.0.12", python = ">=3.8"},
+mddocs = [
+  "mkdocs~=1.6.1",
+  "mkdocs-material~=9.7.6",
+  "mkdocstrings[python]~=1.0.3",
+  "mkdocs-autorefs~=1.4.4",
+  "pymdown-extensions~=11.0",
+  "griffe-inherited-docstrings~=1.1.3",
+  "griffe-fieldz~=0.5.0",
+  "mkdocs-literate-nav~=0.6.1",
+  "mkdocs-git-revision-date-localized-plugin~=1.5.3",
+  "mkdocs-towncrier~=0.1.5",
+  "towncrier~=25.8.0",
 ]
 
-[tool.poetry.group.dev.dependencies]
-pre-commit = {version = "^4.1.0", python = ">=3.9"}
-mypy = {version = "^1.14.0", python = ">=3.9"}
-sqlalchemy = {extras = ["mypy"], version = "^2.0.37", python = ">=3.9"}
-types-passlib = {version = "^1.7.7", python = ">=3.9"}
-types-pyyaml = {version = "^6.0.12", python = ">=3.9"}
-types-requests = {version = "^2.32.0", python = ">=3.9"}
-types-authlib = {version= "^1.4.0", python = ">=3.9"}
-ruff = {version= "^0.14.1", python = ">=3.9"}
+[tool.uv]
+default-groups = []
 
-[tool.poetry.group.docs.dependencies]
-autodoc-pydantic = {version = "^2.2.0", python = ">=3.9"}
-numpydoc = {version = "^1.8.0", python = ">=3.9"}
-sphinx = [
-  {version = "^7.4.7", python = "3.9"},
-  {version = "^8.1.3", python = ">=3.10"},
-]
-furo = {version = ">=2024.8.6,<2026.0.0", python = ">=3.9"}
-sphinx-copybutton = {version = "^0.5.2", python = ">=3.9"}
-sphinxcontrib-towncrier = {version = "^0.5.0a0", python = ">=3.9"}
-towncrier = {version = "^24.8.0", python = ">=3.9"}
-sphinx-issues = {version = "^5.0.0", python = ">=3.9"}
-sphinx-design = {version = "^0.6.1", python = ">=3.9"}
-sphinx-favicon = {version = "^1.0.1", python = ">=3.9"}
-sphinx-argparse = [
-    {version = "^0.4.0", python = ">=3.9,<3.10"},
-    {version = "^0.5.2", python = ">=3.10"},
-]
-# https://github.com/mgeier/sphinx-last-updated-by-git/pull/77
-sphinx-last-updated-by-git = {version = "^0.3.8", python = ">=3.9"}
-# uncomment after https://github.com/zqmillet/sphinx-plantuml/pull/4
-# sphinx-plantuml = {version = "^1.0.0", python = ">=3.9"}
+[tool.uv.dependency-groups]
+dev = {requires-python = ">=3.10"}
+mddocs = {requires-python = ">=3.10"}
 
-[tool.poetry.plugins."tricoder_package_spy.register"]
-"data-horizon" = "horizon"
-
-[tool.poetry_bumpversion.file."horizon/__init__.py"]
-search = '_raw_version = "{current_version}"'
-replace = '_raw_version = "{new_version}"'
-
-[tool.poetry_bumpversion.file."docs/conf.py"]
-search = 'ver = Version.parse("{current_version}")'
-replace = 'ver = Version.parse("{new_version}")'
 
 [tool.pytest.ini_options]
 markers = [
@@ -282,6 +145,11 @@ markers = [
     "auth: tests using AuthProvider",
     "dummy_auth: tests for DummyAuthProvider",
     "ldap_auth: tests for LDAPAuthProvider",
+]
+asyncio_default_fixture_loop_scope = "session"
+asyncio_default_test_loop_scope = "session"
+filterwarnings = [
+    "ignore:Module already imported so cannot be rewritten:pytest.PytestAssertRewriteWarning",
 ]
 
 [tool.coverage.paths]
@@ -299,43 +167,43 @@ data_file = "reports/.coverage"
 
 [tool.coverage.report]
 precision = 2
-exclude_lines = [
-  "pragma: no cover",
+exclude_also = [
   "def __repr__",
-  "if .*debug:",
   "raise AssertionError",
   "raise NotImplementedError",
-  "if __name__ == .__main__.:",
-  "if TYPE_CHECKING:",
-  "if log.isEnabledFor(logging.DEBUG):",
-  "if sys.version_info",
   "@(abc\\.)?abstractmethod",
   "\\.\\.\\.",
   "def downgrade\\(\\)",
 ]
+partial_also = [
+  "if TYPE_CHECKING:",
+  "if .*isEnabledFor.*:",
+  "if .*debug.*:",
+  "if .*sys.version_info.*:",
+  "if __name__ == .__main__.:",
+]
 [tool.ruff]
+target-version = "py310"
 line-length = 120
-extend-exclude = ["docs/", "Makefile"]
+extend-exclude = ["mddocs/", "Makefile"]
 
 [tool.ruff.lint]
 select = ["ALL"]
-# UP035, UP006 - Set -> set, Dict -> dict... ignore for support python version before 3.9
-# FA100, UP045 - Optional[str] -> str | None, doesn't work before 3.10
-# B905 - zip(strict=True) was added in Python 3.9
-ignore = ["ARG", "ANN", "D", "COM812", "TD", "FIX002", "UP035", "UP006", "UP007", "FA100", "UP045", "B905"]
+ignore = ["ARG", "ANN", "D", "COM812", "TD", "FIX002", "CPY001"]
 
 [tool.ruff.lint.per-file-ignores]
 "horizon/commons/schemas/*" = ["TC"]
 "horizon/backend/middlewares/*" = ["TC"]
 "horizon/backend/db/repositories/*" = ["TC"]
 "horizon/backend/db/migrations/*" = ["INP001", "E501"]
-# Using root logger example: logging.info()
-"horizon/backend/scripts/manage_admins.py" = ["LOG015"]
 "horizon/backend/providers/auth/*" = ["PLR0913"]
+# Conflict with generating openapi scheme for docs in ci
+"horizon/backend/services/uow.py" = ["FA102"]
 
-"tests/*" = ["S", "A", "PLR0913", "PLR2004", "FBT001", "SLF001"]
+"tests/*" = ["S", "A", "PLR0913", "PLR2004", "FBT001", "SLF001", "PLR0917"]
 "tests/*/fixtures/*" = ["INP001"]
 "tests/fixtures/*" = ["INP001"]
+"mddocs/scripts/*" = ["T201", "INP001", "C901", "PLR0915", "PLR0912", "E501"]
 
 [tool.ruff.lint.flake8-pytest-style]
 parametrize-names-type = "list"
@@ -351,16 +219,25 @@ docstring-quotes = "double"
 max-string-length=20
 
 [tool.codespell]
-exclude-file = "poetry.lock"
+exclude-file = "uv.lock"
 ignore-words-list = "selectin"
+
+[tool.mypy]
+python_version="3.10"
+
+[[tool.mypy.overrides]]
+module = "pydantic_settings_logging"
+ignore_missing_imports = true
 
 [tool.towncrier]
 name = "Horizon"
 package = "horizon"
-filename = "docs/changelog/NEXT_RELEASE.rst"
-directory = "docs/changelog/next_release/"
-title_format = "{version} ({project_date})"
-issue_format = ":issue:`{issue}`"
+filename = "mddocs/docs/changelog/RELEASE_TEMPLATE.md"
+start_string = "<!-- towncrier release notes start -->\n"
+underlines = ["", "", ""]
+directory = "mddocs/docs/changelog/next_release/"
+title_format = "## [{version}](https://github.com/MTSWebServices/horizon/tree/{version}) - {project_date}"
+issue_format = "[#{issue}](https://github.com/MTSWebServices/horizon/issues/{issue})"
 
 [[tool.towncrier.type]]
 directory = "breaking"
@@ -400,4 +277,9 @@ showcontent = true
 [[tool.towncrier.type]]
 directory = "misc"
 name = "Misc"
+showcontent = true
+
+[[tool.towncrier.type]]
+directory = "removal"
+name = "Removal"
 showcontent = true

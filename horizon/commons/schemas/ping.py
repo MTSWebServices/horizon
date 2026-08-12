@@ -1,9 +1,10 @@
-# SPDX-FileCopyrightText: 2023-2025 MTS PJSC
+# SPDX-FileCopyrightText: 2023-present MTS PJSC
 # SPDX-License-Identifier: Apache-2.0
 from __future__ import annotations
 
+from typing import Literal
+
 from pydantic import BaseModel
-from typing_extensions import Literal
 
 
 class PingResponse(BaseModel):

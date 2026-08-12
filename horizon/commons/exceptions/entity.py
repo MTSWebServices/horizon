@@ -1,4 +1,4 @@
-# SPDX-FileCopyrightText: 2023-2025 MTS PJSC
+# SPDX-FileCopyrightText: 2023-present MTS PJSC
 # SPDX-License-Identifier: Apache-2.0
 from __future__ import annotations
 
@@ -13,10 +13,12 @@ class EntityNotFoundError(ApplicationError):
     Examples
     --------
 
+    ```python
     >>> from horizon.commons.exceptions import EntityNotFoundError
     >>> raise EntityNotFoundError("User", "username", "test")
     Traceback (most recent call last):
     horizon.commons.exceptions.entity.EntityNotFoundError: User with username='test' not found
+    ```
     """
 
     entity_type: str
@@ -55,10 +57,12 @@ class EntityAlreadyExistsError(ApplicationError):
     --------
 
 
+    ```python
     >>> from horizon.commons.exceptions import EntityNotFoundError
     >>> raise EntityAlreadyExistsError("User", "username", "test")
     Traceback (most recent call last):
     horizon.commons.exceptions.entity.EntityAlreadyExistsError: User with username='test' already exists
+    ```
     """
 
     entity_type: str

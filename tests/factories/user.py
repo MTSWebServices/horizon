@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import secrets
 from random import randint
-from typing import TYPE_CHECKING, AsyncContextManager, Callable
+from typing import TYPE_CHECKING
 
 import pytest  # noqa: TC002
 import pytest_asyncio
@@ -18,7 +18,8 @@ from horizon.backend.db.models import (
 from tests.factories.base import random_string
 
 if TYPE_CHECKING:
-    from typing import AsyncGenerator
+    from collections.abc import AsyncGenerator, Callable
+    from contextlib import AbstractAsyncContextManager
 
     from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -27,7 +28,6 @@ def user_factory(**kwargs):
     data = {
         "id": randint(0, 10000000),
         "username": random_string(),
-        "is_active": True,
     }
     data.update(kwargs)
     return User(**data)
@@ -36,7 +36,7 @@ def user_factory(**kwargs):
 @pytest_asyncio.fixture(params=[{}])
 async def new_user(
     request: pytest.FixtureRequest,
-    async_session_factory: Callable[[], AsyncContextManager[AsyncSession]],
+    async_session_factory: Callable[[], AbstractAsyncContextManager[AsyncSession]],
 ) -> AsyncGenerator[User, None]:
     params = request.param
     user = user_factory(**params)
@@ -45,7 +45,7 @@ async def new_user(
     query = delete(User).where(User.username == user.username)
 
     # do not use the same session in tests and fixture teardown
-    # see https://github.com/MobileTeleSystems/horizon/pull/6
+    # see https://github.com/MTSWebServices/horizon/pull/6
     async with async_session_factory() as async_session:
         await async_session.execute(query)
         await async_session.commit()
@@ -54,7 +54,7 @@ async def new_user(
 @pytest_asyncio.fixture(params=[{}])
 async def user(
     request: pytest.FixtureRequest,
-    async_session_factory: Callable[[], AsyncContextManager[AsyncSession]],
+    async_session_factory: Callable[[], AbstractAsyncContextManager[AsyncSession]],
 ) -> AsyncGenerator[User, None]:
     params = request.param
     user = user_factory(**params)
@@ -82,7 +82,7 @@ async def user(
 @pytest_asyncio.fixture(params=[(5, {})])
 async def users(
     request: pytest.FixtureRequest,
-    async_session_factory: Callable[[], AsyncContextManager[AsyncSession]],
+    async_session_factory: Callable[[], AbstractAsyncContextManager[AsyncSession]],
 ) -> AsyncGenerator[list[User], None]:
     size, params = request.param
     result = [user_factory(**params) for _ in range(size)]
@@ -112,7 +112,7 @@ async def user_with_role(
     request: pytest.FixtureRequest,
     user: User,
     namespace: Namespace,
-    async_session_factory: Callable[[], AsyncContextManager[AsyncSession]],
+    async_session_factory: Callable[[], AbstractAsyncContextManager[AsyncSession]],
 ) -> AsyncGenerator[None, None]:
     role = request.param
     fake_owner = None
@@ -122,7 +122,7 @@ async def user_with_role(
             user.is_admin = True
             async_session.add(user)
         elif role != NamespaceUserRoleInt.OWNER:
-            fake_owner = User(username=secrets.token_hex(5), is_active=True)
+            fake_owner = User(username=secrets.token_hex(5))
             async_session.add(fake_owner)
             await async_session.commit()
 

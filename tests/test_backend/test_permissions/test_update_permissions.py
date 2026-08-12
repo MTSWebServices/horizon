@@ -5,12 +5,11 @@ from http import HTTPStatus
 from typing import TYPE_CHECKING
 
 import pytest
-from pydantic import __version__ as pydantic_version
 
 from horizon.backend.db.models import Namespace, NamespaceUserRoleInt, User
 
 if TYPE_CHECKING:
-    from httpx import AsyncClient
+    from httpx2 import AsyncClient
 
 pytestmark = [pytest.mark.backend, pytest.mark.asyncio]
 
@@ -98,24 +97,17 @@ async def test_update_namespace_permissions_with_duplicates_usernames(
     )
     assert response.status_code == HTTPStatus.UNPROCESSABLE_ENTITY
 
-    if pydantic_version >= "2":
-        detail = {
-            "code": "value_error",
-            "context": {},
-            "input": [
-                {"role": "DEVELOPER", "username": "user1"},
-                {"role": "MAINTAINER", "username": "user1"},
-                {"role": "OWNER", "username": "user2"},
-            ],
-            "location": ["body", "permissions"],
-            "message": "Value error, Duplicate username detected: user1. Each username must appear only once.",
-        }
-    else:
-        detail = {
-            "code": "value_error",
-            "location": ["body", "permissions"],
-            "message": "Duplicate username detected: user1. Each username must appear only once.",
-        }
+    detail = {
+        "code": "value_error",
+        "context": {},
+        "input": [
+            {"role": "DEVELOPER", "username": "user1"},
+            {"role": "MAINTAINER", "username": "user1"},
+            {"role": "OWNER", "username": "user2"},
+        ],
+        "location": ["body", "permissions"],
+        "message": "Value error, Duplicate username detected: user1. Each username must appear only once.",
+    }
 
     expected_body = {
         "error": {
@@ -159,20 +151,13 @@ async def test_update_namespace_permissions_duplicates_owner(
     )
     assert response.status_code == HTTPStatus.UNPROCESSABLE_ENTITY
 
-    if pydantic_version >= "2":
-        detail = {
-            "code": "value_error",
-            "context": {},
-            "input": changes["permissions"],
-            "location": ["body", "permissions"],
-            "message": "Value error, Multiple owner role assignments detected. Only one owner can be assigned.",
-        }
-    else:
-        detail = {
-            "code": "value_error",
-            "location": ["body", "permissions"],
-            "message": "Multiple owner role assignments detected. Only one owner can be assigned.",
-        }
+    detail = {
+        "code": "value_error",
+        "context": {},
+        "input": changes["permissions"],
+        "location": ["body", "permissions"],
+        "message": "Value error, Multiple owner role assignments detected. Only one owner can be assigned.",
+    }
 
     expected_body = {
         "error": {

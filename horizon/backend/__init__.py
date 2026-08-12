@@ -1,11 +1,12 @@
-# SPDX-FileCopyrightText: 2023-2025 MTS PJSC
+# SPDX-FileCopyrightText: 2023-present MTS PJSC
 # SPDX-License-Identifier: Apache-2.0
 
-from typing import TYPE_CHECKING, Type
+from logging import getLogger
+from typing import TYPE_CHECKING
 
+from devtools import pformat
 from fastapi import FastAPI, HTTPException
 from fastapi.exceptions import RequestValidationError
-from sqlalchemy.ext.asyncio import AsyncSession, async_engine_from_config
 
 import horizon
 from horizon.backend.api.handlers import (
@@ -17,12 +18,15 @@ from horizon.backend.api.handlers import (
 )
 from horizon.backend.api.router import api_router
 from horizon.backend.db.factory import create_session_factory
+from horizon.backend.logging import setup_logging
 from horizon.backend.middlewares import apply_middlewares
 from horizon.backend.settings import Settings
 from horizon.commons.exceptions import ApplicationError, ServiceError
 
 if TYPE_CHECKING:
     from horizon.backend.providers.auth.base import AuthProvider
+
+logger = getLogger(__name__)
 
 
 def application_factory(settings: Settings) -> FastAPI:
@@ -49,18 +53,10 @@ def application_factory(settings: Settings) -> FastAPI:
     application.add_exception_handler(HTTPException, http_exception_handler)  # type: ignore[arg-type]
     application.add_exception_handler(Exception, unknown_exception_handler)
 
-    engine = async_engine_from_config(settings.database.dict(), prefix="")
-    session_factory = create_session_factory(engine)
-
-    application.dependency_overrides.update(
-        {
-            Settings: lambda: settings,
-            AsyncSession: session_factory,  # type: ignore[dict-item]
-        },
-    )
+    application.state.session_factory = create_session_factory(settings.database)
 
     # get AuthProvider class from settings, and perform setup
-    auth_class: Type[AuthProvider] = settings.auth.provider  # type: ignore[assignment]
+    auth_class: type[AuthProvider] = settings.auth.provider  # type: ignore[assignment]
     auth_class.setup(application)
 
     apply_middlewares(application, settings)
@@ -69,4 +65,6 @@ def application_factory(settings: Settings) -> FastAPI:
 
 def get_application():
     settings = Settings()
+    setup_logging(settings.logging)
+    logger.info("Starting Horizon backend with settings:\n%s", pformat(settings))
     return application_factory(settings=settings)

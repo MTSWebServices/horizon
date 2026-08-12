@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from random import randint
-from typing import TYPE_CHECKING, AsyncContextManager, Callable
+from typing import TYPE_CHECKING
 
 import pytest  # noqa: TC002
 import pytest_asyncio
@@ -12,7 +12,8 @@ from horizon.backend.db.models import CredentialsCache
 from tests.factories.base import random_string
 
 if TYPE_CHECKING:
-    from typing import AsyncGenerator
+    from collections.abc import AsyncGenerator, Callable
+    from contextlib import AbstractAsyncContextManager
 
     from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -33,13 +34,13 @@ def credentials_cache_factory(**kwargs):
 async def credentials_cache_item(
     user: User,
     request: pytest.FixtureRequest,
-    async_session_factory: Callable[[], AsyncContextManager[AsyncSession]],
+    async_session_factory: Callable[[], AbstractAsyncContextManager[AsyncSession]],
 ) -> AsyncGenerator[CredentialsCache, None]:
     params = request.param
     item = credentials_cache_factory(user_id=user.id, **params)
 
     # do not use the same session in tests and fixture teardown
-    # see https://github.com/MobileTeleSystems/horizon/pull/6
+    # see https://github.com/MTSWebServices/horizon/pull/6
     async with async_session_factory() as async_session:
         async_session.add(item)
         # this is not required for backend tests, but needed by client tests

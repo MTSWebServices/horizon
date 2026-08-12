@@ -3,13 +3,12 @@ from __future__ import annotations
 from copy import copy
 from datetime import datetime
 from http import HTTPStatus
-from typing import TYPE_CHECKING, Any
+from typing import TYPE_CHECKING
 
 import pytest
-from pydantic import __version__ as pydantic_version
 
 if TYPE_CHECKING:
-    from httpx import AsyncClient
+    from httpx2 import AsyncClient
 
     from horizon.backend.db.models import HWM, Namespace
 
@@ -44,25 +43,15 @@ async def test_paginate_hwm_not_enough_arguments(
     )
     assert response.status_code == HTTPStatus.UNPROCESSABLE_ENTITY
 
-    details: list[dict[str, Any]]
-    if pydantic_version < "2":
-        details = [
-            {
-                "location": ["query", "namespace_id"],
-                "code": "value_error.missing",
-                "message": "field required",
-            },
-        ]
-    else:
-        details = [
-            {
-                "code": "missing",
-                "context": {},
-                "input": None,
-                "location": ["query", "namespace_id"],
-                "message": "Field required",
-            },
-        ]
+    details = [
+        {
+            "code": "missing",
+            "context": {},
+            "input": None,
+            "location": ["query", "namespace_id"],
+            "message": "Field required",
+        },
+    ]
 
     assert response.json() == {
         "error": {

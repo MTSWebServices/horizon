@@ -1,0 +1,19 @@
+.md-header__topic .md-ellipsis {
+  display: none;
+}
+
+.md-header__button.md-logo img, .md-header__button.md-logo svg {
+  height: 2.5rem;
+}
+
+.readme-logo {
+  width: 400px;
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+  text-align: center;
+}
+
+:root  > * {
+  --md-primary-fg-color: #6ab3b3;
+}

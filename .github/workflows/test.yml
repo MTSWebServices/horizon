@@ -13,8 +13,9 @@ concurrency:
   cancel-in-progress: true
 
 env:
-  DEFAULT_PYTHON: '3.13'
-  MIN_COVERAGE: 93
+  DEFAULT_PYTHON: '3.14'
+  MIN_COVERAGE: 92
+  COLUMNS: 120
 
 permissions:
   contents: write
@@ -23,55 +24,61 @@ permissions:
 
 jobs:
   tests:
-    name: Run tests (Python ${{ matrix.python-version }}, Pydantic v${{ matrix.pydantic-version }} on ${{ matrix.os }})
-    runs-on: ${{ matrix.os }}
+    name: Run tests (Python ${{ matrix.python-version }})
+    runs-on: ubuntu-latest
 
     strategy:
       fail-fast: false
       matrix:
         include:
-          - python-version: '3.7'
-            pydantic-version: '1'
-            os: ubuntu-22.04
-
-          - python-version: '3.13'
-            pydantic-version: '2'
-            os: ubuntu-latest
-    env:
-      POETRY_VERSION: ${{ matrix.python-version == '3.7' && '1.5.1' || '2.0.1' }}
+          - python-version: '3.10'
+          - python-version: '3.14'
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v5
+        uses: actions/checkout@v7
 
       - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3
+        uses: docker/setup-buildx-action@v4
+
+      - name: Start container dependencies
+        run: |
+          docker compose -f docker-compose.test.yml down -v --remove-orphans
+          docker compose -f docker-compose.test.yml up -d db ldap
+
+      # https://docs.docker.com/build/ci/github-actions/cache/#local-cache
+      - name: Cache Docker layers
+        uses: actions/cache@v6
+        with:
+          path: ${{ runner.temp }}/.buildx-cache
+          key: ${{ runner.os }}-buildx-${{ hashFiles('docker/Dockerfile.backend', 'pyproject.toml', 'uv.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-buildx-
 
       - name: Build Backend Container
-        uses: docker/build-push-action@v6
+        uses: docker/build-push-action@v7
         with:
           context: .
           file: docker/Dockerfile.backend
           tags: mtsrus/horizon-backend:develop
+          target: test
           build-args: |
             PYTHON_VERSION=${{ matrix.python-version }}
           push: false
           load: true
-          cache-to: type=gha,mode=max
-          cache-from: type=gha
+          cache-from: type=local,src=${{ runner.temp }}/.buildx-cache
 
       - name: Creare reports dir
         run: |
           mkdir -p reports/
           sudo chmod 777 -R reports/
 
-      - name: Start Backend Container
+      - name: Start Backend
         run: |
-          docker compose -f docker-compose.test.yml down -v --remove-orphans
           docker compose -f docker-compose.test.yml up -d --wait --wait-timeout 60
 
       - name: Set up Python ${{ matrix.python-version }}
-        uses: actions/setup-python@v6
+        uses: actions/setup-python@v7
         with:
           python-version: ${{ matrix.python-version }}
 
@@ -79,32 +86,31 @@ jobs:
       # this step is needed for successful installation of "bonsai" library in python dependencies
         run: sudo apt-get update && sudo apt-get install -y libldap2-dev libsasl2-dev
 
-      - name: Install poetry
-        uses: snok/install-poetry@v1
+      - name: Install uv
+        uses: astral-sh/setup-uv@v7
         with:
-          version: ${{ env.POETRY_VERSION }}
+          enable-cache: 'false'
 
-      - name: Cache poetry
-        uses: actions/cache@v4
+      # astral-sh/setup-uv cannot restore multiple keys
+      - name: Cache uv
+        uses: actions/cache@v6
         with:
-          path: ~/.cache/pypoetry
-          key: ${{ runner.os }}-python-${{ matrix.python-version }}-pydantic-${{ matrix.pydantic-version }}-test-${{ hashFiles('**/poetry.lock') }}
+          path: ~/.cache/uv
+          key: ${{ runner.os }}-python${{matrix.python-version }}-${{ hashFiles('uv.lock') }}
           restore-keys: |
-            ${{ runner.os }}-python-${{ matrix.python-version }}-pydantic-${{ matrix.pydantic-version }}-test-${{ hashFiles('**/poetry.lock') }}
-            ${{ runner.os }}-python-${{ matrix.python-version }}-pydantic-${{ matrix.pydantic-version }}-test-
-            ${{ runner.os }}-python-${{ matrix.python-version }}-pydantic-${{ matrix.pydantic-version }}-
+            ${{ runner.os }}-python${{ matrix.python-version }}-${{ hashFiles('uv.lock') }}
+            ${{ runner.os }}-python${{ matrix.python-version }}-
+            ${{ runner.os }}-python${{ env.DEFAULT_PYTHON }}-
 
       - name: Install dependencies
         run: |
-          poetry install --no-root --all-extras --with test --without dev,docs
-          if [ "${{ matrix.pydantic-version }}" == "1" ]; then
-            poetry run pip install "pydantic<2.0.0"
-          fi
+          uv sync --frozen --all-extras --group test
+          uv cache prune --ci
 
       - name: Run Tests
         run: |
-          source .env.local
-          poetry run coverage run -m pytest
+          source .env.local.test
+          uv run --no-sync coverage run -m pytest --junitxml=reports/junit/test-${{ matrix.python-version }}.xml
 
       - name: Dump backend logs on failure
         if: failure()
@@ -119,17 +125,18 @@ jobs:
           docker compose -f docker-compose.test.yml down -v --remove-orphans
 
       - name: Upload server logs
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@v7
         if: failure()
         with:
-          name: backend-logs-${{ matrix.os }}-${{ matrix.python-version }}-${{ matrix.pydantic-version }}
+          name: backend-logs-${{ matrix.python-version }}
           path: logs/*
 
       - name: Upload Coverage Results
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@v7
+        if: success() || failure()
         with:
-          name: raw-coverage-${{ matrix.os }}-${{ matrix.python-version }}-${{ matrix.pydantic-version }}
-          path: reports/.coverage*
+          name: coverage-${{ matrix.python-version }}
+          path: reports/
           # https://github.com/actions/upload-artifact/issues/602
           include-hidden-files: true
 
@@ -137,54 +144,62 @@ jobs:
     name: Tests done
     runs-on: ubuntu-latest
 
-    if: always()
+    permissions:
+      contents: write
+      checks: write
+      pull-requests: write
+
+    if: success() || failure()
     needs: [tests]
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v5
+        uses: actions/checkout@v7
+
+      - name: Download all raw coverage data
+        uses: actions/download-artifact@v8
+        with:
+          path: reports/
+          pattern: coverage-*
+          merge-multiple: true
+
+      - name: Show test results
+        uses: mikepenz/action-junit-report@v6
+        with:
+          report_paths: reports/junit/*.xml
 
       - name: Set up Python ${{ env.DEFAULT_PYTHON }}
-        uses: actions/setup-python@v6
+        uses: actions/setup-python@v7
         with:
           python-version: ${{ env.DEFAULT_PYTHON }}
 
-      - name: Cache pip
-        uses: actions/cache@v4
+      - name: Install uv
+        uses: astral-sh/setup-uv@v7
         with:
-          path: ~/.cache/pip
-          key: ${{ runner.os }}-python-${{ env.DEFAULT_PYTHON }}-coverage
-
-      - name: Upgrade pip
-        run: python -m pip install --upgrade pip setuptools wheel
+          enable-cache: 'false'
 
       - name: Install dependencies
-        run: pip install -I coverage pytest
-
-      - name: Download all raw coverage data
-        uses: actions/download-artifact@v6
-        with:
-          path: coverage-data/
-          pattern: raw-coverage-*
+        run: |
+          uv sync --frozen --group test
 
       - name: Combine Coverage Data
         run: |
-          coverage combine coverage-data/*
-          coverage xml -o combined_coverage.xml
+          uv run coverage combine
+          uv run coverage xml -o reports/coverage.xml
 
       - name: Coverage comment
         id: coverage
         uses: MishaKav/pytest-coverage-comment@v1
         with:
-          pytest-xml-coverage-path: ./combined_coverage.xml
+          pytest-xml-coverage-path: ./reports/coverage.xml
           default-branch: develop
           xml-skip-covered: true
           report-only-changed-files: true
           hide-comment: ${{ github.event_name != 'pull_request' }}
 
       - name: Dynamic Badges
-        uses: schneegans/dynamic-badges-action@v1.7.0
-        if: github.repository == 'MobileTeleSystems/horizon' && github.event_name == 'push'
+        uses: schneegans/dynamic-badges-action@v1.9.0
+        if: github.repository == 'MTSWebServices/horizon' && github.event_name == 'push'
         with:
           auth: ${{ secrets.AUTOMERGE_TOKEN }}
           gistID: 03e73a82ecc4709934540ce8201cc3b4

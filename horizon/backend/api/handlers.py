@@ -1,4 +1,4 @@
-# SPDX-FileCopyrightText: 2023-2025 MTS PJSC
+# SPDX-FileCopyrightText: 2023-present MTS PJSC
 # SPDX-License-Identifier: Apache-2.0
 from __future__ import annotations
 
@@ -38,7 +38,7 @@ def http_exception_handler(_request: Request, exc: HTTPException) -> Response:
 
 
 def unknown_exception_handler(request: Request, exc: Exception) -> Response:
-    logger.exception("Got unhandled error: %s", exc, exc_info=exc)
+    logger.exception("Got unhandled error: %s", exc, exc_info=exc)  # noqa: LOG004
 
     server: ServerSettings = request.app.state.settings.server
     details = None
@@ -59,7 +59,7 @@ def unknown_exception_handler(request: Request, exc: Exception) -> Response:
 
 
 def service_exception_handler(request: Request, exc: ServiceError) -> Response:
-    logger.exception("Got service error: %s", exc, exc_info=exc)
+    logger.exception("Got service error: %s", exc, exc_info=exc)  # noqa: LOG004
 
     server: ServerSettings = request.app.state.settings.server
     details = None
@@ -128,7 +128,7 @@ def exception_json_response(
     error_schema = APIErrorSchema[content_type]  # type: ignore[valid-type]
     return Response(
         status_code=status,
-        content=error_schema(error=content).json(by_alias=True),
+        content=error_schema(error=content).model_dump_json(by_alias=True, warnings=False),
         media_type="application/json",
         headers=headers,
     )

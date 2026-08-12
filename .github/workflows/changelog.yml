@@ -7,7 +7,7 @@ on:
       - master
 
 env:
-  DEFAULT_PYTHON: '3.13'
+  DEFAULT_PYTHON: '3.14'
 
 jobs:
   check-changelog:
@@ -20,37 +20,31 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v5
+        uses: actions/checkout@v7
         with:
           fetch-depth: 0
 
       - name: Set up Python ${{ env.DEFAULT_PYTHON }}
         id: python
-        uses: actions/setup-python@v6
+        uses: actions/setup-python@v7
         with:
           python-version: ${{ env.DEFAULT_PYTHON }}
 
-      - name: Install poetry
-        uses: snok/install-poetry@v1
-
-      - name: Cache poetry
-        uses: actions/cache@v4
+      - name: Install uv
+        uses: astral-sh/setup-uv@v7
         with:
-          path: ~/.cache/pypoetry
-          key: ${{ runner.os }}-python-${{ env.DEFAULT_PYTHON }}-changelog-${{ hashFiles('**/poetry.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-python-${{ env.DEFAULT_PYTHON }}-changelog-${{ hashFiles('**/poetry.lock') }}
-            ${{ runner.os }}-python-${{ env.DEFAULT_PYTHON }}-changelog-
-            ${{ runner.os }}-python-
+          enable-cache: 'false'
+
+      # no uv cache here because fresh install takes about 1 second
 
       - name: Install dependencies
         run: |
-          poetry install --no-root --with docs --without dev,test
+          uv sync --frozen --group mddocs
 
       - name: Check changelog entry exists
         run: |
-          if [ ! -s docs/changelog/next_release/${{ github.event.pull_request.number }}.*.rst ]; then
-              echo "Please add corresponding file 'docs/changelog/next_release/<issue number>.<change type>.rst' with changes description"
+          if [ ! -s mddocs/docs/changelog/next_release/${{ github.event.pull_request.number }}.*.md ]; then
+              echo "Please add corresponding file 'mddocs/docs/changelog/next_release/<issue number>.<change type>.md' with changes description"
               exit 1
           fi
 
@@ -59,5 +53,5 @@ jobs:
           # Fetch the pull request' base branch so towncrier will be able to
           # compare the current branch with the base branch.
           git fetch --no-tags origin +refs/heads/${{ github.base_ref }}:refs/remotes/origin/${{ github.base_ref }}
-          poetry run towncrier check --compare-with origin/${{ github.base_ref }}
-          poetry run towncrier --draft
+          uv run towncrier check --compare-with origin/${{ github.base_ref }}
+          uv run towncrier --draft

@@ -1,4 +1,4 @@
-# SPDX-FileCopyrightText: 2023-2025 MTS PJSC
+# SPDX-FileCopyrightText: 2023-present MTS PJSC
 # SPDX-License-Identifier: Apache-2.0
 from __future__ import annotations
 
@@ -14,10 +14,12 @@ class BadRequestError(ApplicationError):
     Examples
     --------
 
+    ```python
     >>> from horizon.commons.exceptions import BadRequestError
-    >>> raise BadRequestError("Duplicate username detected. Each username must appear only once.")
+    >>> raise BadRequestError("Duplicate username detected. Each username must appear only once")
     Traceback (most recent call last):
     horizon.commons.exceptions.BadRequestError: Duplicate username detected. Each username must appear only once.
+    ```
     """
 
     reason: str

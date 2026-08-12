@@ -1,4 +1,4 @@
-# SPDX-FileCopyrightText: 2023-2025 MTS PJSC
+# SPDX-FileCopyrightText: 2023-present MTS PJSC
 # SPDX-License-Identifier: Apache-2.0
 from pydantic import BaseModel, Field
 
@@ -11,10 +11,12 @@ class DummyAuthProviderSettings(BaseModel):
     Examples
     --------
 
-    .. code-block:: bash
-
-        HORIZON__AUTH__PROVIDER=horizon.backend.providers.auth.dummy.DummyAuthProvider
-        HORIZON__AUTH__ACCESS_KEY__SECRET_KEY=secret
+    ```yaml title="config.yml"
+    auth:
+      provider: horizon.backend.providers.auth.dummy.DummyAuthProvider
+      access_token:
+        secret_key: secret
+    ```
     """
 
     access_token: JWTSettings = Field(description="Access-token related settings")

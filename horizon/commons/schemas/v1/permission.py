@@ -1,9 +1,8 @@
-# SPDX-FileCopyrightText: 2023-2025 MTS PJSC
+# SPDX-FileCopyrightText: 2023-present MTS PJSC
 # SPDX-License-Identifier: Apache-2.0
 
-from typing import List, Optional, Set
 
-from pydantic import BaseModel, Field, validator
+from pydantic import BaseModel, Field, field_validator
 
 from horizon.commons.schemas.v1 import NamespaceUserRole
 
@@ -11,21 +10,21 @@ from horizon.commons.schemas.v1 import NamespaceUserRole
 class PermissionResponseItemV1(BaseModel):
     """Represents a single permission entry in a response, linking a user with their role within a namespace."""
 
-    username: str
-    role: NamespaceUserRole
+    username: str = Field(description="The username of the user")
+    role: NamespaceUserRole = Field(description="The role to be assigned to the user within the namespace")
 
 
 class PermissionsResponseV1(BaseModel):
     """Wraps a list of permission entries for a namespace, returned by the GET endpoint."""
 
-    permissions: List[PermissionResponseItemV1]
+    permissions: list[PermissionResponseItemV1] = Field(description="A list of user permissions within the namespace")
 
 
 class PermissionUpdateRequestItemV1(BaseModel):
     """Represents a single permission entry in a request, specifying a desired role for a user within a namespace."""
 
-    username: str
-    role: Optional[NamespaceUserRole] = Field(
+    username: str = Field(description="The username of the user")
+    role: NamespaceUserRole | None = Field(
         default=None,
         description="The role to be assigned to the user within the namespace."
         " A value of `None` indicates that the permission should be removed.",
@@ -35,17 +34,18 @@ class PermissionUpdateRequestItemV1(BaseModel):
 class PermissionsUpdateRequestV1(BaseModel):
     """Wraps a list of permission modification requests for a namespace, used by the PATCH endpoint."""
 
-    permissions: List[PermissionUpdateRequestItemV1] = Field(
+    permissions: list[PermissionUpdateRequestItemV1] = Field(
         description="A list of modifications to the namespace's permissions."
         " Each entry specifies a user and the role they should have or be removed from.",
     )
 
-    @validator("permissions")
+    @field_validator("permissions")
+    @classmethod
     def _ensure_unique_usernames_and_single_owner(
-        cls,  # noqa: N805
-        permissions: List[PermissionUpdateRequestItemV1],
-    ) -> List[PermissionUpdateRequestItemV1]:
-        seen: Set[str] = set()
+        cls,
+        permissions: list[PermissionUpdateRequestItemV1],
+    ) -> list[PermissionUpdateRequestItemV1]:
+        seen: set[str] = set()
         owner_count = 0
         for perm in permissions:
             username, role = perm.username, perm.role

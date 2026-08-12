@@ -7,7 +7,7 @@ import responses
 from authlib.integrations.base_client.errors import OAuthError
 from authlib.integrations.requests_client import OAuth2Session
 from authlib.oauth2.auth import OAuth2Token as AuthlibToken
-from pytest_lazyfixture import lazy_fixture
+from pytest_lazy_fixtures import lf as lazy_fixture
 from requests.exceptions import ConnectionError, RetryError
 from urllib3 import __version__ as urllib3_version
 from urllib3.exceptions import ReadTimeoutError

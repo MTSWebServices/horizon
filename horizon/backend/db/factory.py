@@ -1,24 +1,17 @@
-# SPDX-FileCopyrightText: 2023-2025 MTS PJSC
+# SPDX-FileCopyrightText: 2023-present MTS PJSC
 # SPDX-License-Identifier: Apache-2.0
 
-from typing import AsyncGenerator
 
-from sqlalchemy.ext.asyncio import AsyncEngine, AsyncSession, async_sessionmaker
+from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_async_engine
+
+from horizon.backend.settings import DatabaseSettings
 
 
-def sessionmaker(engine: AsyncEngine) -> async_sessionmaker[AsyncSession]:
+def create_session_factory(settings: DatabaseSettings) -> async_sessionmaker[AsyncSession]:
+    engine = create_async_engine(url=str(settings.url), **settings.model_dump(exclude={"url"}))
+
     return async_sessionmaker(
         bind=engine,
         class_=AsyncSession,
         expire_on_commit=False,
     )
-
-
-def create_session_factory(engine: AsyncEngine):
-    Session = sessionmaker(engine)  # noqa: N806
-
-    async def wrapper() -> AsyncGenerator[AsyncSession, None]:
-        async with Session.begin() as session:
-            yield session
-
-    return wrapper

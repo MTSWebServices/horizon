@@ -1,8 +1,9 @@
 from __future__ import annotations
 
+from collections.abc import Callable
 from datetime import datetime, timezone
 from random import randint
-from typing import TYPE_CHECKING, AsyncContextManager, Callable
+from typing import TYPE_CHECKING
 
 import pytest  # noqa: TC002
 import pytest_asyncio
@@ -12,7 +13,8 @@ from horizon.backend.db.models import Namespace, User
 from tests.factories.base import random_string
 
 if TYPE_CHECKING:
-    from typing import AsyncGenerator
+    from collections.abc import AsyncGenerator, Callable
+    from contextlib import AbstractAsyncContextManager
 
     from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -31,7 +33,7 @@ def namespace_factory(**kwargs):
 @pytest_asyncio.fixture(params=[{}])
 async def new_namespace(
     request: pytest.FixtureRequest,
-    async_session_factory: Callable[[], AsyncContextManager[AsyncSession]],
+    async_session_factory: Callable[[], AbstractAsyncContextManager[AsyncSession]],
 ) -> AsyncGenerator[Namespace, None]:
     params = request.param
     item = namespace_factory(**params)
@@ -40,7 +42,7 @@ async def new_namespace(
     query = delete(Namespace).where(Namespace.name == item.name)
 
     # do not use the same session in tests and fixture teardown
-    # see https://github.com/MobileTeleSystems/horizon/pull/6
+    # see https://github.com/MTSWebServices/horizon/pull/6
     async with async_session_factory() as async_session:
         await async_session.execute(query)
         await async_session.commit()
@@ -50,7 +52,7 @@ async def new_namespace(
 async def namespace(
     user: User,
     request: pytest.FixtureRequest,
-    async_session_factory: Callable[[], AsyncContextManager[AsyncSession]],
+    async_session_factory: Callable[[], AbstractAsyncContextManager[AsyncSession]],
 ) -> AsyncGenerator[Namespace, None]:
     params = request.param
     item = namespace_factory(**params, changed_by_user_id=user.id, owner_id=user.id)
@@ -79,7 +81,7 @@ async def namespace(
 async def namespaces(
     user: User,
     request: pytest.FixtureRequest,
-    async_session_factory: Callable[[], AsyncContextManager[AsyncSession]],
+    async_session_factory: Callable[[], AbstractAsyncContextManager[AsyncSession]],
 ) -> AsyncGenerator[list[Namespace], None]:
     size, params = request.param
     result = [namespace_factory(changed_by_user_id=user.id, owner_id=user.id, **params) for _ in range(size)]

@@ -1,0 +1,345 @@
+# Contributing Guide { #contributing }
+
+Welcome! There are many ways to contribute, including submitting bug
+reports, improving documentation, submitting feature requests, reviewing
+new submissions, or contributing code that can be incorporated into the
+project.
+
+## Limitations
+
+We should keep close to these items during development:
+
+* Some companies still use Python 3.10. So it is required to keep compatibility if possible, at least for *client* part of package.
+* Different users uses Horizon in different ways - someone store data in Postgres, someone in MySQL, some users need LDAP. Such dependencies should be optional.
+
+## Initial setup for local development
+
+### Install Git
+
+Please follow [instruction](https://docs.github.com/en/get-started/quickstart/set-up-git).
+
+### Create a fork
+
+If you are not a member of a development team building horizon, you should create a fork before making any changes.
+
+Please follow [instruction](https://docs.github.com/en/get-started/quickstart/fork-a-repo).
+
+### Clone the repo
+
+Open terminal and run these commands:
+
+```bash
+git clone https://github.com/MTSWebServices/horizon -b develop
+
+cd horizon
+```
+
+### Setup environment
+
+Firstly, install [make](https://www.gnu.org/software/make/manual/make.html). It is used for running complex commands in local environment.
+
+Secondly, create virtualenv and install dependencies:
+
+```bash
+make venv-init
+```
+
+If you already have venv, but need to install dependencies required for development:
+
+```bash
+make venv-install
+```
+
+We are using [uv](https://docs.astral.sh/uv/) for managing dependencies and building the package.
+It allows to keep development environment the same for all developers due to using lock file with fixed dependency versions.
+
+There are *extra* dependencies (included into package as optional):
+
+* `backend`
+* `client-sync`
+* `postgres`
+* `ldap`
+
+And *groups* (not included into package, used locally and in CI):
+
+* `test` - for running tests
+* `dev` - for development, like linters, formatters, mypy, pre-commit and so on
+* `mddocs` - for building documentation
+
+### Enable pre-commit hooks
+
+[pre-commit](https://pre-commit.com/) hooks allows to validate & fix repository content before making new commit.
+It allows to run linters, formatters, fix file permissions and so on. If something is wrong, changes cannot be committed.
+
+Firstly, install pre-commit hooks:
+
+```bash
+pre-commit install --install-hooks
+```
+
+And then test hooks run:
+
+```bash
+pre-commit run
+```
+
+## How to
+
+### Run development instance locally
+
+Start DB container:
+
+```bash
+make db
+```
+
+Then start development server:
+
+```bash
+make dev
+```
+
+And open [http://localhost:8000/docs](http://localhost:8000/docs)
+
+Application settings are stored in `config.yml`. The `.env.local.test` file contains
+test-only environment variables.
+
+### Working with migrations
+
+Start database:
+
+```bash
+make db-start
+```
+
+Generate revision:
+
+```bash
+make db-revision
+```
+
+Upgrade db to `head` migration:
+
+```bash
+make db-upgrade
+```
+
+Downgrade db to `head-1` migration:
+
+```bash
+make db-downgrade
+```
+
+### Run tests locally
+
+Start all containers with dependencies:
+
+```bash
+make db  # for backend & client tests
+make ldap-start  # for backend tests
+make dev  # for client test, run in separate terminal tab
+```
+
+Run tests:
+
+```bash
+make test
+```
+
+You can pass additional arguments, they will be passed to pytest:
+
+```bash
+make test PYTEST_ARGS="-m client-sync -lsx -vvvv --log-cli-level=INFO"
+```
+
+Stop all containers and remove created volumes:
+
+```bash
+make cleanup ARGS="-v"
+```
+
+Get fixtures not used by any test:
+
+```bash
+make check-fixtures
+```
+
+### Build CI image locally
+
+This image is build in CI for testing purposes, but you can do that locally as well:
+
+```bash
+make test-build
+```
+
+### Run production instance locally
+
+Firstly, build production image:
+
+```bash
+make prod-build
+```
+
+And then start it:
+
+```bash
+make prod
+```
+
+Then open [http://localhost:8000/docs](http://localhost:8000/docs)
+
+Application settings are stored in `config.docker.yml`. The `.env.docker.test` file
+contains test-only variables.
+
+### Build documentation
+
+Build documentation using mkdocs:
+
+```bash
+make docs-serve
+```
+
+Then open in browser http://localhost:8000/
+
+## Review process
+
+Please create a new GitHub issue for any significant changes and
+enhancements that you wish to make. Provide the feature you would like
+to see, why you need it, and how it will work. Discuss your ideas
+transparently and get community feedback before proceeding.
+
+Significant Changes that you wish to contribute to the project should be
+discussed first in a GitHub issue that clearly outlines the changes and
+benefits of the feature.
+
+Small Changes can directly be crafted and submitted to the GitHub
+Repository as a Pull Request.
+
+### Create pull request
+
+Commit your changes:
+
+```bash
+git commit -m "Commit message"
+git push
+```
+
+Then open Github interface and [create pull request](https://docs.github.com/en/get-started/quickstart/contributing-to-projects#making-a-pull-request).
+Please follow guide from PR body template.
+
+After pull request is created, it get a corresponding number, e.g. 123 (`pr_number`).
+
+### Write release notes
+
+`horizon` uses [towncrier](https://pypi.org/project/towncrier/)
+for changelog management.
+
+To submit a change note about your PR, add a text file into the
+`mddocs/docs/changelog/next_release` folder. It should contain an
+explanation of what applying this PR will change in the way
+end-users interact with the project. One sentence is usually
+enough but feel free to add as many details as you feel necessary
+for the users to understand what it means.
+
+**Use the past tense** for the text in your fragment because,
+combined with others, it will be a part of the “news digest”
+telling the readers **what changed** in a specific version of
+the library *since the previous version*.
+
+Finally, name your file following the convention that Towncrier
+understands: it should start with the number of an issue or a
+PR followed by a dot, then add a patch type, like `feature`,
+`doc`, `misc` etc., and add `.md` as a suffix. If you
+need to add more than one fragment, you may add an optional
+sequence number (delimited with another period) between the type
+and the suffix.
+
+In general the name will follow `<pr_number>.<category>.md` pattern,
+where the categories are:
+
+* `feature`: Any new feature
+* `bugfix`: A bug fix
+* `improvement`: An improvement
+* `doc`: A change to the documentation
+* `dependency`: Dependency-related changes
+* `misc`: Changes internal to the repo like CI, test and build changes
+
+A pull request may have more than one of these components, for example
+a code change may introduce a new feature that deprecates an old
+feature, in which case two fragments should be added. It is not
+necessary to make a separate documentation fragment for documentation
+changes accompanying the relevant code changes.
+
+#### Examples for adding changelog entries to your Pull Requests
+
+```markdown title="mddocs/docs/changelog/next_release/2345.bugfix.md"
+Fixed behavior of `backend`
+```
+
+```markdown title="mddocs/docs/changelog/next_release/3456.feature.md"
+Added support of `timeout` in `LDAP`
+```
+
+#### How to skip change notes check?
+
+Just add `ci:skip-changelog` label to pull request.
+
+#### Release Process
+
+Before making a release from the `develop` branch, follow these steps:
+
+1. Checkout to `develop` branch and update it to the actual state
+
+```bash
+git checkout develop
+git pull -p
+```
+
+2. Get current release version
+
+```bash
+VERSION=$(cat horizon/VERSION)
+```
+
+3. Build changelog for current release
+
+```bash
+make docs-generate-changelog
+```
+
+4. Commit and push changes to `develop` branch
+
+```bash
+git add .
+git commit -m "Prepare for release ${VERSION}"
+git push
+```
+
+5. Merge `develop` branch to `master`, **WITHOUT** squashing
+
+```bash
+git checkout master
+git pull
+git merge develop
+git push
+```
+
+6. Add git tag to the latest commit in `master` branch
+
+```bash
+git tag "$VERSION"
+git push origin "$VERSION"
+```
+
+7. Update version in `develop` branch **after release**:
+
+```bash
+git checkout develop
+
+NEXT_VERSION=$(echo "$VERSION" | awk -F. '/[0-9]+\./{$NF++;print}' OFS=.)
+echo $NEXT_VERSION > horizon/VERSION
+
+git add .
+git commit -m "Bump version"
+git push
+```

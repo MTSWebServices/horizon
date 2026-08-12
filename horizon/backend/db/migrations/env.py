@@ -1,4 +1,4 @@
-# SPDX-FileCopyrightText: 2023-2025 MTS PJSC
+# SPDX-FileCopyrightText: 2023-present MTS PJSC
 # SPDX-License-Identifier: Apache-2.0
 import asyncio
 from logging.config import fileConfig
@@ -19,7 +19,7 @@ if config.config_file_name is not None:
 
 if not config.get_main_option("sqlalchemy.url"):
     # read application settings only if sqlalchemy.url is not being passed via cli arguments
-    config.set_main_option("sqlalchemy.url", Settings().database.url)
+    config.set_main_option("sqlalchemy.url", str(Settings().database.url))
 
 target_metadata = (Base.metadata,)
 

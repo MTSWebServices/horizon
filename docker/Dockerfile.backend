@@ -1,4 +1,6 @@
-ARG PYTHON_VERSION=3.13
+# syntax = docker/dockerfile:1.4
+
+ARG PYTHON_VERSION=3.14
 FROM python:$PYTHON_VERSION-slim AS base
 
 RUN apt-get update \
@@ -9,28 +11,24 @@ RUN apt-get update \
 
 WORKDIR /app
 ENV PYTHONPATH=/app \
-    PATH="/app/.venv/bin:$PATH" \
-    POETRY_VIRTUALENVS_IN_PROJECT=1 \
-    POETRY_VIRTUALENVS_CREATE=1
+    PATH="/app/.venv/bin:$PATH"
 
 # Logo
-COPY docs/_static/*.svg /app/horizon/backend/static/
+COPY --chmod=755 mddocs/docs/_static/*.svg /app/horizon/backend/static/
 
 # Swagger UI
-ADD https://cdn.jsdelivr.net/npm/swagger-ui-dist@latest/swagger-ui-bundle.js https://cdn.jsdelivr.net/npm/swagger-ui-dist@latest/swagger-ui.css \
+ADD --chmod=755 https://cdn.jsdelivr.net/npm/swagger-ui-dist@latest/swagger-ui-bundle.js https://cdn.jsdelivr.net/npm/swagger-ui-dist@latest/swagger-ui.css \
     /app/horizon/backend/static/swagger/
 
 # Redoc
-ADD https://cdn.jsdelivr.net/npm/redoc@latest/bundles/redoc.standalone.js /app/horizon/backend/static/redoc/redoc.standalone.js
+ADD --chmod=755 https://cdn.jsdelivr.net/npm/redoc@latest/bundles/redoc.standalone.js /app/horizon/backend/static/redoc/redoc.standalone.js
 
 ENV HORIZON__SERVER__OPENAPI__SWAGGER__JS_URL=/static/swagger/swagger-ui-bundle.js \
     HORIZON__SERVER__OPENAPI__SWAGGER__CSS_URL=/static/swagger/swagger-ui.css \
     HORIZON__SERVER__OPENAPI__REDOC__JS_URL=/static/redoc/redoc.standalone.js \
     HORIZON__SERVER__STATIC_FILES__DIRECTORY=/app/horizon/backend/static
 
-COPY ./docker/entrypoint.sh /app/docker/entrypoint.sh
-RUN chmod +x /app/docker/entrypoint.sh \
-    && chmod +r -R /app/horizon/backend/static
+COPY --chmod=755 ./docker/entrypoint.sh /app/docker/entrypoint.sh
 ENTRYPOINT ["/app/docker/entrypoint.sh"]
 EXPOSE 8000
 HEALTHCHECK --interval=30s --timeout=5s --start-period=5s --retries=3 CMD ["curl", "-f", "http://localhost:8000/monitoring/ping"]
@@ -55,24 +53,26 @@ RUN apt-get update && apt-get install -y \
         libffi-dev \
     && rm -rf /var/lib/apt/lists/* /var/cache/*
 
-RUN --mount=type=cache,target=/root/.cache/pip \
-    pip install poetry
+COPY --from=ghcr.io/astral-sh/uv:latest /uv /usr/bin/uv
 
-COPY ./pyproject.toml ./poetry.lock* ./
-RUN --mount=type=cache,target=/root/.cache/pypoetry \
-    poetry install \
-        --no-root \
+COPY ./pyproject.toml ./uv.lock ./
+RUN --mount=type=cache,target=/root/.cache/uv \
+    uv sync \
+        --frozen \
+        --link-mode copy \
+        --no-install-project \
         --all-extras \
-        --without test,docs,dev \
-    && python -m compileall -j 4 .venv
+        --compile-bytecode \
+    && uv pip install pip \
+    && uv cache prune --ci
 
 
 FROM base AS prod
 
-# We don't need poetry in final image
-COPY --from=builder /app/.venv/ /app/.venv/
-COPY ./horizon/ /app/horizon/
-RUN python -m compileall -b horizon
+COPY --link --from=builder /app/.venv/ /app/.venv/
+
+COPY --chmod=755 ./horizon/ /app/horizon/
+RUN python -m compileall -b /app/horizon
 
 # Do not run production as root, to improve security.
 # Also user does not own anything inside the image, including venv and source code.
@@ -82,12 +82,14 @@ USER horizon
 
 FROM builder AS test
 
-RUN --mount=type=cache,target=/root/.cache/pypoetry \
-    poetry install \
-        --no-root \
+RUN --mount=type=cache,target=/root/.cache/uv \
+    uv sync \
+        --frozen \
+        --link-mode copy \
+        --no-install-project \
         --all-extras \
-        --with test \
-        --without docs,dev \
-    && python -m compileall -j 4 .venv
+        --group "test" \
+        --compile-bytecode \
+    && uv cache prune --ci
 
 RUN sed -i 's/python -m/coverage run -m/g' /app/docker/entrypoint.sh

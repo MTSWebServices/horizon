@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, AsyncContextManager, Callable
+from typing import TYPE_CHECKING
 
 import pytest  # noqa: TC002
 import pytest_asyncio
@@ -14,7 +14,8 @@ from horizon.backend.db.models import (
 )
 
 if TYPE_CHECKING:
-    from typing import AsyncGenerator
+    from collections.abc import AsyncGenerator, Callable
+    from contextlib import AbstractAsyncContextManager
 
     from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -29,7 +30,7 @@ if TYPE_CHECKING:
 async def namespace_with_users(
     request: pytest.FixtureRequest,
     namespace: Namespace,
-    async_session_factory: Callable[[], AsyncContextManager[AsyncSession]],
+    async_session_factory: Callable[[], AbstractAsyncContextManager[AsyncSession]],
 ) -> AsyncGenerator[None, None]:
     users_roles = request.param
 
@@ -37,7 +38,7 @@ async def namespace_with_users(
         created_users = []
         original_owner_id = namespace.owner_id
         for username, role in users_roles:
-            user = User(username=username, is_active=True)
+            user = User(username=username)
             async_session.add(user)
             await async_session.commit()
             created_users.append(user)
