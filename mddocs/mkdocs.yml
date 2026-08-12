@@ -82,6 +82,7 @@ plugins:
                   add_fields_to: docstring-parameters
                   remove_fields_from_members: true
   - towncrier
+  - git-revision-date-localized
   - privacy:
       enabled: !ENV [READTHEDOCS, false]
 
