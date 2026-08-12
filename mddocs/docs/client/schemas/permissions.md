@@ -2,6 +2,7 @@
 
 ::: horizon.commons.schemas.v1.permission
     options:
+        show_root_heading: false
         members:
             - PermissionResponseItemV1
             - PermissionsResponseV1

@@ -35,7 +35,7 @@ async def add_admins(session: AsyncSession, usernames: list[str]) -> None:
             logger.info("    %r (new user)", username)
 
     await session.commit()
-    logger.info("Done.")
+    logger.info("Done")
 
 
 async def remove_admins(session: AsyncSession, usernames: list[str]) -> None:
@@ -55,7 +55,7 @@ async def remove_admins(session: AsyncSession, usernames: list[str]) -> None:
             logger.info("    %r", username)
 
     await session.commit()
-    logger.info("Done.")
+    logger.info("Done")
 
 
 async def list_admins(session: AsyncSession) -> None:
@@ -64,11 +64,11 @@ async def list_admins(session: AsyncSession) -> None:
     logger.info("Listing users with SUPERADMIN role:")
     for admin in admins:
         logger.info("    %r", admin.username)
-    logger.info("Done.")
+    logger.info("Done")
 
 
 def create_parser() -> argparse.ArgumentParser:
-    parser = argparse.ArgumentParser(description="Manage admin users.")
+    parser = argparse.ArgumentParser(description="Manage admin users")
     subparsers = parser.add_subparsers(dest="command", required=True)
 
     parser_add = subparsers.add_parser("add", help="Add admin privileges to users")

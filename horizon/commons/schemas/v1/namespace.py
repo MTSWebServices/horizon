@@ -13,8 +13,13 @@ MAX_NAME_LENGTH = 256
 
 class NamespaceUserRole(str, Enum):
     DEVELOPER = "DEVELOPER"
+    """Namespace Developer"""
+
     MAINTAINER = "MAINTAINER"
+    """Namespace Maintainer"""
+
     OWNER = "OWNER"
+    """Namespace Owner"""
 
 
 class NamespaceResponseV1(BaseModel):
@@ -33,7 +38,7 @@ class NamespaceResponseV1(BaseModel):
 class NamespacePaginateQueryV1(PaginateQueryV1):
     """Query params for namespace pagination request."""
 
-    name: str | None = Field(default=None, min_length=1, max_length=MAX_NAME_LENGTH)
+    name: str | None = Field(default=None, min_length=1, max_length=MAX_NAME_LENGTH, description="Search query")
 
     # more arguments can be added in future
 
@@ -41,8 +46,10 @@ class NamespacePaginateQueryV1(PaginateQueryV1):
 class NamespaceCreateRequestV1(BaseModel):
     """Request body for namespace creation request."""
 
-    name: str = Field(min_length=1, max_length=MAX_NAME_LENGTH)
-    description: str = ""
+    name: str = Field(
+        min_length=1, max_length=MAX_NAME_LENGTH, description="Namespace name, unique in the entire database"
+    )
+    description: str = Field(default="", description="Namespace description")
 
 
 class NamespaceUpdateRequestV1(BaseModel):
@@ -51,8 +58,8 @@ class NamespaceUpdateRequestV1(BaseModel):
     If field value is not set, it will not be updated.
     """
 
-    name: str = Field(default=Unset(), min_length=1, max_length=MAX_NAME_LENGTH)  # type: ignore[assignment]
-    description: str = Unset()  # type: ignore[assignment]
+    name: str = Field(default=Unset(), min_length=1, max_length=MAX_NAME_LENGTH, description="Namespace name")  # type: ignore[assignment]
+    description: str = Field(default=Unset(), description="Namespace description")  # type: ignore[assignment]
 
     model_config = ConfigDict(arbitrary_types_allowed=True)
 

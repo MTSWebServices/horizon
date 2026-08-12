@@ -2,6 +2,7 @@
 
 ::: horizon.commons.schemas.v1.hwm
     options:
+        show_root_heading: false
         members:
             - HWMResponseV1
             - HWMListResponseV1

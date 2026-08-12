@@ -97,11 +97,11 @@ class LDAPLookupSettings(BaseModel):
 
     enabled: bool = Field(
         default=True,
-        description="Set to ``True`` to enable lookup",
+        description="Set to `True` to enable lookup",
     )
     check_on_startup: bool = Field(
         default=True,
-        description="If ``True``, and LDAP is not available during application start, abort application startup",
+        description="If `True`, and LDAP is not available during application start, abort application startup",
     )
     pool: LDAPConnectionPoolSettings = Field(
         default_factory=LDAPConnectionPoolSettings,
@@ -121,9 +121,10 @@ class LDAPLookupSettings(BaseModel):
             You can also pass any query string supported by LDAP.
             See [Bonsai documentation](https://bonsai.readthedocs.io/en/latest/tutorial.html#searching).
 
-            Supported substitution values (see [horizon.backend.settings.auth.ldap.LDAPSettings][].):
-              * `{uid_attribute}`
-              * `{login}`
+            Supported substitution values:
+
+            * `{login}`
+            * [`{uid_attribute}`][horizon.backend.settings.auth.ldap.LDAPSettings(uid_attribute)]
             """,
         ),
     )
@@ -159,14 +160,14 @@ class LDAPSettings(BaseModel):
     )
     timeout_seconds: int | None = Field(
         default=10,
-        description="LDAP request timeout, in seconds. ``None`` means no timeout",
+        description="LDAP request timeout, in seconds. `None` means no timeout",
     )
     auth_mechanism: Literal["SIMPLE", "DIGEST-MD5"] = Field(
         default="SIMPLE",
-        description="LDAP auth mechanism, used for ``bind`` request",
+        description="LDAP auth mechanism, used for `bind` request",
     )
     base_dn: str = Field(
-        description="Organization DN, e.g. ``ou=users,dc=example,dc=com``",
+        description="Organization DN, e.g. `ou=users,dc=example,dc=com`",
     )
     uid_attribute: str = Field(
         default="uid",
@@ -186,9 +187,10 @@ class LDAPSettings(BaseModel):
             You can pass any DN value supported by LDAP.
 
             Supported substitution values:
-              * `{login}`
-              * `{uid_attribute}` (see [uid_attribute][])
-              * `{base_dn}` (see [base_dn][])
+
+            * `{login}`
+            * [`{uid_attribute}`][horizon.backend.settings.auth.ldap.LDAPSettings(uid_attribute)]
+            * [`{base_dn}`][horizon.backend.settings.auth.ldap.LDAPSettings(base_dn)]
             """,
         ),
     )

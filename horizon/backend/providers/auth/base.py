@@ -57,12 +57,12 @@ class AuthProvider(ABC):
 
         Parameters
         ----------
-        access_token : str
+        access_token
             JWT token got from `Authorization: Bearer <token>` header.
 
         Returns
         -------
-        User
+        :
             Current user object
         """
         ...
@@ -88,7 +88,7 @@ class AuthProvider(ABC):
 
         Returns
         -------
-        Dict:
+        :
             Access token response.
 
         Examples

@@ -17,6 +17,8 @@ DOCKER_BUILDKIT = 1
 # Fix docker build on M1/M2
 DOCKER_DEFAULT_PLATFORM = linux/amd64
 
+export DISABLE_MKDOCS_2_WARNING=true
+
 HELP_FUN = \
 	%help; while(<>){push@{$$help{$$2//'options'}},[$$1,$$3] \
 	if/^([\w-_]+)\s*:.*\#\#(?:@(\w+))?\s(.*)$$/}; \

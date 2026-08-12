@@ -2,6 +2,7 @@
 
 ::: horizon.commons.schemas.v1.hwm_history
     options:
+        show_root_heading: false
         members:
             - HWMHistoryResponseV1
             - HWMHistoryPaginateQueryV1

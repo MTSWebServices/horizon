@@ -33,14 +33,14 @@ class HWMResponseV1(BaseModel):
 
 
 class HWMListResponseV1(BaseModel):
-    hwms: list[HWMResponseV1]
+    hwms: list[HWMResponseV1] = Field(description="List of HWMs")
 
 
 class HWMPaginateQueryV1(PaginateQueryV1):
     """Query params for HWM pagination request."""
 
-    namespace_id: int
-    name: str | None = Field(default=None, min_length=1, max_length=MAX_NAME_LENGTH)
+    namespace_id: int = Field(description="Namespace id HWM is bound to")
+    name: str | None = Field(default=None, min_length=1, max_length=MAX_NAME_LENGTH, description="Search query")
 
     # more arguments can be added in future
 
@@ -48,13 +48,16 @@ class HWMPaginateQueryV1(PaginateQueryV1):
 class HWMCreateRequestV1(BaseModel):
     """Request body for HWM create request."""
 
-    namespace_id: int
-    name: str = Field(min_length=1, max_length=MAX_NAME_LENGTH)
-    description: str = ""
-    type: str = Field(min_length=1, max_length=MAX_TYPE_LENGTH)
-    value: Any
-    entity: str | None = None
-    expression: str | None = None
+    namespace_id: int = Field(description="Namespace id HWM is bound to")
+    name: str = Field(min_length=1, max_length=MAX_NAME_LENGTH, description="HWM name, unique in the namespace")
+    description: str = Field(default="", description="HWM description")
+    type: str = Field(min_length=1, max_length=MAX_TYPE_LENGTH, description="HWM type, any non-empty string")
+    value: Any = Field(description="HWM value, any JSON serializable value")
+    entity: str | None = Field(default=None, description="Name of entity associated with the HWM. Can be any string")
+    expression: str | None = Field(
+        default=None,
+        description="Expression used to calculate HWM value. Can be any string",
+    )
 
 
 class HWMUpdateRequestV1(BaseModel):
@@ -63,12 +66,16 @@ class HWMUpdateRequestV1(BaseModel):
     If field value is not set, it will not be updated.
     """
 
-    name: str = Field(default=Unset(), min_length=1, max_length=MAX_NAME_LENGTH)  # type: ignore[assignment]
-    description: str = Unset()  # type: ignore[assignment]
-    type: str = Field(default=Unset(), min_length=1, max_length=MAX_TYPE_LENGTH)  # type: ignore[assignment]
-    value: Any = Unset()  # type: ignore[assignment]
-    entity: str | None = Unset()  # type: ignore[assignment]
-    expression: str | None = Unset()  # type: ignore[assignment]
+    name: str = Field(default=Unset(), min_length=1, max_length=MAX_NAME_LENGTH, description="New HWM name")  # type: ignore[assignment]
+    description: str = Field(default=Unset(), description="New HWM description")  # type: ignore[assignment]
+    type: str = Field(default=Unset(), min_length=1, max_length=MAX_TYPE_LENGTH, description="New HWM type")  # type: ignore[assignment]
+    value: Any = Field(default=Unset(), description="New HWM value")  # type: ignore[assignment]
+    entity: str | None = Field(
+        default=Unset(), description="New name of entity associated with the HWM. Can be any string"
+    )  # type: ignore[assignment]
+    expression: str | None = Field(
+        default=Unset(), description="New expression used to calculate HWM value. Can be any string"
+    )  # type: ignore[assignment]
 
     model_config = ConfigDict(arbitrary_types_allowed=True)
 
@@ -84,10 +91,10 @@ class HWMUpdateRequestV1(BaseModel):
 class HWMBulkCopyRequestV1(BaseModel):
     """Schema for request body of HWM copy operation."""
 
-    source_namespace_id: int = Field(description="Source namespace ID from which HWMs are copied.")
-    target_namespace_id: int = Field(description="Target namespace ID to which HWMs are copied.")
-    hwm_ids: list[int] = Field(description="List of HWM IDs to be copied.")
-    with_history: bool = Field(default=False, description="Whether to copy HWM history.")
+    source_namespace_id: int = Field(description="Source namespace ID from which HWMs are copied")
+    target_namespace_id: int = Field(description="Target namespace ID to which HWMs are copied")
+    hwm_ids: list[int] = Field(description="List of HWM IDs to be copied")
+    with_history: bool = Field(default=False, description="Whether to copy HWM history")
 
     @field_validator("hwm_ids", mode="before")
     @classmethod
@@ -109,8 +116,8 @@ class HWMBulkCopyRequestV1(BaseModel):
 class HWMBulkDeleteRequestV1(BaseModel):
     """Schema for request body of bulk delete HWM operation."""
 
-    namespace_id: int
-    hwm_ids: list[int]
+    namespace_id: int = Field(description="Namespace ID where the HWMs belong")
+    hwm_ids: list[int] = Field(description="List of HWM IDs to be copied")
 
     @field_validator("hwm_ids", mode="before")
     @classmethod

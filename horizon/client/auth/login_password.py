@@ -19,10 +19,10 @@ class LoginPassword(BaseAuth, BaseModel):
 
     Parameters
     ----------
-    username : str
+    login
         User name
 
-    password : str
+    password
         User password
 
     Examples

@@ -81,6 +81,7 @@ HWMResponseV1(
 
 ::: horizon.client.sync.HorizonClientSync
     options:
+        parameter_headings: false
         members:
             - authorize
             - ping
@@ -96,12 +97,11 @@ HWMResponseV1(
             - update_hwm
             - delete_hwm
             - bulk_delete_hwm
+            - bulk_copy_hwm
             - get_namespace_permissions
             - update_namespace_permissions
             - paginate_hwm_history
             - paginate_namespace_history
-            - retry
-            - bulk_copy_hwm
 
 ::: horizon.client.sync.RetryConfig
 

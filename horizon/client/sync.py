@@ -49,16 +49,16 @@ class RetryConfig(BaseModel):
 
     Parameters
     ----------
-    total : int, default: 3
+    total
         The maximum number of retry attempts to make.
 
-    backoff_factor : float, default: 0.1
+    backoff_factor
         A backoff factor to apply between attempts after the second try.
 
-    status_forcelist : list[int], default: [502, 503, 504]
+    status_forcelist
         A set of HTTP status codes that we should force a retry on.
 
-    backoff_jitter : float, default: None
+    backoff_jitter
         A random jitter amount (between 0 and 1) to add to the backoff delay.
         Helps to avoid "thundering herd" issues by randomizing the delay
         times between retries.
@@ -82,10 +82,10 @@ class TimeoutConfig(BaseModel):
 
     Parameters
     ----------
-    connection_timeout : float, default: 3
+    connection_timeout
         The maximum number of seconds to wait for a connection to the server.
 
-    request_timeout : float, default: 5
+    request_timeout
         The maximum number of seconds to wait for a response from the server.
     """
 
@@ -99,25 +99,24 @@ class HorizonClientSync(BaseClient[OAuth2Session]):
     Parameters
     ----------
 
-    base_url : str
+    base_url
         URL of Horizon API, e.g. `https://some.domain.com/api`
 
-    auth : horizon.client.auth.base.BaseAuth
+    auth
         Authentication class
 
-    retry : RetryConfig
+    retry
         Configuration for request retries.
 
-    timeout : TimeoutConfig
+    timeout
         Configuration for request timeouts.
 
-    session : OAuth2Session
+    session
         Custom session object. Inherited from `requests.Session`, so you can pass custom
         session options.
 
     Examples
     --------
-
     Using default parameters:
 
     ```python
@@ -259,12 +258,12 @@ class HorizonClientSync(BaseClient[OAuth2Session]):
 
         Parameters
         ----------
-        query : NamespacePaginateQueryV1
+        query
             Namespace query parameters
 
         Returns
         -------
-        PageResponseV1[NamespaceResponseV1]
+        :
             List of namespaces, limited and filtered by query parameters.
 
         Examples
@@ -346,12 +345,12 @@ class HorizonClientSync(BaseClient[OAuth2Session]):
 
         Parameters
         ----------
-        namespace_id : int
+        namespace_id
             Namespace name to get
 
         Returns
         -------
-        NamespaceResponseV1
+        :
             Namespace
 
         Raises
@@ -382,12 +381,12 @@ class HorizonClientSync(BaseClient[OAuth2Session]):
 
         Parameters
         ----------
-        namespace : NamespaceCreateRequestV1
+        data
             Namespace to create
 
         Returns
         -------
-        NamespaceResponseV1
+        :
             Created namespace
 
         Raises
@@ -421,15 +420,15 @@ class HorizonClientSync(BaseClient[OAuth2Session]):
 
         Parameters
         ----------
-        namespace_id : int
+        namespace_id
             Namespace name to update
 
-        changes : NamespaceUpdateRequestV1
+        changes
             Changes to namespace object
 
         Returns
         -------
-        NamespaceResponseV1
+        :
             Updated namespace
 
         Raises
@@ -467,7 +466,7 @@ class HorizonClientSync(BaseClient[OAuth2Session]):
 
         Parameters
         ----------
-        namespace_id : int
+        namespace_id
             Namespace name to delete
 
         Raises
@@ -497,12 +496,12 @@ class HorizonClientSync(BaseClient[OAuth2Session]):
 
         Parameters
         ----------
-        query : NamespaceHistoryPaginateQueryV1
+        query
             Namespace history query parameters
 
         Returns
         -------
-        PageResponseV1[NamespaceHistoryResponseV1]
+        :
             List of namespace history items, limited and filtered by query parameters.
 
         Examples
@@ -565,12 +564,12 @@ class HorizonClientSync(BaseClient[OAuth2Session]):
 
         Parameters
         ----------
-        query : HWMPaginateQueryV1
+        query
             HWM query parameters
 
         Returns
         -------
-        PageResponseV1[HWMResponseV1]
+        :
             List of HWM, limited and filtered by query parameters.
 
         Examples
@@ -653,12 +652,12 @@ class HorizonClientSync(BaseClient[OAuth2Session]):
 
         Parameters
         ----------
-        hwm_id : int
+        hwm_id
             HWM id to get
 
         Returns
         -------
-        HWMResponseV1
+        :
             HWM
 
         Raises
@@ -690,12 +689,12 @@ class HorizonClientSync(BaseClient[OAuth2Session]):
 
         Parameters
         ----------
-        data : HWMCreateRequestV1
+        data
             HWM data
 
         Returns
         -------
-        HWMResponseV1
+        :
             Created HWM
 
         Raises
@@ -741,14 +740,14 @@ class HorizonClientSync(BaseClient[OAuth2Session]):
 
         Parameters
         ----------
-        hwm_id : int
+        hwm_id
             HWM id to update
-        changes : HWMUpdateRequestV1
+        changes
             HWM changes
 
         Returns
         -------
-        HWMResponseV1
+        :
             Updated HWM
 
         Raises
@@ -789,7 +788,7 @@ class HorizonClientSync(BaseClient[OAuth2Session]):
 
         Parameters
         ----------
-        hwm_id : int
+        hwm_id
             HWM id to delete
 
         Raises
@@ -820,12 +819,12 @@ class HorizonClientSync(BaseClient[OAuth2Session]):
 
         Parameters
         ----------
-        data : HWMBulkCopyRequestV1
+        data
             HWM copy data
 
         Returns
         -------
-        HWMListResponseV1
+        :
             Copied HWMs
 
         Raises
@@ -865,9 +864,9 @@ class HorizonClientSync(BaseClient[OAuth2Session]):
 
         Parameters
         ----------
-        namespace_id : int
+        namespace_id
             Namespace ID where the HWMs belong.
-        hwm_ids : List[int]
+        hwm_ids
             List of HWM IDs to be deleted.
 
         Raises
@@ -898,12 +897,12 @@ class HorizonClientSync(BaseClient[OAuth2Session]):
 
         Parameters
         ----------
-        namespace_id : int
+        namespace_id
             The ID of the namespace to get permissions for.
 
         Returns
         -------
-        PermissionsResponseV1
+        :
             The permissions of the namespace.
 
         Raises
@@ -936,14 +935,14 @@ class HorizonClientSync(BaseClient[OAuth2Session]):
 
         Parameters
         ----------
-        namespace_id : int
+        namespace_id
             The ID of the namespace to update permissions for.
-        changes : PermissionsUpdateRequestV1
+        changes
             The changes to apply to the namespace's permissions.
 
         Returns
         -------
-        PermissionsResponseV1
+        :
             Actual permissions of the namespace.
 
         Raises
@@ -985,12 +984,12 @@ class HorizonClientSync(BaseClient[OAuth2Session]):
 
         Parameters
         ----------
-        query : HWMHistoryPaginateQueryV1
+        query
             HWM history query parameters
 
         Returns
         -------
-        PageResponseV1[HWMHistoryResponseV1]
+        :
             List of HWM history items, limited and filtered by query parameters.
 
         Examples

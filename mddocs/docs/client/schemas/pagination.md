@@ -2,6 +2,7 @@
 
 ::: horizon.commons.schemas.v1.pagination
     options:
+        show_root_heading: false
         members:
             - PaginateQueryV1
             - PageResponseV1

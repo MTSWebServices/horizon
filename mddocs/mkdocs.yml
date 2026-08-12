@@ -55,6 +55,7 @@ plugins:
         python:
           paths: [..]
           options:
+            show_bases: false
             show_source: false
             show_root_heading: true
             show_root_toc_entry: false
@@ -62,8 +63,24 @@ plugins:
             heading_level: 3
             docstring_style: numpy
             docstring_section_style: list
-            inherited_members: true
-            show_if_no_docstring: true
+            inherited_members: false
+            show_if_no_docstring: false
+            show_docstring_attributes: false
+            show_symbol_type_heading: true
+            show_symbol_type_toc: true
+            unwrap_annotated: true
+            parameter_headings: true
+            show_labels: false
+            scoped_crossrefs: true
+            docstring_options:
+              warn_unknown_params: false
+              warn_missing_types: false
+            extensions:
+              - griffe_fieldz:
+                  include_inherited: true
+                  include_private: false
+                  add_fields_to: docstring-parameters
+                  remove_fields_from_members: true
   - towncrier
 
 markdown_extensions:

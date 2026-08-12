@@ -31,17 +31,14 @@ export HORIZON__SERVER__CORS__ALLOW_ORIGINS='["*"]'
 Values loaded from the YAML file override values passed through environment variables.
 Settings passed directly to the `Settings` constructor have the highest priority.
 
-* [Database][backend-configuration-database]
-* [Logging][backend-configuration-logging]
-* [Monitoring][backend-configuration-monitoring]
-* [CORS][backend-configuration-cors]
-* [Static_files][backend-configuration-static-files]
-* [Openapi][backend-configuration-openapi]
-* [Debug][backend-configuration-debug]
-
 ::: horizon.backend.settings
     options:
+        show_root_heading: false
         members:
             - Settings
-            - server
-                - ServerSettings
+
+::: horizon.backend.settings.server
+    options:
+        show_root_heading: false
+        members:
+              - ServerSettings

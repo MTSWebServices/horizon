@@ -10,20 +10,20 @@ from horizon.commons.schemas.v1 import NamespaceUserRole
 class PermissionResponseItemV1(BaseModel):
     """Represents a single permission entry in a response, linking a user with their role within a namespace."""
 
-    username: str
-    role: NamespaceUserRole
+    username: str = Field(description="The username of the user")
+    role: NamespaceUserRole = Field(description="The role to be assigned to the user within the namespace")
 
 
 class PermissionsResponseV1(BaseModel):
     """Wraps a list of permission entries for a namespace, returned by the GET endpoint."""
 
-    permissions: list[PermissionResponseItemV1]
+    permissions: list[PermissionResponseItemV1] = Field(description="A list of user permissions within the namespace")
 
 
 class PermissionUpdateRequestItemV1(BaseModel):
     """Represents a single permission entry in a request, specifying a desired role for a user within a namespace."""
 
-    username: str
+    username: str = Field(description="The username of the user")
     role: NamespaceUserRole | None = Field(
         default=None,
         description="The role to be assigned to the user within the namespace."

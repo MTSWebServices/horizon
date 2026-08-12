@@ -50,25 +50,25 @@ class ServerSettings(BaseModel):
     )
     cors: CORSSettings = Field(
         default_factory=CORSSettings,
-        description="[CORS settings][backend-configuration-cors]",
+        description="CORS settings",
     )
     monitoring: MonitoringSettings = Field(
         default_factory=MonitoringSettings,
-        description="[Monitoring settings][backend-configuration-monitoring]",
+        description="Monitoring settings",
     )
     request_id: RequestIDSettings = Field(
         default_factory=RequestIDSettings,
-        description="[RequestID settings][backend-configuration-debug]",
+        description="RequestID settings",
     )
     application_version: ApplicationVersionSettings = Field(
         default_factory=ApplicationVersionSettings,
-        description="[Application version settings][backend-configuration-debug]",
+        description="Application version settings",
     )
     static_files: StaticFilesSettings = Field(
         default_factory=StaticFilesSettings,
-        description="[Static files settings][backend-configuration-static-files]",
+        description="Static files settings",
     )
     openapi: OpenAPISettings = Field(
         default_factory=OpenAPISettings,
-        description="[OpenAPI.json settings][backend-configuration-openapi]",
+        description="OpenAPI.json settings",
     )

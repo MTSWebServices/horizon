@@ -21,12 +21,11 @@ class AccessToken(BaseAuth, BaseModel):
 
     Parameters
     ----------
-    token: str
+    token
         Access token
 
     Examples
     --------
-
     ```python
     >>> from horizon.client.auth import AccessToken
     >>> auth = AccessToken(token="my.access.token")

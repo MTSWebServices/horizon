@@ -51,25 +51,25 @@ class Settings(BaseSettings):
         env_nested_delimiter="__",
     )
 
-    admin_users: list[str] = Field(
-        default_factory=list,
-        description="Usernames which should be assigned SUPERADMIN role on application start",
-    )
     database: DatabaseSettings = Field(
         default_factory=DatabaseSettings,  # type: ignore[arg-type]
-        description="[Database settings][backend-configuration-database]",
+        description="Database settings",
     )
     logging: LoggingSettings = Field(
         default=DEFAULT_LOGGING_SETTINGS,
-        description="[Logging settings][backend-configuration-logging]",
+        description="Logging settings",
     )
     server: ServerSettings = Field(
         default_factory=ServerSettings,
-        description="[Server settings][backend-configuration-server]",
+        description="Server settings",
     )
     auth: AuthSettings = Field(
         default_factory=AuthSettings,
-        description="[Auth setting][backend-auth-providers]",
+        description="Auth provider setting",
+    )
+    admin_users: list[str] = Field(
+        default_factory=list,
+        description="[Usernames which should be assigned SUPERADMIN role on application start][manage-admins-script]",
     )
 
     @classmethod
