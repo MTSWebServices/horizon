@@ -8,6 +8,8 @@ build:
   tools:
     python: '3.14'
   jobs:
+    post_checkout:
+      - git fetch --unshallow || true
     post_create_environment:
       - VIRTUAL_ENV=$READTHEDOCS_VIRTUALENV_PATH python -m pip install uv
     post_install:
