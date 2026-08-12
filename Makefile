@@ -5,6 +5,9 @@ include .env.local.test
 HORIZON_CONFIG_FILE ?= config.yml
 export HORIZON_CONFIG_FILE
 
+VERSION := $(shell cat horizon/VERSION)
+DATE := $(shell date --rfc-3339=date)
+
 VIRTUAL_ENV ?= .venv
 PYTHON = ${VIRTUAL_ENV}/bin/python
 PIP = ${VIRTUAL_ENV}/bin/pip
@@ -106,13 +109,18 @@ docs-serve: ##@Docs Run docs server
 	PYTHONPATH=. ${VIRTUAL_ENV}/bin/mkdocs serve --config-file mddocs/mkdocs.yml
 
 docs-generate-changelog: ##@Docs Generate changelog
+	echo "Building changelog for ${VERSION}"
 	cp "mddocs/docs/changelog/RELEASE_TEMPLATE.md" "mddocs/docs/changelog/temp_RELEASE_TEMPLATE.md"
-	${UV} run towncrier build "--version=$(shell cat horizon/VERSION)" --yes
-	mv "mddocs/docs/changelog/RELEASE_TEMPLATE.md" "mddocs/docs/changelog/$(shell cat horizon/VERSION).md"
+	${UV} run towncrier build "--version=${VERSION}" --yes
+	mv "mddocs/docs/changelog/RELEASE_TEMPLATE.md" "mddocs/docs/changelog/${VERSION}.md"
 	mv "mddocs/docs/changelog/temp_RELEASE_TEMPLATE.md" "mddocs/docs/changelog/RELEASE_TEMPLATE.md"
-	awk '/##/,0' "mddocs/docs/changelog/$(shell cat horizon/VERSION).md" > temp && mv temp "mddocs/docs/changelog/$(shell cat horizon/VERSION).md"
-	sed "s#\(.*NEXT_RELEASE.*\)#\1\n- [$(shell cat horizon/VERSION) ($(shell date --rfc-3339=date))][$(shell cat horizon/VERSION | tr '.' '-')]#" "mddocs/docs/changelog/index.md" > temp && mv temp "mddocs/docs/changelog/index.md"
-	sed "s#\(.*NEXT_RELEASE.*\)#\1\n    * [$(shell cat horizon/VERSION)](changelog/$(shell cat horizon/VERSION).md)#" "mddocs/docs/nav.md" > temp && mv temp "mddocs/docs/nav.md"
+
+	# Remove content above the version number heading in the `${VERSION}.md` file
+	awk '/##/,0' "mddocs/docs/changelog/${VERSION}.md" > temp && mv temp "mddocs/docs/changelog/${VERSION}.md"
+
+	# Update Changelog Index and Navigation
+	sed "s#\(.*NEXT_RELEASE.*\)#\1\n- [${VERSION} (${DATE})][${VERSION}]#" "mddocs/docs/changelog/index.md" > temp && mv temp "mddocs/docs/changelog/index.md"
+	sed "s#\(.*NEXT_RELEASE.*\)#\1\n    * [${VERSION}](changelog/${VERSION}.md)#" "mddocs/docs/nav.md" > temp && mv temp "mddocs/docs/nav.md"
 
 docs-openapi: ##@Docs Generate OpenAPI schema
 	${PYTHON} -m horizon.backend.export_openapi_schema mddocs/docs/_static/openapi.json

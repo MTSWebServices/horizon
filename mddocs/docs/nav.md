@@ -37,6 +37,7 @@
         * [User](client/schemas/user.md)
 * [Changelog](changelog/index.md)
     * [Next release](changelog/NEXT_RELEASE.md)
+    * [2.0.0](changelog/2.0.0.md)
     * [1.1.3](changelog/1.1.3.md)
     * [1.1.2](changelog/1.1.2.md)
     * [1.1.1](changelog/1.1.1.md)
