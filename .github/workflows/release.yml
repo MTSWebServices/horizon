@@ -43,7 +43,7 @@ jobs:
 
       - name: Install dependencies
         run: |
-          uv sync --frozen --extra backend
+          uv sync --frozen --extra backend --extra postgres
 
       - name: Generate OpenAPI Schema
         run: |
