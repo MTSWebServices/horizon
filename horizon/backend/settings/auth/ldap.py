@@ -10,8 +10,7 @@ Basic LDAP terminology is explained here: `LDAP Overview <https://www.zytrax.com
 import textwrap
 from typing import Annotated, Literal
 
-from bonsai import LDAPSearchScope
-from pydantic import AnyUrl, BaseModel, Field, SecretStr, UrlConstraints, field_validator
+from pydantic import AnyUrl, BaseModel, Field, SecretStr, UrlConstraints
 
 from horizon.backend.settings.auth.jwt import JWTSettings
 
@@ -128,8 +127,8 @@ class LDAPLookupSettings(BaseModel):
             """,
         ),
     )
-    scope: LDAPSearchScope = Field(
-        default=LDAPSearchScope.ONELEVEL,
+    scope: Literal["BASE", "ONELEVEL", "SUBTREE"] = Field(
+        default="ONELEVEL",
         description=textwrap.dedent(
             """
             Lookup scope. Use `SUBTREE` for ActiveDirectory.
@@ -138,13 +137,6 @@ class LDAPLookupSettings(BaseModel):
             """,
         ),
     )
-
-    @field_validator("scope", mode="before")
-    @classmethod
-    def _convert_scope_to_enum(cls, value: str | int | LDAPSearchScope) -> LDAPSearchScope:
-        if isinstance(value, str):
-            return LDAPSearchScope[value.upper()]
-        return LDAPSearchScope(value)
 
 
 class LDAPSettings(BaseModel):

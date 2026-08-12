@@ -18,7 +18,7 @@ from contextlib import AbstractAsyncContextManager, asynccontextmanager
 from time import time
 from typing import Any
 
-from bonsai import InvalidDN, LDAPClient
+from bonsai import InvalidDN, LDAPClient, LDAPSearchScope
 from bonsai.asyncio import AIOConnectionPool, AIOLDAPConnection
 from bonsai.errors import AuthenticationError, LDAPError
 from devtools import pformat
@@ -199,7 +199,7 @@ class LDAPAuthProvider(AuthProvider):
         async with self._get_lookup_connection() as connection:
             results = await connection.search(
                 base=base_dn,
-                scope=scope,
+                scope=LDAPSearchScope[scope],
                 filter_exp=query,
                 attrlist=["*"],
                 sizelimit=1,
