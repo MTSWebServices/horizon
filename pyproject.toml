@@ -11,7 +11,7 @@ dirty_template = "{tag}.dev{env:GITHUB_RUN_ID:{ccount}}+git.{sha}.dirty"
 
 [project]
 name = "data-horizon"
-license = { file = "LICENSE.txt" }
+license = {text = "Apache-2.0"}
 description = "Horizon REST API + client"
 authors = [{name= "MWS Data Bridge", email = "onetools@mts.ru"}]
 readme = "README.rst"
