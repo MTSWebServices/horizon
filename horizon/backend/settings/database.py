@@ -1,21 +1,19 @@
 # SPDX-FileCopyrightText: 2023-present MTS PJSC
 # SPDX-License-Identifier: Apache-2.0
-
 import textwrap
 from typing import Annotated
-from urllib.parse import urlsplit
 
 from pydantic import AfterValidator, BaseModel, ConfigDict, Field, PostgresDsn, UrlConstraints
 from sqlalchemy import make_url
 
 
 def validate_url(value: PostgresDsn):
-    if not value.path or len(value.path) <= 1:
+    url = make_url(str(value))
+    if not url.database:
         msg = "Database URL must contain database name"
         raise ValueError(msg)
 
-    split = urlsplit(str(value))
-    if not split.username or not split.password:
+    if not url.username or not url.password:
         msg = "Database URL must contain username and password"
         raise ValueError(msg)
 
@@ -24,7 +22,7 @@ def validate_url(value: PostgresDsn):
 
 PostgresURL = Annotated[
     PostgresDsn,
-    UrlConstraints(allowed_schemes=["postgresql+asyncpg"], host_required=True),
+    UrlConstraints(allowed_schemes=["postgresql+asyncpg"], default_port=5432, host_required=True),
     AfterValidator(validate_url),
 ]
 
@@ -43,18 +41,25 @@ class DatabaseSettings(BaseModel):
 
     ```yaml title="config.yml"
     database:
-      url: postgresql+asyncpg://postgres:postgres@localhost:5432/horizon
-      # custom option passed directly to engine factory
-      pool_pre_ping: true
+        url: postgresql+asyncpg://postgres:postgres@localhost:5432/syncmaster
+
+        # custom option passed directly to SQLAlchemy Engine
+        pool_pre_ping: True
     ```
     """
 
-    url: PostgresURL = Field(
+    url: PostgresDsn = Field(
         description=textwrap.dedent(
             """
             Database connection URL.
 
-            See [SQLAlchemy documentation](https://docs.sqlalchemy.org/en/20/core/engines.html#backend-specific-urls)
+            Mandatory components:
+
+            * host
+            * username (urlencoded)
+            * password (urlencoded)
+
+            See [SQLAlchemy documentation](https://docs.sqlalchemy.org/en/20/core/engines.html#server-specific-urls)
 
             !!! warning
 
