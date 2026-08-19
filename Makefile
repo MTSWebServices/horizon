@@ -116,7 +116,7 @@ docs-generate-changelog: ##@Docs Generate changelog
 	mv "mddocs/docs/changelog/temp_RELEASE_TEMPLATE.md" "mddocs/docs/changelog/RELEASE_TEMPLATE.md"
 
 	# Remove content above the version number heading in the `${VERSION}.md` file
-	awk '/##/,0' "mddocs/docs/changelog/${VERSION}.md" > temp && mv temp "mddocs/docs/changelog/${VERSION}.md"
+	awk '!/towncrier release notes start/' "mddocs/docs/changelog/${VERSION}.md" | sed '/./,$$!d' > temp && mv temp "mddocs/docs/changelog/${VERSION}.md"
 
 	# Update Changelog Index and Navigation
 	sed "s#\(.*NEXT_RELEASE.*\)#\1\n- [${VERSION} (${DATE})][${VERSION}]#" "mddocs/docs/changelog/index.md" > temp && mv temp "mddocs/docs/changelog/index.md"
