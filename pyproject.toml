@@ -92,7 +92,7 @@ ldap = [
 # pytest-lazy-fixture doesn't support pytest 8.x+
 test = [
   "pytest~=9.1.1",
-  "httpx2~=2.10.0",
+  "httpx2>=2.10,<2.13",
   "pytest-asyncio~=1.4.0",
   "pytest-randomly~=4.1.0",
   "pytest-rerunfailures~=16.4",
