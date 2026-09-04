@@ -100,14 +100,14 @@ test = [
   "pytest-lazy-fixtures~=1.4.0",
   "pytest-clarity~=1.0.1",
   "pytest-pretty~=1.3.0",
-  "coverage~=7.15.2",
+  "coverage>=7.15.2,<7.17.0",
   "psycopg2-binary~=2.9.12",
   "gevent~=26.7",
   "responses~=0.26.2",
 ]
 dev = [
   "mypy~=2.3.0",
-  "prek~=0.4.12",
+  "prek>=0.4.12,<0.6.0",
   "ruff~=0.16.2",
   "sqlalchemy[mypy]~=2.0.51",
   "types-pyyaml~=6.0.12",
