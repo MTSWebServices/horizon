@@ -45,7 +45,7 @@ class LDAPCachePasswordHashSettings(BaseModel):
         ),
     )
     options: dict[str, Any] = Field(
-        default={},
+        default_factory=dict,
         description="Options passed to hashing algorithm",
     )
 
