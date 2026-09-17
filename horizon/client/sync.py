@@ -170,7 +170,7 @@ class HorizonClientSync(BaseClient[OAuth2Session]):
         # do not call ``self.whoami`` here to avoid recursion
         timeout = (self.timeout.connection_timeout, self.timeout.request_timeout)
         response = session.request("GET", f"{self.base_url}/v1/users/me", timeout=timeout)
-        self._handle_response(response, UserResponseV1)
+        self._handle_response(response, UserResponseV1)  # type: ignore[arg-type]
 
     def close(self) -> None:
         """Close session.
@@ -1091,4 +1091,4 @@ class HorizonClientSync(BaseClient[OAuth2Session]):
 
         timeout = (self.timeout.connection_timeout, self.timeout.request_timeout)
         response = session.request(method, url, json=json, params=params, timeout=timeout)
-        return self._handle_response(response, response_class)
+        return self._handle_response(response, response_class)  # type: ignore[arg-type]
