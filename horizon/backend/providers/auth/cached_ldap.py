@@ -7,18 +7,20 @@ AuthProvider using LDAP, but
 
 import logging
 from datetime import datetime, timedelta, timezone
-from typing import Any
+from typing import TYPE_CHECKING, Any
 
 from bonsai.asyncio import AIOConnectionPool
 from devtools import pformat
 from fastapi import FastAPI
-from passlib.ifc import PasswordHash
 from passlib.registry import get_crypt_handler
 
 from horizon.backend.providers.auth.ldap import LDAPAuthProvider
 from horizon.backend.services.uow import UnitOfWork
 from horizon.backend.settings.auth.cached_ldap import CachedLDAPAuthProviderSettings
 from horizon.commons.exceptions import AuthorizationError
+
+if TYPE_CHECKING:
+    from passlib.ifc import PasswordHash
 
 log = logging.getLogger(__name__)
 
@@ -31,6 +33,9 @@ class CachedLDAPAuthProvider(LDAPAuthProvider):
     ) -> None:
         self._pool: AIOConnectionPool | None = pool
         self._auth_settings: CachedLDAPAuthProviderSettings = auth_settings
+        self._hasher: PasswordHash = get_crypt_handler(auth_settings.cache.password_hash.algorithm).using(
+            **auth_settings.cache.password_hash.options
+        )
 
     @classmethod
     def setup(cls, app: FastAPI) -> FastAPI:
@@ -84,11 +89,6 @@ class CachedLDAPAuthProvider(LDAPAuthProvider):
             "expires_at": expires_at,
         }
 
-    def _get_hasher(self) -> PasswordHash:
-        hash_settings = self._auth_settings.cache.password_hash
-        handler = get_crypt_handler(hash_settings.algorithm)
-        return handler.using(**hash_settings.options)
-
     async def _resolve_username_from_credentials_cache(self, login: str, password: str, uow: UnitOfWork) -> str | None:
         log.info("Perform lookup in credentials cache")
         user_cache = await uow.credentials_cache.get_by_login(login)
@@ -102,8 +102,7 @@ class CachedLDAPAuthProvider(LDAPAuthProvider):
             log.info("Cache item expired")
             return None
 
-        hasher = self._get_hasher()
-        if not hasher.verify(password, user_cache.password_hash):
+        if not self._hasher.verify(password, user_cache.password_hash):
             msg = "Wrong credentials"
             raise AuthorizationError(msg)
 
@@ -113,14 +112,13 @@ class CachedLDAPAuthProvider(LDAPAuthProvider):
     async def _update_credentials_cache(self, user_id: int, login: str, password: str, uow: UnitOfWork) -> None:
         # this is not a dedicated method of repository because we need hashing settings to generate password hash,
         # and generating new hash every time is expensive
-        hasher = self._get_hasher()
         user_cache = await uow.credentials_cache.get_by_login(login=login)
 
         data: dict[str, Any] = {}
         if not user_cache or user_cache.user_id != user_id:
             data["user_id"] = user_id
-        if not user_cache or not hasher.verify(password, user_cache.password_hash):
-            data["password_hash"] = hasher.hash(password)
+        if not user_cache or not self._hasher.verify(password, user_cache.password_hash):
+            data["password_hash"] = self._hasher.hash(password)
 
         # even if nothing is changed in credentials cache, we do perform an update to sync `updated_at` column
         await uow.credentials_cache.create_or_update(login=login, data=data)

@@ -11,7 +11,7 @@ dirty_template = "{tag}.dev{env:GITHUB_RUN_ID:{ccount}}+git.{sha}.dirty"
 
 [project]
 name = "data-horizon"
-license = { file = "LICENSE.txt" }
+license = {text = "Apache-2.0"}
 description = "Horizon REST API + client"
 authors = [{name= "MWS Data Bridge", email = "onetools@mts.ru"}]
 readme = "README.rst"
@@ -92,26 +92,26 @@ ldap = [
 # pytest-lazy-fixture doesn't support pytest 8.x+
 test = [
   "pytest~=9.1.1",
-  "httpx2~=2.10.0",
+  "httpx2>=2.10,<2.13",
   "pytest-asyncio~=1.4.0",
-  "pytest-randomly~=4.1.0",
+  "pytest-randomly>=4.1,<5.1",
   "pytest-rerunfailures~=16.4",
   "pytest-deadfixtures~=3.1.0",
   "pytest-lazy-fixtures~=1.4.0",
   "pytest-clarity~=1.0.1",
   "pytest-pretty~=1.3.0",
-  "coverage~=7.15.2",
+  "coverage>=7.15.2,<7.17.0",
   "psycopg2-binary~=2.9.12",
   "gevent~=26.7",
   "responses~=0.26.2",
 ]
 dev = [
   "mypy~=2.3.0",
-  "prek~=0.4.12",
+  "prek>=0.4.12,<0.6.0",
   "ruff~=0.16.2",
   "sqlalchemy[mypy]~=2.0.51",
   "types-pyyaml~=6.0.12",
-  "types-authlib~=1.7.2",
+  "types-authlib>=1.7.2,<1.9.0",
   "types-passlib~=1.7.7",
   "types-requests~=2.33.0",
 ]
