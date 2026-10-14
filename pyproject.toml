@@ -106,10 +106,10 @@ test = [
   "responses~=0.26.2",
 ]
 dev = [
-  "mypy~=2.3.0",
-  "prek~=0.5.4",
-  "ruff~=0.16.9",
-  "sqlalchemy[mypy]~=2.0.51",
+  "mypy~=2.4.0",
+  "prek~=0.5.5",
+  "ruff~=0.17.0",
+  "sqlalchemy[mypy]~=2.1.4",
   "types-pyyaml~=6.0.12",
   "types-authlib~=1.8.0",
   "types-passlib~=1.7.7",
@@ -133,8 +133,8 @@ mddocs = [
 default-groups = []
 
 [tool.uv.dependency-groups]
-dev = {requires-python = ">=3.10"}
-mddocs = {requires-python = ">=3.10"}
+dev = {requires-python = ">=3.11"}
+mddocs = {requires-python = ">=3.11"}
 
 
 [tool.pytest.ini_options]
