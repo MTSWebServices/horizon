@@ -57,7 +57,7 @@ class Repository(ABC, Generic[Model]):
         data: dict,
     ) -> Model:
         model_type = self.model_type()
-        query: ReturningInsert[tuple[Model]] = insert(model_type).values(**data).returning(model_type)
+        query: ReturningInsert[Model] = insert(model_type).values(**data).returning(model_type)
         result = await self._session.scalars(query)
         return result.one()
 
@@ -67,12 +67,12 @@ class Repository(ABC, Generic[Model]):
         changes: dict,
     ) -> Model | None:
         model_type = self.model_type()
-        query: ReturningUpdate[tuple[Model]] = update(model_type).where(*where).values(**changes).returning(model_type)
+        query: ReturningUpdate[Model] = update(model_type).where(*where).values(**changes).returning(model_type)
         return await self._session.scalar(query)
 
     async def _delete(self, id_: int) -> Model | None:
         model_type = self.model_type()
-        query: ReturningDelete[tuple[Model]] = (
+        query: ReturningDelete[Model] = (
             delete(model_type).where(model_type.id == id_).returning(model_type)  # type: ignore[attr-defined]
         )
         return await self._session.scalar(query)
