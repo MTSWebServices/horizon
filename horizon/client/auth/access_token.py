@@ -60,7 +60,7 @@ class AccessToken(BaseAuth, BaseModel):
         try:
             # As client don't have private key used for signing JWT, this call will always raise this exception
             # https://github.com/lepture/authlib/issues/600
-            jwt.decode(token, key="")
+            jwt.decode(token, key="deadbeef")
         except BadSignatureError as e:
             token_decoded = e.result.payload
             claims = JWTClaims(
