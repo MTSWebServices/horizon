@@ -13,7 +13,7 @@ concurrency:
   cancel-in-progress: true
 
 env:
-  DEFAULT_PYTHON: '3.14'
+  DEFAULT_PYTHON: '3.15'
   MIN_COVERAGE: 92
   COLUMNS: 120
 
@@ -32,7 +32,7 @@ jobs:
       matrix:
         include:
           - python-version: '3.10'
-          - python-version: '3.14'
+          - python-version: '3.15'
 
     steps:
       - name: Checkout code

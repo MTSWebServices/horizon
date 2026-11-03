@@ -69,9 +69,6 @@ ldap-start: ##@LDAP Start LDAP container
 test: db ldap-start ##@Test Run tests
 	${PYTEST} $(PYTEST_ARGS)
 
-test-check-fixtures: ##@Test Check declared fixtures
-	${PYTEST} --dead-fixtures $(PYTEST_ARGS)
-
 test-cleanup: ##@Test Cleanup tests dependencies
 	docker compose -f docker-compose.test.yml down $(ARGS)
 
